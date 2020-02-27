@@ -1,5 +1,6 @@
 function World() {
-    const world = new Eleven.World2D();
+    const world = new Eleven.Grid2D();
+    world.debug();
     const camera = world.camera.center();
     const panZoom = world.getPanZoom();
 
