@@ -1,20 +1,31 @@
 function World() {
-    const world = new Eleven.Grid2D();
-    world.debug();
-    const camera = world.camera.center();
-    const panZoom = world.getPanZoom();
+    const grid = new Eleven.Grid2D();
+    const tileRenderer = new Eleven.TileRenderer(grid,{
+        width: 16, height: 16, layers: 1
+    });
+    grid.renderer = tileRenderer;
 
-    this.world = world;
+    tileRenderer.renderData.forEach(layer => {
+        for(let i = 0;i<layer.length;i++) layer[i] = i;
+    });
+
+    const camera = grid.camera.center();
+    const panZoom = grid.getPanZoom();
+
+    this.load = async () => {
+        const resourceDictionary = await Eleven.ResourceManager.queueManifest(`{
+            "Image": ["tileset.png"]
+        }`).loadWithDictionary();
+        grid.renderer.tileset = resourceDictionary.Image.tileset;
+    };
+
+    grid.bindToFrame(this);
+    panZoom.bindToFrame(this);
+
+    //For debugging...
+    this.grid = grid;
     this.camera = camera;
-
-    this.resize = world.resize;
-    this.render = world.render;
-
-    this.clickDown = panZoom.panStart;
-    this.clickUp = panZoom.panEnd;
-    this.pointerMove = panZoom.pan;
-    this.pointerScroll = panZoom.zoom;
-}
+};
 
 Eleven.CanvasManager.start({
     frame: World,
