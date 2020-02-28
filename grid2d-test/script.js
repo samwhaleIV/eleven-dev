@@ -1,30 +1,37 @@
-function World(optimized=false) {
-    const grid = new Eleven.Grid2D(optimized?256:16);
-    const tileRenderer = new Eleven.TileRenderer(grid,{
-        width: optimized?1:16, height: optimized?1:16, layers: 1
-    });
-    grid.renderer = tileRenderer;
+const MAP_NAME = "tumble_woods";
+const UVTC_TILE_SIZE = 16;
 
-    tileRenderer.renderData.forEach(layer => {
-        if(optimized) {
-            for(let i = 0;i<layer.length;i++) layer[i] = 0;
-        } else {
-            for(let i = 0;i<layer.length;i++) layer[i] = i;
-        }
-    });
+function World() {
+    const grid = new Eleven.Grid2D(UVTC_TILE_SIZE);
 
-    const camera = grid.camera.center();
+    const camera = grid.camera;
     const panZoom = grid.getPanZoom();
 
     this.load = async () => {
-        const resourceDictionary = await Eleven.ResourceManager.queueManifest(`{
-            "Image": ["tileset.png"]
-        }`).loadWithDictionary();
-        grid.renderer.tileset = resourceDictionary.Image.tileset;
+        await Eleven.ResourceManager.queueManifest(`{
+            "Image": ["world-tileset.png"],
+            "JSON": ["uvtc-map-data.json"]
+        }`).load();
+
+        const maps = Eleven.ResourceManager.getJSON("uvtc-map-data");
+
+        grid.renderer = new Eleven.TileRenderer(grid,{
+            map: maps[MAP_NAME],
+            uvtc: true
+        });
+        
+        grid.renderer.tileset = Eleven.ResourceManager.getImage("world-tileset");
+
+        camera.center();
     };
 
     grid.bindToFrame(this);
     panZoom.bindToFrame(this);
+
+    this.resize = data => {
+        data.context.imageSmoothingEnabled = false;
+        grid.resize(data);
+    };
 
     //For debugging...
     this.grid = grid;
