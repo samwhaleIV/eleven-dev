@@ -18,11 +18,11 @@ function World() {
         const maps = ResourceManager.getJSON("uvtc-map-data");
 
         const tileRenderer = new grid.TileRenderer({
-            applySize: true,
+            setSize: true,
             map: maps[MAP_NAME],
             uvtc: true
         });
-    
+
         grid.renderer = tileRenderer;
 
         const tileset = ResourceManager.getImage("world-tileset");
