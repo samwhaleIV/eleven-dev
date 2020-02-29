@@ -1,26 +1,34 @@
-const MAP_NAME = "tumble_woods";
+const {ResourceManager, CanvasManager, Grid2D} = Eleven;
+
+const MAP_NAME = "my_swamp";
 const UVTC_TILE_SIZE = 16;
 
 function World() {
-    const grid = new Eleven.Grid2D(UVTC_TILE_SIZE);
+    const grid = new Grid2D(UVTC_TILE_SIZE);
 
     const camera = grid.camera;
     const panZoom = grid.getPanZoom();
 
     this.load = async () => {
-        await Eleven.ResourceManager.queueManifest(`{
+        await ResourceManager.queueManifest(`{
             "Image": ["world-tileset.png"],
             "JSON": ["uvtc-map-data.json"]
         }`).load();
 
-        const maps = Eleven.ResourceManager.getJSON("uvtc-map-data");
+        const maps = ResourceManager.getJSON("uvtc-map-data");
 
-        grid.renderer = new Eleven.TileRenderer(grid,{
+        const tileRenderer = new grid.TileRenderer({
+            applySize: true,
             map: maps[MAP_NAME],
             uvtc: true
         });
+    
+        grid.renderer = tileRenderer;
+
+        const tileset = ResourceManager.getImage("world-tileset");
         
-        grid.renderer.tileset = Eleven.ResourceManager.getImage("world-tileset");
+        grid.renderer.tileset = tileset;
+        grid.cache();
 
         camera.center();
     };
@@ -38,7 +46,7 @@ function World() {
     this.camera = camera;
 };
 
-Eleven.CanvasManager.start({
+CanvasManager.start({
     frame: World,
     markLoaded: true
 });
