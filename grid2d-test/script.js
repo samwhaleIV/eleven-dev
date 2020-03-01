@@ -1,13 +1,31 @@
-const {ResourceManager, CanvasManager, Grid2D} = Eleven;
+const {ResourceManager, CanvasManager, Grid2D, SpriteLayer} = Eleven;
 
 const MAP_NAME = "my_swamp";
 const UVTC_TILE_SIZE = 16;
+
+function TestSprite() {
+    this.x = 0;
+    this.y = 0;
+
+    this.width = 1;
+    this.height = 1;
+
+    this.tilesPerSecond = 5;
+
+    this.render = (context,x,y,width,height) => {
+        context.fillStyle = "red";
+        context.fillRect(x,y,width,height);
+        this.didRender = true;
+    };
+}
 
 function World() {
     const grid = new Grid2D(UVTC_TILE_SIZE);
 
     const camera = grid.camera;
     const panZoom = grid.getPanZoom();
+
+    let sprite = null;
 
     this.load = async () => {
         await ResourceManager.queueManifest(`{
@@ -25,30 +43,23 @@ function World() {
             uvtcDecoding: true
         });
 
-        tileRenderer.layerCount = 1;
+        tileRenderer.layerCount = 2;
         tileRenderer.layerStart = 0;
         grid.cache();
-        tileRenderer.layerStart = 1;
-        tileRenderer.paused = false;
+        tileRenderer.paused = true;
+
+        const spriteLayer = new SpriteLayer(grid);
+        spriteLayer.bindToRenderer(tileRenderer);
 
         tileRenderer.background = (context,{width,height}) => {
-            context.fillStyle = "black";
+            context.fillStyle = sprite.didRender ? "white" : "red";
             context.fillRect(0,0,width,height);
+            sprite.didRender = false;
         };
-        tileRenderer.start = context => {
-            context.save();
-            context.translate(0,0);
-            context.globalCompositeOperation = "multiply";
-        };
-        tileRenderer.render = context => {
-            const {x,y} = grid.getLocation(camera.x,camera.y);
-            const tileSize = grid.tileSize;
-            context.fillStyle = "red";
-            context.fillRect(x,y,tileSize,tileSize);
-        };
-        tileRenderer.finalize = context => {
-            context.restore();
-        };
+
+        sprite = new TestSprite();
+
+        spriteLayer.add(sprite);
 
         camera.center();
     };
@@ -59,6 +70,32 @@ function World() {
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
         grid.resize(data);
+    };
+
+    setInterval(()=>{
+        if(!sprite) return;
+        console.log(sprite.x,sprite.y);
+    },1000);
+
+    this.input = (downKeys,{delta}) => {
+        if(!sprite) return;
+        const upDown = "KeyW" in downKeys;
+        const downDown = "KeyS" in downKeys;
+        const leftDown = "KeyA" in downKeys;
+        const rightDown = "KeyD" in downKeys;
+
+        let xDelta = 0;
+        let yDelta = 0;
+
+        if(upDown) yDelta--;
+        if(downDown) yDelta++;
+        if(leftDown) xDelta--;
+        if(rightDown) xDelta++;
+
+        const deltaSecond = delta / 1000;
+        const speed = sprite.tilesPerSecond * deltaSecond;
+        sprite.x += xDelta * speed;
+        sprite.y += yDelta * speed;
     };
 
     //For debugging...
