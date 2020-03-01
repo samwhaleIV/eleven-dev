@@ -18,23 +18,37 @@ function World() {
         const maps = ResourceManager.getJSON("uvtc-map-data");
         const tileset = ResourceManager.getImage("world-tileset");
 
-        grid.getTileRenderer({
+        const tileRenderer = grid.getTileRenderer({
             tileset: tileset,
             setRenderer: true, setSize: true,
-            map: maps[MAP_NAME],
-            uvtc: true
+            map: maps["my_swamp"],
+            uvtcDecoding: true
         });
-        return;
+
+        tileRenderer.layerCount = 1;
+        tileRenderer.layerStart = 0;
         grid.cache();
+        tileRenderer.layerStart = 1;
+        tileRenderer.paused = false;
 
-        grid.getTileRenderer({
-            tileset: tileset,
-            setRenderer: true,
-            map: maps["tumble_woods"],
-            uvtc: true
-        });
-
-        grid.cacheTop();
+        tileRenderer.background = (context,{width,height}) => {
+            context.fillStyle = "black";
+            context.fillRect(0,0,width,height);
+        };
+        tileRenderer.start = context => {
+            context.save();
+            context.translate(0,0);
+            context.globalCompositeOperation = "multiply";
+        };
+        tileRenderer.render = context => {
+            const {x,y} = grid.getLocation(camera.x,camera.y);
+            const tileSize = grid.tileSize;
+            context.fillStyle = "red";
+            context.fillRect(x,y,tileSize,tileSize);
+        };
+        tileRenderer.finalize = context => {
+            context.restore();
+        };
 
         camera.center();
     };
