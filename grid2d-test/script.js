@@ -16,18 +16,25 @@ function World() {
         }`).load();
 
         const maps = ResourceManager.getJSON("uvtc-map-data");
+        const tileset = ResourceManager.getImage("world-tileset");
 
-        const tileRenderer = new grid.TileRenderer({
-            setRenderer: true,
-            setSize: true,
+        grid.getTileRenderer({
+            tileset: tileset,
+            setRenderer: true, setSize: true,
             map: maps[MAP_NAME],
             uvtc: true
         });
-
-        const tileset = ResourceManager.getImage("world-tileset");
-        
-        tileRenderer.tileset = tileset;
+        return;
         grid.cache();
+
+        grid.getTileRenderer({
+            tileset: tileset,
+            setRenderer: true,
+            map: maps["tumble_woods"],
+            uvtc: true
+        });
+
+        grid.cacheTop();
 
         camera.center();
     };
