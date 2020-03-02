@@ -4,13 +4,16 @@ const MAP_NAME = "my_swamp";
 const UVTC_TILE_SIZE = 16;
 
 function TestSprite() {
-    this.x = 0;
-    this.y = 0;
+    this.x = 50;
+    this.y = 50;
 
     this.width = 1;
     this.height = 1;
 
-    this.tilesPerSecond = 5;
+    this.xDelta = 0;
+    this.yDelta = 0;
+
+    this.tilesPerSecond = 6;
 
     this.render = (context,x,y,width,height) => {
         context.fillStyle = "red";
@@ -62,20 +65,16 @@ function World() {
         spriteLayer.add(sprite);
 
         camera.center();
+        camera.padding = true;
     };
 
     grid.bindToFrame(this);
-    panZoom.bindToFrame(this);
+    //panZoom.bindToFrame(this);
 
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
         grid.resize(data);
     };
-
-    setInterval(()=>{
-        if(!sprite) return;
-        console.log(sprite.x,sprite.y);
-    },1000);
 
     this.input = (downKeys,{delta}) => {
         if(!sprite) return;
@@ -96,6 +95,9 @@ function World() {
         const speed = sprite.tilesPerSecond * deltaSecond;
         sprite.x += xDelta * speed;
         sprite.y += yDelta * speed;
+
+        camera.x = sprite.x;
+        camera.y = sprite.y;
     };
 
     //For debugging...
