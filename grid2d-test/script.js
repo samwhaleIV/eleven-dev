@@ -1,19 +1,32 @@
-const {ResourceManager, CanvasManager, Grid2D, SpriteLayer} = Eleven;
+const {ResourceManager, CanvasManager, Grid2D, SpriteLayer, Frame, GamepadProcessor, KeyBind} = Eleven;
 
 const MAP_NAME = "my_swamp";
 const UVTC_TILE_SIZE = 16;
 
-function TestSprite() {
-    this.x = 50;
+const MOVE_UP = "MoveUp";
+const MOVE_LEFT = "MoveLeft";
+const MOVE_RIGHT = "MoveRight";
+const MOVE_DOWN = "MoveDown";
+
+function TestSprite(grid) {
+    this.x = 75;
     this.y = 50;
 
     this.width = 1;
     this.height = 1;
 
-    this.xDelta = 0;
+    this.xDelta = -1;
     this.yDelta = 0;
 
-    this.tilesPerSecond = 6;
+    this.tilesPerSecond = 5;
+
+    this.update = time => {
+        const deltaSecond = time.delta / 1000;
+        const speed = this.tilesPerSecond * deltaSecond;
+
+        this.x += this.xDelta * speed;
+        this.y += this.yDelta * speed;
+    };
 
     this.render = (context,x,y,width,height) => {
         context.fillStyle = "red";
@@ -55,14 +68,22 @@ function World() {
         spriteLayer.bindToRenderer(tileRenderer);
 
         tileRenderer.background = (context,{width,height}) => {
-            context.fillStyle = sprite.didRender ? "white" : "red";
+            context.fillStyle = sprite.didRender ? "black" : "red";
             context.fillRect(0,0,width,height);
             sprite.didRender = false;
         };
 
-        sprite = new TestSprite();
+        sprite = new TestSprite(grid);
 
         spriteLayer.add(sprite);
+        spriteLayer.add({
+            update: () => {
+                grid.alignToPixels(sprite);
+                camera.x = sprite.x; camera.y = sprite.y;
+            }
+        });
+
+        camera.scale = 6;
 
         camera.center();
         camera.padding = true;
@@ -76,12 +97,53 @@ function World() {
         grid.resize(data);
     };
 
-    this.input = (downKeys,{delta}) => {
+    const downKeys = new Object();
+
+    this.keyDown = key => {
+        downKeys[key.impulse] = true;
+    };
+    this.keyUp = key => {
+        delete downKeys[key.impulse];
+    };
+
+    const keyBind = new KeyBind({
+        "KeyW": MOVE_UP,
+        "KeyS": MOVE_DOWN,
+        "KeyA": MOVE_LEFT,
+        "KeyD": MOVE_RIGHT,
+        ArrowUp: MOVE_UP,
+        ArrowDown: MOVE_DOWN,
+        ArrowLeft: MOVE_LEFT,
+        ArrowRight: MOVE_RIGHT,
+    });
+    const gamepadProcessor = new GamepadProcessor({
+        binds: {
+            Up: MOVE_UP,
+            Down: MOVE_DOWN,
+            Left: MOVE_LEFT,
+            Right: MOVE_RIGHT
+        },
+        whitelist: true,
+        triggerThreshold: 0.1,
+        repeatButtons: false,
+        repeatAxes: false,
+        repeatTriggers: false,
+        repeatDelay: 200,
+        repeatRate: 150,
+        axisDeadzone: 0.7,
+        manageLeftAxis: true,
+        manageRightAxis: false,
+        compositeLeftAxis: true,
+        compositeRightAxis: false
+    });
+    this.inputGamepad = gamepadProcessor.poll;
+
+    const input = downKeys => {
         if(!sprite) return;
-        const upDown = "KeyW" in downKeys;
-        const downDown = "KeyS" in downKeys;
-        const leftDown = "KeyA" in downKeys;
-        const rightDown = "KeyD" in downKeys;
+        const upDown = MOVE_UP in downKeys;
+        const downDown = MOVE_DOWN in downKeys;
+        const leftDown = MOVE_LEFT in downKeys;
+        const rightDown = MOVE_RIGHT in downKeys;
 
         let xDelta = 0;
         let yDelta = 0;
@@ -91,20 +153,23 @@ function World() {
         if(leftDown) xDelta--;
         if(rightDown) xDelta++;
 
-        const deltaSecond = delta / 1000;
-        const speed = sprite.tilesPerSecond * deltaSecond;
-        sprite.x += xDelta * speed;
-        sprite.y += yDelta * speed;
-
-        camera.x = sprite.x;
-        camera.y = sprite.y;
+        sprite.xDelta = xDelta;
+        sprite.yDelta = yDelta;
     };
 
-    //For debugging...
+    gamepadProcessor.inputGamepad = downKeys => {
+        if(sprite.xDelta === 0 && sprite.yDelta === 0) {
+            input(downKeys);
+        }
+    };
+    this.input = keyBind.poll(input);
+
+    let lastX = 0;
+    //setInterval(()=>{const dif = camera.x-lastX;lastX = camera.x;console.log("x dif",dif)},1000);
+
     this.grid = grid;
     this.camera = camera;
 };
-
 CanvasManager.start({
     frame: World,
     markLoaded: true
