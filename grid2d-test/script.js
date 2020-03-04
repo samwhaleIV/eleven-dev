@@ -1,4 +1,16 @@
-const {ResourceManager, CanvasManager, Grid2D, SpriteLayer, Frame, GamepadProcessor, KeyBind} = Eleven;
+const {
+    ResourceManager,
+    CanvasManager,
+    Grid2D,
+    SpriteLayer,
+    Frame,
+    ManagedGamepad,
+    KeyBind,
+    SpriteFollower,
+    UVTCLighting,
+    UVTCReflection,
+    Dispatcher
+} = Eleven;
 
 const MAP_NAME = "my_swamp";
 const UVTC_TILE_SIZE = 16;
@@ -8,9 +20,9 @@ const MOVE_LEFT = "MoveLeft";
 const MOVE_RIGHT = "MoveRight";
 const MOVE_DOWN = "MoveDown";
 
-function TestSprite(grid) {
-    this.x = 75;
-    this.y = 50;
+function TestSprite() {
+    this.x = 60.3;
+    this.y = 43.9;
 
     this.width = 1;
     this.height = 1;
@@ -31,16 +43,12 @@ function TestSprite(grid) {
     this.render = (context,x,y,width,height) => {
         context.fillStyle = "red";
         context.fillRect(x,y,width,height);
-        this.didRender = true;
     };
 }
 
 function World() {
     const grid = new Grid2D(UVTC_TILE_SIZE);
-
     const camera = grid.camera;
-    const panZoom = grid.getPanZoom();
-
     let sprite = null;
 
     this.load = async () => {
@@ -52,45 +60,57 @@ function World() {
         const maps = ResourceManager.getJSON("uvtc-map-data");
         const tileset = ResourceManager.getImage("world-tileset");
 
-        const tileRenderer = grid.getTileRenderer({
+        const renderer = grid.getTileRenderer({
             tileset: tileset,
             setRenderer: true, setSize: true,
-            map: maps["my_swamp"],
+            map: maps[MAP_NAME],
             uvtcDecoding: true
         });
 
-        tileRenderer.layerCount = 2;
-        tileRenderer.layerStart = 0;
+        renderer.layerCount = 2;
+        renderer.layerStart = 0;
         grid.cache();
-        tileRenderer.paused = true;
+        renderer.paused = true;
 
+        const lightingLayer = new UVTCLighting(grid,renderer);
         const spriteLayer = new SpriteLayer(grid);
-        spriteLayer.bindToRenderer(tileRenderer);
 
-        tileRenderer.background = (context,{width,height}) => {
-            context.fillStyle = sprite.didRender ? "black" : "red";
-            context.fillRect(0,0,width,height);
-            sprite.didRender = false;
-        };
+        const backgroundHandler = new Dispatcher();
+        const resizeHandler = new Dispatcher();
+        const renderHandler = new Dispatcher();
+        const updateHandler = new Dispatcher();
+        const finalizeHandler = new Dispatcher();
+
+        renderer.resize = resizeHandler.target;
+        renderer.render = renderHandler.target;
+        renderer.update = updateHandler.target;
+        renderer.background = backgroundHandler.target;
+        renderer.finalize = finalizeHandler.target;
+
+        updateHandler.add(spriteLayer.update);
+        renderHandler.add(spriteLayer.render);
+
+        if(lightingLayer.hasLighting) {
+            renderHandler.add(lightingLayer.render);
+        }
+
+        const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);
+        backgroundHandler.add(reflector.clear);
+        resizeHandler.add(reflector.resize);
+        finalizeHandler.add(reflector.render);
 
         sprite = new TestSprite(grid);
-
         spriteLayer.add(sprite);
-        spriteLayer.add({
-            update: () => {
-                grid.alignToPixels(sprite);
-                camera.x = sprite.x; camera.y = sprite.y;
-            }
-        });
+
+        const spriteFollower = new SpriteFollower(camera,sprite);
+        this.spriteFollower = spriteFollower;
 
         camera.scale = 6;
-
         camera.center();
         camera.padding = true;
     };
 
     grid.bindToFrame(this);
-    //panZoom.bindToFrame(this);
 
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
@@ -116,7 +136,7 @@ function World() {
         ArrowLeft: MOVE_LEFT,
         ArrowRight: MOVE_RIGHT,
     });
-    const gamepadProcessor = new GamepadProcessor({
+    const managedGamepad = new ManagedGamepad({
         binds: {
             Up: MOVE_UP,
             Down: MOVE_DOWN,
@@ -136,7 +156,7 @@ function World() {
         compositeLeftAxis: true,
         compositeRightAxis: false
     });
-    this.inputGamepad = gamepadProcessor.poll;
+    this.inputGamepad = managedGamepad.poll;
 
     const input = downKeys => {
         if(!sprite) return;
@@ -157,15 +177,12 @@ function World() {
         sprite.yDelta = yDelta;
     };
 
-    gamepadProcessor.inputGamepad = downKeys => {
+    managedGamepad.inputGamepad = downKeys => {
         if(sprite.xDelta === 0 && sprite.yDelta === 0) {
             input(downKeys);
         }
     };
     this.input = keyBind.poll(input);
-
-    let lastX = 0;
-    //setInterval(()=>{const dif = camera.x-lastX;lastX = camera.x;console.log("x dif",dif)},1000);
 
     this.grid = grid;
     this.camera = camera;
