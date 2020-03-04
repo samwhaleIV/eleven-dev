@@ -9,7 +9,7 @@ const {
     SpriteFollower,
     UVTCLighting,
     UVTCReflection,
-    Dispatcher
+    DispatchRenderer
 } = Eleven;
 
 const MAP_NAME = "my_swamp";
@@ -75,29 +75,21 @@ function World() {
         const lightingLayer = new UVTCLighting(grid,renderer);
         const spriteLayer = new SpriteLayer(grid);
 
-        const backgroundHandler = new Dispatcher();
-        const resizeHandler = new Dispatcher();
-        const renderHandler = new Dispatcher();
-        const updateHandler = new Dispatcher();
-        const finalizeHandler = new Dispatcher();
+        const dispatchRenderer = new DispatchRenderer();
 
-        renderer.resize = resizeHandler.target;
-        renderer.render = renderHandler.target;
-        renderer.update = updateHandler.target;
-        renderer.background = backgroundHandler.target;
-        renderer.finalize = finalizeHandler.target;
-
-        updateHandler.add(spriteLayer.update);
-        renderHandler.add(spriteLayer.render);
-
+        dispatchRenderer.addUpdate(spriteLayer.update);
+        dispatchRenderer.addRender(spriteLayer.render);
         if(lightingLayer.hasLighting) {
-            renderHandler.add(lightingLayer.render);
+            dispatchRenderer.addRender(lightingLayer.render);
         }
-
         const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);
-        backgroundHandler.add(reflector.clear);
-        resizeHandler.add(reflector.resize);
-        finalizeHandler.add(reflector.render);
+        dispatchRenderer.addBackground(reflector.clear);
+        dispatchRenderer.addResize(reflector.resize);
+        dispatchRenderer.addFinalize(reflector.render);
+
+        console.log(dispatchRenderer);
+
+        grid.renderer = dispatchRenderer;
 
         sprite = new TestSprite(grid);
         spriteLayer.add(sprite);
