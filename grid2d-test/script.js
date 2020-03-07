@@ -9,7 +9,9 @@ const {
     SpriteFollower,
     UVTCLighting,
     UVTCReflection,
-    DispatchRenderer
+    DispatchRenderer,
+    CollisionLayer,
+    UVTCCollision
 } = Eleven;
 
 const MAP_NAME = "my_swamp";
@@ -21,16 +23,16 @@ const MOVE_RIGHT = "MoveRight";
 const MOVE_DOWN = "MoveDown";
 
 function TestSprite() {
-    this.x = 60.3;
-    this.y = 43.9;
+    this.x = 60.5;
+    this.y = 43;
 
-    this.width = 1;
-    this.height = 1;
+    this.width = 4; this.height = 0.25;
 
-    this.xDelta = -1;
-    this.yDelta = 0;
+    this.xDelta = 0; this.yDelta = 0;
 
     this.tilesPerSecond = 5;
+
+    this.color = "red";
 
     this.update = time => {
         const deltaSecond = time.delta / 1000;
@@ -41,7 +43,7 @@ function TestSprite() {
     };
 
     this.render = (context,x,y,width,height) => {
-        context.fillStyle = "red";
+        context.fillStyle = this.color;
         context.fillRect(x,y,width,height);
     };
 }
@@ -74,9 +76,10 @@ function World() {
 
         const lightingLayer = new UVTCLighting(grid,renderer);
         const spriteLayer = new SpriteLayer(grid);
-
+        const collisionLayer = spriteLayer.getCollisionLayer();
         const dispatchRenderer = new DispatchRenderer();
 
+        dispatchRenderer.addUpdate(collisionLayer.update);
         dispatchRenderer.addUpdate(spriteLayer.update);
         dispatchRenderer.addRender(spriteLayer.render);
         if(lightingLayer.hasLighting) {
@@ -92,14 +95,86 @@ function World() {
         grid.renderer = dispatchRenderer;
 
         sprite = new TestSprite(grid);
-        spriteLayer.add(sprite);
 
         const spriteFollower = new SpriteFollower(camera,sprite);
         this.spriteFollower = spriteFollower;
+        this.spriteFollower.disable();
+        this.sprite = sprite;
 
         camera.scale = 6;
         camera.center();
         camera.padding = true;
+
+        const sprite2 = new TestSprite();
+        sprite2.color = "green";
+        sprite2.x -= 5;
+        spriteLayer.add(sprite2);
+
+        sprite2.collides = true;
+        sprite.collides = false;
+
+        const collider = collisionLayer.collides;
+        const tileCollider = new UVTCCollision(grid,renderer).collides;
+        collisionLayer.collides = sprite => {
+            let result = collider(sprite);
+            if(!result) result = tileCollider(sprite);
+            return result;
+        };
+
+        sprite.update = (function(time) {
+            const deltaSecond = time.delta / 1000;
+            const speed = this.tilesPerSecond * deltaSecond;
+            if(this.xDelta) {
+                this.x += this.xDelta * speed;
+                const goingDown = this.xDelta < 0
+                const collisionResult = collisionLayer.collides(sprite);
+                if(collisionResult) {
+                    if(goingDown) {
+                        //going left
+                        this.x = collisionResult.x + collisionResult.width;
+                    } else {
+                        //going right
+                        this.x = collisionResult.x - this.width;
+                    }
+                }
+            } else if(this.yDelta) {
+                this.y += this.yDelta * speed;
+                const goingDown = this.yDelta < 0;
+                const collisionResult = collisionLayer.collides(sprite);
+                if(collisionResult) {
+                    if(goingDown) {
+                        //going up
+                        this.y = collisionResult.y + collisionResult.height;
+                    } else {
+                        //going down
+                        this.y = collisionResult.y - this.height;
+                    }
+                }
+            }
+        }).bind(sprite);
+
+        sprite.width = 0.75;
+        sprite.height = 0.75;
+
+        const sprite3 = new TestSprite();
+        sprite3.color = "green";
+        sprite3.x -= 5;
+        sprite3.y += 1.25;
+        sprite3.width = 0.25;
+        sprite3.height = 10;
+        sprite3.collides = true;
+        sprite3.x += 0.25;
+        spriteLayer.add(sprite3);
+
+        spriteLayer.add(sprite);
+
+        dispatchRenderer.addUpdate(()=>{
+            if(collisionLayer.collides(sprite)) {
+                sprite.color = "blue";
+            } else {
+                sprite.color = "red";
+            }
+        });
     };
 
     grid.bindToFrame(this);
@@ -178,6 +253,8 @@ function World() {
 
     this.grid = grid;
     this.camera = camera;
+
+    grid.getPanZoom().bindToFrame(this);
 };
 CanvasManager.start({
     frame: World,
