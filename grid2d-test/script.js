@@ -11,7 +11,9 @@ const {
     UVTCReflection,
     DispatchRenderer,
     CollisionLayer,
-    UVTCCollision
+    TileCollision,
+    PlayerController,
+    InstallHitBox
 } = Eleven;
 
 const MAP_NAME = "my_swamp";
@@ -22,177 +24,7 @@ const MOVE_LEFT = "MoveLeft";
 const MOVE_RIGHT = "MoveRight";
 const MOVE_DOWN = "MoveDown";
 
-function TestSprite() {
-    this.x = 60.5;
-    this.y = 43;
-
-    this.width = 4; this.height = 0.25;
-
-    this.xDelta = 0; this.yDelta = 0;
-
-    this.tilesPerSecond = 5;
-
-    this.color = "red";
-
-    this.update = time => {
-        const deltaSecond = time.delta / 1000;
-        const speed = this.tilesPerSecond * deltaSecond;
-
-        this.x += this.xDelta * speed;
-        this.y += this.yDelta * speed;
-    };
-
-    this.render = (context,x,y,width,height) => {
-        context.fillStyle = this.color;
-        context.fillRect(x,y,width,height);
-    };
-}
-
-function World() {
-    const grid = new Grid2D(UVTC_TILE_SIZE);
-    const camera = grid.camera;
-    let sprite = null;
-
-    this.load = async () => {
-        await ResourceManager.queueManifest(`{
-            "Image": ["world-tileset.png"],
-            "JSON": ["uvtc-map-data.json"]
-        }`).load();
-
-        const maps = ResourceManager.getJSON("uvtc-map-data");
-        const tileset = ResourceManager.getImage("world-tileset");
-
-        const renderer = grid.getTileRenderer({
-            tileset: tileset,
-            setRenderer: true, setSize: true,
-            map: maps[MAP_NAME],
-            uvtcDecoding: true
-        });
-
-        renderer.layerCount = 2;
-        renderer.layerStart = 0;
-        grid.cache();
-        renderer.paused = true;
-
-        const lightingLayer = new UVTCLighting(grid,renderer);
-        const spriteLayer = new SpriteLayer(grid);
-        const collisionLayer = spriteLayer.getCollisionLayer();
-        const dispatchRenderer = new DispatchRenderer();
-
-        dispatchRenderer.addUpdate(collisionLayer.update);
-        dispatchRenderer.addUpdate(spriteLayer.update);
-        dispatchRenderer.addRender(spriteLayer.render);
-        if(lightingLayer.hasLighting) {
-            dispatchRenderer.addRender(lightingLayer.render);
-        }
-        const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);
-        dispatchRenderer.addBackground(reflector.clear);
-        dispatchRenderer.addResize(reflector.resize);
-        dispatchRenderer.addFinalize(reflector.render);
-
-        console.log(dispatchRenderer);
-
-        grid.renderer = dispatchRenderer;
-
-        sprite = new TestSprite(grid);
-
-        const spriteFollower = new SpriteFollower(camera,sprite);
-        this.spriteFollower = spriteFollower;
-        this.spriteFollower.disable();
-        this.sprite = sprite;
-
-        camera.scale = 6;
-        camera.center();
-        camera.padding = true;
-
-        const sprite2 = new TestSprite();
-        sprite2.color = "green";
-        sprite2.x -= 5;
-        spriteLayer.add(sprite2);
-
-        sprite2.collides = true;
-        sprite.collides = false;
-
-        const collider = collisionLayer.collides;
-        const tileCollider = new UVTCCollision(grid,renderer).collides;
-        collisionLayer.collides = sprite => {
-            let result = collider(sprite);
-            if(!result) result = tileCollider(sprite);
-            return result;
-        };
-
-        sprite.update = (function(time) {
-            const deltaSecond = time.delta / 1000;
-            const speed = this.tilesPerSecond * deltaSecond;
-            if(this.xDelta) {
-                this.x += this.xDelta * speed;
-                const goingDown = this.xDelta < 0
-                const collisionResult = collisionLayer.collides(sprite);
-                if(collisionResult) {
-                    if(goingDown) {
-                        //going left
-                        this.x = collisionResult.x + collisionResult.width;
-                    } else {
-                        //going right
-                        this.x = collisionResult.x - this.width;
-                    }
-                }
-            } else if(this.yDelta) {
-                this.y += this.yDelta * speed;
-                const goingDown = this.yDelta < 0;
-                const collisionResult = collisionLayer.collides(sprite);
-                if(collisionResult) {
-                    if(goingDown) {
-                        //going up
-                        this.y = collisionResult.y + collisionResult.height;
-                    } else {
-                        //going down
-                        this.y = collisionResult.y - this.height;
-                    }
-                }
-            }
-        }).bind(sprite);
-
-        sprite.width = 0.75;
-        sprite.height = 0.75;
-
-        const sprite3 = new TestSprite();
-        sprite3.color = "green";
-        sprite3.x -= 5;
-        sprite3.y += 1.25;
-        sprite3.width = 0.25;
-        sprite3.height = 10;
-        sprite3.collides = true;
-        sprite3.x += 0.25;
-        spriteLayer.add(sprite3);
-
-        spriteLayer.add(sprite);
-
-        dispatchRenderer.addUpdate(()=>{
-            if(collisionLayer.collides(sprite)) {
-                sprite.color = "blue";
-            } else {
-                sprite.color = "red";
-            }
-        });
-    };
-
-    grid.bindToFrame(this);
-
-    this.resize = data => {
-        data.context.imageSmoothingEnabled = false;
-        grid.resize(data);
-    };
-
-    const downKeys = new Object();
-
-    this.keyDown = key => {
-        downKeys[key.impulse] = true;
-    };
-    this.keyUp = key => {
-        delete downKeys[key.impulse];
-    };
-
+function getInputDevices() {
     const keyBind = new KeyBind({
         "KeyW": MOVE_UP,
         "KeyS": MOVE_DOWN,
@@ -223,38 +55,121 @@ function World() {
         compositeLeftAxis: true,
         compositeRightAxis: false
     });
-    this.inputGamepad = managedGamepad.poll;
+    return {keyBind, managedGamepad};
+}
 
-    const input = downKeys => {
-        if(!sprite) return;
-        const upDown = MOVE_UP in downKeys;
-        const downDown = MOVE_DOWN in downKeys;
-        const leftDown = MOVE_LEFT in downKeys;
-        const rightDown = MOVE_RIGHT in downKeys;
+function TestSprite() {
+    this.x = 60;
+    this.y = 43;
 
-        let xDelta = 0;
-        let yDelta = 0;
+    this.width = 1;
+    this.height = 1;
 
-        if(upDown) yDelta--;
-        if(downDown) yDelta++;
-        if(leftDown) xDelta--;
-        if(rightDown) xDelta++;
+    InstallHitBox(this,12/16,12/16);
+    this.yOffset = -(2 / 16);
 
-        sprite.xDelta = xDelta;
-        sprite.yDelta = yDelta;
+    this.tilesPerSecond = 5;
+    this.color = "yellow";
+
+    this.showHitBox = false;
+
+    this.render = (context,x,y,width,height) => {
+        context.fillStyle = this.color;
+        context.fillRect(x,y,width,height);
     };
+}
 
-    managedGamepad.inputGamepad = downKeys => {
-        if(sprite.xDelta === 0 && sprite.yDelta === 0) {
-            input(downKeys);
+function World() {
+    const grid = new Grid2D(UVTC_TILE_SIZE);
+    const camera = grid.camera;
+
+    this.load = async () => {
+        await ResourceManager.queueManifest(`{
+            "Image": ["world-tileset.png"],
+            "JSON": ["uvtc-map-data.json"]
+        }`).load();
+
+        const maps = ResourceManager.getJSON("uvtc-map-data");
+        const tileset = ResourceManager.getImage("world-tileset");
+
+        const renderer = grid.getTileRenderer({
+            tileset: tileset,
+            setRenderer: true, setSize: true,
+            map: maps[MAP_NAME],
+            uvtcDecoding: true
+        });
+
+        renderer.layerCount = 2;
+        renderer.layerStart = 0;
+        grid.cache();
+        renderer.paused = true;
+
+        const lightingLayer = new UVTCLighting(grid,renderer);
+        const tileCollision = new TileCollision(grid,renderer);
+
+        const spriteLayer = new SpriteLayer(grid);
+        const collisionLayer = spriteLayer.getCollisionLayer();
+
+        const dispatchRenderer = new DispatchRenderer();
+
+        dispatchRenderer.addUpdate(collisionLayer.update);
+        dispatchRenderer.addUpdate(spriteLayer.update);
+        dispatchRenderer.addRender(spriteLayer.render);
+        if(lightingLayer.hasLighting) {
+            dispatchRenderer.addRender(lightingLayer.render);
         }
+        const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);
+        dispatchRenderer.addBackground(reflector.clear);
+        dispatchRenderer.addResize(reflector.resize);
+        dispatchRenderer.addFinalize(reflector.render);
+
+        console.log(dispatchRenderer);
+
+        grid.renderer = dispatchRenderer;
+
+        let sprite = new TestSprite(grid);
+
+        const spriteFollower = new SpriteFollower(camera,sprite);
+        this.spriteFollower = spriteFollower;
+
+        this.sprite = sprite;
+
+        camera.scale = 6;
+        camera.center();
+        camera.padding = true;
+  
+        spriteLayer.add(sprite);
+
+        const {managedGamepad, keyBind} = getInputDevices();
+        this.inputGamepad = managedGamepad.poll;
+
+        const playerController = new PlayerController(
+            sprite,collisionLayer,tileCollision
+        );
+                
+        const input = playerController.getInputHandler({
+            [MOVE_DOWN]: "down", [MOVE_RIGHT]: "right",
+            [MOVE_UP]: "up", [MOVE_LEFT]: "left"
+        });
+        const keyDown = input.keyDown;
+        const keyUp = input.keyUp;
+
+        managedGamepad.keyDown = keyDown;
+        managedGamepad.keyUp = keyUp;
+
+        this.keyDown = keyBind.impulse(keyDown);
+        this.keyUp = keyBind.impulse(keyUp);
+
     };
-    this.input = keyBind.poll(input);
+
+    grid.bindToFrame(this);
+
+    this.resize = data => {
+        data.context.imageSmoothingEnabled = false;
+        grid.resize(data);
+    };
 
     this.grid = grid;
-    this.camera = camera;
-
-    grid.getPanZoom().bindToFrame(this);
 };
 CanvasManager.start({
     frame: World,
