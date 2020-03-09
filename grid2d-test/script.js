@@ -1,16 +1,16 @@
+import TextLayer from "../eleven/engine/modules/uvtc/text/text-layer.js";
+
 const {
     ResourceManager,
     CanvasManager,
     Grid2D,
     SpriteLayer,
-    Frame,
     ManagedGamepad,
     KeyBind,
     SpriteFollower,
     UVTCLighting,
     UVTCReflection,
     DispatchRenderer,
-    CollisionLayer,
     TileCollision,
     PlayerController,
     InstallHitBox
@@ -68,7 +68,6 @@ function TestSprite() {
     InstallHitBox(this,12/16,12/16);
     this.yOffset = -(2 / 16);
 
-    this.tilesPerSecond = 5;
     this.color = "yellow";
 
     this.showHitBox = false;
@@ -160,6 +159,14 @@ function World() {
         this.keyDown = keyBind.impulse(keyDown);
         this.keyUp = keyBind.impulse(keyUp);
 
+        const textLayer = new TextLayer(["gggggggggggggggggggggggggggg","\n","ABCDEFGHIJKLMNOPQRSTUVWXYZ","\n","Hello,","world!"],700,300,4,1,2);
+        dispatchRenderer.addRender((context,{halfWidth,height})=>{
+            const x = Math.floor(halfWidth - textLayer.width / 2);
+            const y = height - textLayer.height - 10;
+            context.fillStyle = "white";
+            context.fillRect(x,y,textLayer.width,textLayer.height);
+            textLayer.render(context,x,y);
+        });
     };
 
     grid.bindToFrame(this);
