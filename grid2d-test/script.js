@@ -13,7 +13,8 @@ const {
     DispatchRenderer,
     TileCollision,
     PlayerController,
-    InstallHitBox
+    InstallHitBox,
+    AnimatedSprite
 } = Eleven;
 
 const MAP_NAME = "my_swamp";
@@ -84,7 +85,7 @@ function World() {
 
     this.load = async () => {
         await ResourceManager.queueManifest(`{
-            "Image": ["world-tileset.png"],
+            "Image": ["world-tileset.png","player.png"],
             "JSON": ["uvtc-map-data.json"]
         }`).load();
 
@@ -126,7 +127,9 @@ function World() {
 
         grid.renderer = dispatchRenderer;
 
-        let sprite = new TestSprite(grid);
+        const sprite = new AnimatedSprite(
+            ResourceManager.getImage("player"),60,43
+        );
 
         const spriteFollower = new SpriteFollower(camera,sprite);
         this.spriteFollower = spriteFollower;
