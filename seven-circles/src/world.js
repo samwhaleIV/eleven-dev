@@ -36,7 +36,6 @@ const {
     DispatchRenderer,
     TileCollision,
     PlayerController,
-    InstallHitBox,
     AnimatedSprite,
     TextLayer,
     SpeechBox,
@@ -136,7 +135,7 @@ function Controller(world,sprite) {
         oldMessage = messageBase(text);
     }; //use later
 
-    const {collisionLayer, tileCollision} = world;
+    const {collisionLayer, tileCollision, interactionLayer} = world;
     
     const playerController = new PlayerController(
         sprite,collisionLayer,tileCollision
@@ -147,7 +146,7 @@ function Controller(world,sprite) {
         [MOVE_UP]: "up", [MOVE_LEFT]: "left"
     });
 
-    const worldImpulse = new WorldImpulse(sprite,collisionLayer,tileCollision);
+    const worldImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
     worldImpulse.layerHandler = sprite => {
         if(sprite.impulse) sprite.impulse(worldImpulse.source);
     };
@@ -212,7 +211,6 @@ function World(manifest,callback) {
 
     const grid = new Grid2D(BASE_TILE_SIZE);
     const camera = grid.camera;
-    camera.scale = DEFAULT_CAMERA_SCALE;
 
     this.grid = grid;
     this.camera = camera;
@@ -235,19 +233,20 @@ function World(manifest,callback) {
     this.controller = null; this.player = null;
     this.keyDown = null; this.keyUp = null;
 
-    this.addPlayer = sprite => {
-        if(!sprite) sprite = getDefaultPlayerSprite();
-        if(typeof sprite === "function") sprite = sprite();
-        this.player = sprite;
-        this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
-        this.controller = new Controller(this,sprite);
-    };
-
     grid.bindToFrame(this);
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
         grid.resize(data);
     };
+}
+
+World.prototype.addPlayer = function(sprite) {
+    if(!sprite) sprite = getDefaultPlayerSprite();
+    if(typeof sprite === "function") sprite = sprite();
+    this.player = sprite;
+    this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
+    this.controller = new Controller(this,sprite);
+    return sprite;
 }
 
 const cache = (world,layerCount,layerStart,isTop,location) => {
@@ -308,8 +307,24 @@ const updateTileBasedLayers = world => {
 
 };
 
+const hasSuperForeground = tileRenderer => {
+    const superForeground = tileRenderer.readLayer(SUPER_FOREGROUND_LAYER);
+
+    for(let i = 0;i<superForeground.length;i++) {
+        if(superForeground[i] >= 1) return true;
+    }
+    return false;
+};
+
 World.prototype.setMap = function(mapName) {
+    this.player = null;
     this.controller = null;
+
+    this.grid.decache();
+    this.grid.decacheTop();
+
+    this.camera.reset();
+    this.camera.scale = DEFAULT_CAMERA_SCALE;
 
     const tileRenderer = this.grid.getTileRenderer({
         tileset: tileset,
@@ -323,7 +338,10 @@ World.prototype.setMap = function(mapName) {
     updateTileBasedLayers(this);
 
     this.cacheBackgroundForeground();
-    this.cacheSuperForeground();
+
+    if(hasSuperForeground(tileRenderer)) {
+        this.cacheSuperForeground();
+    }
 };
 
 World.prototype.getTile = function(layer,x,y) {
@@ -392,4 +410,3 @@ World.prototype.setLightingTile = function(x,y,value) {
 };
 
 export default World;
-

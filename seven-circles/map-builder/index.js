@@ -86,11 +86,10 @@ function self_compile_map_file(mapFile) {
     const map = jsonData.map;
     const backgroundLayer = map.layer[0];
     const foregroundLayer = map.layer[1];
-    const collisionLayer = map.layer[2];
-    let lightingLayer = null;
-    if(map.layer[3]) {
-        lightingLayer = map.layer[3]
-    }
+    const superForegroundLayer = map.layer[2];
+    const collisionLayer = map.layer[3];
+    const interactionLayer = map.layer[4];
+    const lightingLayer = map.layer[5];
 
     rawMap.width = backgroundLayer.attr.width;
     rawMap.height = backgroundLayer.attr.height;
@@ -98,13 +97,12 @@ function self_compile_map_file(mapFile) {
     rawMap.layers = [
         process_csv_xml_data(backgroundLayer),
         process_csv_xml_data(foregroundLayer),
-        process_csv_xml_data(collisionLayer)
+        process_csv_xml_data(superForegroundLayer),
+        process_csv_xml_data(collisionLayer),
+        process_csv_xml_data(interactionLayer),
+        process_csv_xml_data(lightingLayer)
     ];
-    if(lightingLayer !== null) {
-        rawMap.layers.push(
-            process_csv_xml_data(lightingLayer)
-        );
-    }
+
     allMapData.push({
         name: mapFile.targetName,
         data: rawMap
@@ -122,10 +120,10 @@ const encodeLayer = layer => {
 const encodeMapLayers = map => {
     map.background = encodeLayer(map.background);
     map.foreground = encodeLayer(map.foreground);
-    map.collision =  encodeLayer(map.collision);
-    if(map.lighting) {
-        map.lighting = encodeLayer(map.lighting);
-    }
+    map.superForeground = encodeLayer(map.superForeground);
+    map.collision = encodeLayer(map.collision);
+    map.interaction = encodeLayer(map.interaction);
+    map.lighting = encodeLayer(map.lighting);
 }
 
 const compiledMapData = {};
@@ -135,10 +133,10 @@ function processMapData(rawMap,name) {
 
     map.background = rawMap.layers[0].data;
     map.foreground = rawMap.layers[1].data;
-    map.collision = rawMap.layers[2].data;
-    if(rawMap.layers[3]) {
-        map.lighting = rawMap.layers[3].data;
-    }
+    map.superForeground = rawMap.layers[2].data;
+    map.collision = rawMap.layers[3].data;
+    map.interaction = rawMap.layers[4].data;
+    map.lighting = rawMap.layers[5].data;
 
     map.columns = rawMap.width;
     map.rows = rawMap.height;
@@ -146,13 +144,17 @@ function processMapData(rawMap,name) {
     for(let i = 0;i<map.background.length;i++) {
         map.background[i] = (map.background[i] || 1) - rawMap.normalOffset;
         map.foreground[i] = (map.foreground[i] || 1) - rawMap.normalOffset;
+
+        map.superForeground[i] = (map.superForeground[i] || 1) - rawMap.normalOffset;
+
         if(map.collision[i] !== 0) {
-            map.collision[i] = map.collision[i] - rawMap.collisionOffset;
+            map.collision[i] = map.collision[i] - (rawMap.collisionOffset || 0);
         }
-        if(map.lighting) {
-            if(map.lighting[i] !== 0) {
-                map.lighting[i] = map.lighting[i] - rawMap.lightingOffset;
-            }
+        if(map.interaction[i] !== 0) {
+            map.interaction[i] = map.interaction[i] - (rawMap.collisionOffset || 0);
+        }
+        if(map.lighting[i] !== 0) {
+            map.lighting[i] = map.lighting[i] - (rawMap.lightingOffset || 0);
         }
     }
 
