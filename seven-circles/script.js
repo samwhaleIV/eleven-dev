@@ -10,12 +10,10 @@ function WorldTestScript(world) {
     player.y = 7;
     player.showHitBox = false;
 
-
     const waterBackground = new Eleven.WaterBackground(
         world.grid,world.tileset,80,112,10000
     );
-    dispatchRenderer.addResize(waterBackground.resize);
-    dispatchRenderer.addBackground(waterBackground.render);
+    waterBackground.install(dispatchRenderer);
 }
 
 Eleven.CanvasManager.start({
