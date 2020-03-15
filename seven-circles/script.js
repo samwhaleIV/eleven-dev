@@ -1,18 +1,25 @@
 import World from "./src/world.js";
 
+function WorldTestScript(world) {
+    const dispatchRenderer = world.dispatchRenderer;
+
+    world.setMap("test");
+
+    const player = world.addPlayer();
+    player.x = 9;
+    player.y = 7;
+    player.showHitBox = false;
+
+
+    const waterBackground = new Eleven.WaterBackground(
+        world.grid,world.tileset,80,112,10000
+    );
+    dispatchRenderer.addResize(waterBackground.resize);
+    dispatchRenderer.addBackground(waterBackground.render);
+}
+
 Eleven.CanvasManager.start({
     frame: World,
-    parameters: [
-        null,world => {
-            world.setMap("template");
-            world.dispatchRenderer.addBackground((context,size)=>{
-                context.fillStyle = "green";
-                context.fillRect(0,0,size.width,size.height);
-            });
-            const player = world.addPlayer();
-            player.x = 15.5;
-            player.y = 26;
-        }
-    ],
+    parameters: [world => world.runScript(WorldTestScript)],
     markLoaded: true
 });

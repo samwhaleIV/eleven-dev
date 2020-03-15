@@ -1,5 +1,9 @@
-const BASE_TILE_SIZE = 16;
+import CollisionMaker from "./collision-maker.js";
+import GetInputDevices from "./input-devices.js";
+import InputCodes from "./input-codes.js";
+import WorldMessage from "./world-message.js";
 
+const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = 7;
 
 const BACKGROUND_LAYER = 0;
@@ -14,11 +18,6 @@ const TILESET_FILE_TYPE = ".png";
 const MAPS_NAME = "maps";
 const MAPS_FILE_TYPE = ".json";
 
-const MOVE_UP = "MoveUp";
-const MOVE_LEFT = "MoveLeft";
-const MOVE_RIGHT = "MoveRight";
-const MOVE_DOWN = "MoveDown";
-const CLICK = "Enter";
 
 const PLAYER_SPRITE = "player";
 const PLAYER_SPRITE_FILE_TYPE = ".png";
@@ -26,19 +25,16 @@ const PLAYER_SPRITE_FILE_TYPE = ".png";
 const PLAYER_Z_INDEX = 1000;
 
 const {
+    CanvasManager,
     ResourceManager,
     Grid2D,
     SpriteLayer,
-    ManagedGamepad,
-    KeyBind,
     SpriteFollower,
     UVTCLighting,
     DispatchRenderer,
     TileCollision,
     PlayerController,
     AnimatedSprite,
-    TextLayer,
-    SpeechBox,
     WorldImpulse
 } = Eleven;
 
@@ -50,90 +46,7 @@ function getDefaultPlayerSprite(x,y) {
     return new AnimatedSprite(ResourceManager.getImage("player"),x,y);
 }
 
-function getInputDevices() {
-    const keyBind = new KeyBind({
-        "KeyW": MOVE_UP,
-        "KeyS": MOVE_DOWN,
-        "KeyA": MOVE_LEFT,
-        "KeyD": MOVE_RIGHT,
-        "Enter": CLICK,
-        ArrowUp: MOVE_UP,
-        ArrowDown: MOVE_DOWN,
-        ArrowLeft: MOVE_LEFT,
-        ArrowRight: MOVE_RIGHT,
-    });
-    const managedGamepad = new ManagedGamepad({
-        binds: {
-            Up: MOVE_UP,
-            Down: MOVE_DOWN,
-            Left: MOVE_LEFT,
-            Right: MOVE_RIGHT,
-            ButtonA: CLICK
-        },
-        whitelist: true,
-        triggerThreshold: 0.1,
-        repeatButtons: false,
-        repeatAxes: false,
-        repeatTriggers: false,
-        repeatDelay: 200,
-        repeatRate: 150,
-        axisDeadzone: 0.7,
-        manageLeftAxis: true,
-        manageRightAxis: false,
-        compositeLeftAxis: true,
-        compositeRightAxis: false
-    });
-    return {keyBind, managedGamepad};
-}
-
-function dispatchMessage(dispatchRenderer,text) {
-
-    const textLayer = new TextLayer({
-        text: text,
-        rowSpacing: 1,
-        boxPadding: 4,
-        scale: 4,
-        textSpacing: 0.5,
-        width: 790,
-        height: 400
-    });
-    const ID = dispatchRenderer.addRender((context,{halfWidth,height})=>{
-        const x = Math.floor(halfWidth - textLayer.width / 2);
-        const y = height - textLayer.height - 10;
-        context.fillStyle = "white";
-        context.fillRect(x,y,textLayer.width,textLayer.height);
-        textLayer.render(context,x,y);
-    });
-
-    let finished = false;
-
-    const speechBox = new SpeechBox(textLayer);
-
-    (async ()=>{
-        await speechBox.start();
-        finished = true;
-    })();
-
-    return () => {
-        if(!finished) {
-            speechBox.finish();
-            return false;
-        }
-        dispatchRenderer.removeRender(ID);
-        return true;
-    };
-}
-
-function Controller(world,sprite) {
-
-    let oldMessage = null;
-
-    const messageBase = dispatchMessage.bind(null,world.dispatchRenderer);
-
-    const speechBox = async text => {
-        playerController.lock();
-        oldMessage = messageBase(text);
-    }; //use later
+function InstallPlayer(world,sprite) {
 
     const {collisionLayer, tileCollision, interactionLayer} = world;
     
@@ -142,34 +55,37 @@ function Controller(world,sprite) {
     );
 
     const input = playerController.getInputHandler({
-        [MOVE_DOWN]: "down", [MOVE_RIGHT]: "right",
-        [MOVE_UP]: "up", [MOVE_LEFT]: "left"
+        [InputCodes.Down]: "down", [InputCodes.Right]: "right",
+        [InputCodes.Up]: "up", [InputCodes.Left]: "left"
     });
 
     const worldImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
     worldImpulse.layerHandler = sprite => {
         if(sprite.impulse) sprite.impulse(worldImpulse.source);
     };
+    worldImpulse.tileHandler = tile => {
+        if(!world.script || !world.script.interaction) return;
+        world.script.interaction(tile);
+    };
 
     world.spriteFollower.target = sprite;
     world.spriteFollower.enabled = true;
 
     const keyDown = event => {
-        if(event.impulse === CLICK) {
+        if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
-            if(oldMessage) {
-                if(oldMessage()) {
-                    oldMessage = null;
-                    playerController.locked = false;
-                }
+            if(world.canAdvanceMessage()) {
+                world.advanceMessage();
                 return;
             }
-            if(playerController.locked) return;
-            console.log(worldImpulse.impulse());
+            if(!playerController.locked) {
+                worldImpulse.impulse();
+            }
             return;
         }
         input.keyDown(event);
     };
+
     const keyUp = input.keyUp;
 
     world.managedGamepad.keyDown = keyDown;
@@ -177,20 +93,21 @@ function Controller(world,sprite) {
 
     world.keyDown = world.keyBind.impulse(keyDown);
     world.keyUp = world.keyBind.impulse(keyUp);
+
+    return playerController;
 }
 
-function World(manifest,callback) {
+function World(callback) {
 
     this.load = async () => {
 
         const loadMaps = maps === null;
         const loadTileset = tileset === null;
-        const loadManifest = Boolean(manifest);
+
         const loadPlayer = playerImage === null;
 
-        if(loadMaps || loadMaps || loadTileset || loadPlayer) {
+        if(loadMaps || loadTileset || loadPlayer) {
 
-            if(loadManifest) ResourceManager.queueManifest(manifest);
             if(loadTileset) ResourceManager.queueImage(TILESET_NAME + TILESET_FILE_TYPE);
             if(loadMaps) ResourceManager.queueJSON(MAPS_NAME + MAPS_FILE_TYPE);
             if(loadPlayer) ResourceManager.queueImage(PLAYER_SPRITE + PLAYER_SPRITE_FILE_TYPE);
@@ -205,7 +122,18 @@ function World(manifest,callback) {
         if(callback) callback(this);
     }
 
-    const {managedGamepad, keyBind} = getInputDevices();
+    Object.defineProperties(this,{
+        tileset: {
+            get: () => tileset,
+            enumerable: true
+        },
+        playerImage: {
+            get: () => playerImage,
+            enumerable: true
+        }
+    });
+
+    const {managedGamepad, keyBind} = GetInputDevices();
     this.managedGamepad = managedGamepad;
     this.keyBind = keyBind;
 
@@ -219,6 +147,8 @@ function World(manifest,callback) {
     this.spriteFollower.target = null;
     this.spriteFollower.enabled = false;
 
+    this.script = null;
+
     const dispatchRenderer = new DispatchRenderer();
     this.dispatchRenderer = dispatchRenderer;
 
@@ -230,8 +160,11 @@ function World(manifest,callback) {
     this.collisionLayer = null;
     this.spriteLayer = null;
 
-    this.controller = null; this.player = null;
+    this.playerController = null; this.player = null;
     this.keyDown = null; this.keyUp = null;
+
+    this.textMessage = null;
+    this.textMessageStack = new Array();
 
     grid.bindToFrame(this);
     this.resize = data => {
@@ -240,12 +173,40 @@ function World(manifest,callback) {
     };
 }
 
+World.prototype.showMessage = function(message,instant) {
+    if(this.canAdvanceMessage()) {
+        this.textMessageStack.push([message,instant]);
+    } else {
+        this.textMessage = new WorldMessage(this.dispatchRenderer,message,instant);
+    }
+}
+World.prototype.showMessageInstant = function(message) {
+    this.showMessage(message,true);
+}
+World.prototype.canAdvanceMessage = function() {
+    return Boolean(this.textMessage);
+}
+World.prototype.advanceMessage = function() {
+    if(this.canAdvanceMessage()) {
+        if(this.textMessage.complete) {
+            this.textMessage.terminate();
+            this.textMessage = null;
+            if(this.textMessageStack.length >= 1) {
+                const newMessage = this.textMessageStack.shift();
+                this.showMessage.apply(this,newMessage);
+            }
+        } else {
+            this.textMessage.advance();
+        }
+    }
+}
+
 World.prototype.addPlayer = function(sprite) {
     if(!sprite) sprite = getDefaultPlayerSprite();
     if(typeof sprite === "function") sprite = sprite();
     this.player = sprite;
     this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
-    this.controller = new Controller(this,sprite);
+    this.playerController = InstallPlayer(this,sprite);
     return sprite;
 }
 
@@ -285,8 +246,8 @@ const updateTileBasedLayers = world => {
     );
 
     world.tileCollision = new TileCollision(
-        grid,tileRenderer,COLLISION_LAYER
-    ); //TODO: use custom collisionMaker
+        grid,tileRenderer,COLLISION_LAYER,CollisionMaker
+    );
 
     world.interactionLayer = new TileCollision(
         grid,tileRenderer,INTERACTION_LAYER
@@ -316,9 +277,19 @@ const hasSuperForeground = tileRenderer => {
     return false;
 };
 
+World.prototype.runScript = async function(script) {
+    CanvasManager.markLoading();
+    if(this.script && this.script.unload) this.script.unload();
+    this.script = null;
+    if(typeof script === "function") script = new script(this);
+    this.script = script;
+    if(script.start) await script.load();
+    CanvasManager.markLoaded();
+}
+
 World.prototype.setMap = function(mapName) {
     this.player = null;
-    this.controller = null;
+    this.playerController = null;
 
     this.grid.decache();
     this.grid.decacheTop();

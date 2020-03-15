@@ -61,7 +61,7 @@ function self_compile_map_file(mapFile) {
     if(!Array.isArray(tileSets)) {
         return;
     }
-    let lightingTileset = null, collisionTileset = null, baseTileset = null;
+    let lightingTileset = null, collisionTileset = null, baseTileset = null, interactionTileset= null;
     tileSets.forEach(tileset => {
         const offset = tileset.attr.firstgid;
         const tilesetName = tileset.attr.source;
@@ -71,6 +71,8 @@ function self_compile_map_file(mapFile) {
             collisionTileset = offset;
         } else if(tilesetName.endsWith("light-tileset.tsx")) {
             lightingTileset = offset;
+        } else if(tilesetName.endsWith("interaction-tileset.tsx")) {
+            interactionTileset = offset;
         }
     });
     if(baseTileset !== null) {
@@ -81,6 +83,9 @@ function self_compile_map_file(mapFile) {
     }
     if(lightingTileset !== null) {
         rawMap.lightingOffset = lightingTileset;
+    }
+    if(interactionTileset !== null) {
+        rawMap.interactionOffset = interactionTileset;
     }
 
     const map = jsonData.map;
@@ -151,7 +156,7 @@ function processMapData(rawMap,name) {
             map.collision[i] = map.collision[i] - (rawMap.collisionOffset || 0);
         }
         if(map.interaction[i] !== 0) {
-            map.interaction[i] = map.interaction[i] - (rawMap.collisionOffset || 0);
+            map.interaction[i] = map.interaction[i] - (rawMap.interactionOffset || 0);
         }
         if(map.lighting[i] !== 0) {
             map.lighting[i] = map.lighting[i] - (rawMap.lightingOffset || 0);
