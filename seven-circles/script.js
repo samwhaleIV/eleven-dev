@@ -1,23 +1,19 @@
-import World from "./src/world.js";
+import Runtime from "./src/runtime.js";
+import Debug from "./src/debug.js";
+import Constants from "./src/constants.js";
 
-function WorldTestScript(world) {
-    const dispatchRenderer = world.dispatchRenderer;
+const autoSingleton = module => {
+    return Singleton({
+        module: module,
+        autoInstantiation: true,
+        deferInstantiation: false
+    });
+};
 
-    world.setMap("test");
-
-    const player = world.addPlayer();
-    player.x = 9;
-    player.y = 7;
-    player.showHitBox = false;
-
-    const waterBackground = new Eleven.WaterBackground(
-        world.grid,world.tileset,80,112,10000
-    );
-    waterBackground.install(dispatchRenderer);
-}
-
-Eleven.CanvasManager.start({
-    frame: World,
-    parameters: [world => world.runScript(WorldTestScript)],
-    markLoaded: true
+const SVCC = Namespace.create({
+    name: Constants.Namespace,
+    modules: [autoSingleton(Runtime),autoSingleton(Debug)]
 });
+
+Namespace.makeGlobal(SVCC);
+SVCC.Runtime.Start();

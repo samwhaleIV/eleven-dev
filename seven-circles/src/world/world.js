@@ -2,9 +2,12 @@ import CollisionMaker from "./collision-maker.js";
 import GetInputDevices from "./input-devices.js";
 import InputCodes from "./input-codes.js";
 import WorldMessage from "./world-message.js";
+import Constants from "../constants.js";
+
+const DEFAULT_PLAYER_SPEED = Constants.PlayerSpeed;
 
 const BASE_TILE_SIZE = 16;
-const DEFAULT_CAMERA_SCALE = 7;
+const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
 
 const BACKGROUND_LAYER = 0;
 const FOREGROUND_LAYER = 1;
@@ -18,11 +21,10 @@ const TILESET_FILE_TYPE = ".png";
 const MAPS_NAME = "maps";
 const MAPS_FILE_TYPE = ".json";
 
-
 const PLAYER_SPRITE = "player";
 const PLAYER_SPRITE_FILE_TYPE = ".png";
 
-const PLAYER_Z_INDEX = 1000;
+const PLAYER_Z_INDEX = Constants.PlayerZIndex;
 
 const {
     CanvasManager,
@@ -207,6 +209,7 @@ World.prototype.addPlayer = function(sprite) {
     this.player = sprite;
     this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
     this.playerController = InstallPlayer(this,sprite);
+    sprite.tilesPerSecond = DEFAULT_PLAYER_SPEED;
     return sprite;
 }
 
@@ -278,18 +281,33 @@ const hasSuperForeground = tileRenderer => {
 };
 
 World.prototype.runScript = async function(script) {
-    CanvasManager.markLoading();
+    const processPauseSequencing = CanvasManager.frame && !CanvasManager.paused;
+
+    if(processPauseSequencing) {
+        CanvasManager.markLoading();
+        CanvasManager.paused = true;
+    }
+
     if(this.script && this.script.unload) this.script.unload();
     this.script = null;
     if(typeof script === "function") script = new script(this);
     this.script = script;
-    if(script.start) await script.load();
-    CanvasManager.markLoaded();
+    if(script.load) await script.load();
+
+    if(processPauseSequencing) {
+        CanvasManager.markLoaded();
+        CanvasManager.paused = false;
+    }
 }
 
 World.prototype.setMap = function(mapName) {
     this.player = null;
     this.playerController = null;
+
+    this.spriteFollower.target = null;
+    this.spriteFollower.enabled = false;
+    this.textMessage = null;
+    this.textMessageStack.splice(0);
 
     this.grid.decache();
     this.grid.decacheTop();
