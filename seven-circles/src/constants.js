@@ -3,6 +3,7 @@ const Constants = Object.freeze({
     PlayerSpeed: 2.5,
     DefaultCameraScale: 7,
     PlayerZIndex: 10000,
+    PlayerSprite: "player",
     GameResolution: {
         Width: 900,
         Height: 700

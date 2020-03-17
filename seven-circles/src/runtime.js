@@ -23,8 +23,8 @@ function Runtime() {
             CanvasManager.markLoading();
         }
 
-        await Eleven.CanvasManager.setFrame(World,[world=>{
-            world.runScript(script);
+        await Eleven.CanvasManager.setFrame(World,[async world=>{
+            await world.runScript(script);
         }]);
 
         if(CanvasManager.paused) {

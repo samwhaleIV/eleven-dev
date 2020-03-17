@@ -3,6 +3,7 @@ import GetInputDevices from "./input-devices.js";
 import InputCodes from "./input-codes.js";
 import WorldMessage from "./world-message.js";
 import Constants from "../constants.js";
+import GetPlayerSprite from "./player-base.js";
 
 const DEFAULT_PLAYER_SPEED = Constants.PlayerSpeed;
 
@@ -21,7 +22,7 @@ const TILESET_FILE_TYPE = ".png";
 const MAPS_NAME = "maps";
 const MAPS_FILE_TYPE = ".json";
 
-const PLAYER_SPRITE = "player";
+const PLAYER_SPRITE = Constants.PlayerSprite;
 const PLAYER_SPRITE_FILE_TYPE = ".png";
 
 const PLAYER_Z_INDEX = Constants.PlayerZIndex;
@@ -36,7 +37,6 @@ const {
     DispatchRenderer,
     TileCollision,
     PlayerController,
-    AnimatedSprite,
     WorldImpulse
 } = Eleven;
 
@@ -44,14 +44,10 @@ let tileset = null;
 let maps = null;
 let playerImage = null;
 
-function getDefaultPlayerSprite(x,y) {
-    return new AnimatedSprite(ResourceManager.getImage("player"),x,y);
-}
-
 function InstallPlayer(world,sprite) {
 
     const {collisionLayer, tileCollision, interactionLayer} = world;
-    
+
     const playerController = new PlayerController(
         sprite,collisionLayer,tileCollision
     );
@@ -77,15 +73,15 @@ function InstallPlayer(world,sprite) {
         if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
             if(world.canAdvanceMessage()) {
-                world.advanceMessage();
-                return;
+                world.advanceMessage(); return;
             }
             if(!playerController.locked) {
-                worldImpulse.impulse();
+                if(worldImpulse.impulse()) return;
+                if(sprite.attack) sprite.attack();
             }
-            return;
+        } else {
+            input.keyDown(event);
         }
-        input.keyDown(event);
     };
 
     const keyUp = input.keyUp;
@@ -121,7 +117,7 @@ function World(callback) {
             if(loadPlayer) playerImage = ResourceManager.getImage(PLAYER_SPRITE);
         }
 
-        if(callback) callback(this);
+        if(callback) await callback(this);
     }
 
     Object.defineProperties(this,{
@@ -136,6 +132,8 @@ function World(callback) {
     });
 
     const {managedGamepad, keyBind} = GetInputDevices();
+    this.inputGamepad = managedGamepad.poll;
+
     this.managedGamepad = managedGamepad;
     this.keyBind = keyBind;
 
@@ -203,14 +201,21 @@ World.prototype.advanceMessage = function() {
     }
 }
 
-World.prototype.addPlayer = function(sprite) {
-    if(!sprite) sprite = getDefaultPlayerSprite();
-    if(typeof sprite === "function") sprite = sprite();
-    this.player = sprite;
+World.prototype.addCustomPlayer = function(sprite,...parameters) {
+    if(typeof sprite === "function") {
+        sprite = new sprite(...parameters);
+    }
     this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
     this.playerController = InstallPlayer(this,sprite);
     sprite.tilesPerSecond = DEFAULT_PLAYER_SPEED;
+    sprite.world = this;
+    this.player = sprite;
     return sprite;
+}
+
+World.prototype.addPlayer = function(...parameters) {
+    const sprite = GetPlayerSprite.apply(null,parameters);
+    return this.addCustomPlayer(sprite);
 }
 
 const cache = (world,layerCount,layerStart,isTop,location) => {

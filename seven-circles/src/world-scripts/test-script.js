@@ -1,31 +1,26 @@
+const {ResourceManager} = Eleven;
+
+import GenericBlaster from "../weapons/generic-blaster.js";
+
 function TestScript(world) {
     const dispatchRenderer = world.dispatchRenderer;
 
     world.setMap("test");
 
-    const player = world.addPlayer();
-    player.x = 9;
-    player.y = 7;
+    const player = world.addPlayer(9,7,{helloworld:2});
+
     player.showHitBox = false;
     player.tilesPerSecond = 2.5;
 
     this.interaction = (...data) => console.log(...data);
 
-    this.loadTest = () => {
-        world.runScript(function(world) {
-            world.setMap("test");
+    this.load = async () => {
+        ResourceManager.queueImage("player-gun.png");
+        ResourceManager.queueAudio("pew.mp3");
+        await ResourceManager.load();
 
-            const player = world.addPlayer();
-            player.x = 9;
-            player.y = 7;
-            player.showHitBox = false;
-
-            this.load = async () => {
-                await new Promise(resolve => {
-                    setTimeout(resolve,100000);
-                });
-            }
-        });
+        const playerGunImage = ResourceManager.getImage("player-gun");
+        player.setWeapon(GenericBlaster,playerGunImage);
     };
 
     const waterBackground = new Eleven.WaterBackground(
