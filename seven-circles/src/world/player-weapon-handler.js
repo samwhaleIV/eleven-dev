@@ -40,9 +40,14 @@ function PlayerWeaponHandler() {
         if(oldWeapon.unload) oldWeapon.unload();
     };
 
+    this.hasWeapon = () => {
+        return weapon !== null;
+    };
+
     this.attack = () => {
-        if(weapon === null) return;
+        if(!this.hasWeapon()) return;
         if(weapon.attack) weapon.attack();
+
     };
 }
 

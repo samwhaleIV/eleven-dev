@@ -8,6 +8,8 @@ const {AnimatedSprite, ResourceManager, MultiLayer} = Eleven;
 function GetPlayerBase(x,y) {
     const sprite = new AnimatedSprite(ResourceManager.getImage(PLAYER_SPRITE),x,y);
 
+    sprite.collisionType = Eleven.CollisionTypes.Player;
+    sprite.collides = true;
     const updateLayer = new MultiLayer();
     const renderLayer = new MultiLayer();
     renderLayer.add(sprite.render);

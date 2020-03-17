@@ -1,6 +1,6 @@
 const {TextLayer, SpeechBox} = Eleven;
 
-const TEXT_BOX_WIDTH = 600;
+const TEXT_BOX_WIDTH = 800;
 const TEXT_BOX_HEIGHT = 300;
 const BOTTOM_MARGIN = 5;
 const TEXT_SCALE = 4;
@@ -14,7 +14,7 @@ function WorldMessage(dispatchRenderer,text,instant) {
     const textLayer = new TextLayer({
         text: text,
         rowSpacing: 0.5,
-        boxPadding: 2,
+        boxPadding: 4,
         scale: TEXT_SCALE,
         textSpacing: 0.5,
         width: TEXT_BOX_WIDTH,

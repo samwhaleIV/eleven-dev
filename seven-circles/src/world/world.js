@@ -76,8 +76,10 @@ function InstallPlayer(world,sprite) {
                 world.advanceMessage(); return;
             }
             if(!playerController.locked) {
-                if(worldImpulse.impulse()) return;
-                if(sprite.attack) sprite.attack();
+                if(sprite.hasWeapon()) {
+                    sprite.attack(); return;
+                }
+                worldImpulse.impulse();
             }
         } else {
             input.keyDown(event);
@@ -173,15 +175,20 @@ function World(callback) {
     };
 }
 
+const resolveStack = new Array();
+
 World.prototype.showMessage = function(message,instant) {
     if(this.canAdvanceMessage()) {
         this.textMessageStack.push([message,instant]);
     } else {
         this.textMessage = new WorldMessage(this.dispatchRenderer,message,instant);
     }
+    return new Promise(resolve => {
+        resolveStack.push(resolve);
+    });
 }
 World.prototype.showMessageInstant = function(message) {
-    this.showMessage(message,true);
+    return this.showMessage(message,true);
 }
 World.prototype.canAdvanceMessage = function() {
     return Boolean(this.textMessage);
@@ -194,6 +201,9 @@ World.prototype.advanceMessage = function() {
             if(this.textMessageStack.length >= 1) {
                 const newMessage = this.textMessageStack.shift();
                 this.showMessage.apply(this,newMessage);
+            } else {
+                resolveStack.forEach(resolve=>resolve());
+                resolveStack.splice(0);
             }
         } else {
             this.textMessage.advance();
@@ -207,7 +217,7 @@ World.prototype.addCustomPlayer = function(sprite,...parameters) {
     }
     this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
     this.playerController = InstallPlayer(this,sprite);
-    sprite.tilesPerSecond = DEFAULT_PLAYER_SPEED;
+    sprite.velocity = DEFAULT_PLAYER_SPEED;
     sprite.world = this;
     this.player = sprite;
     return sprite;

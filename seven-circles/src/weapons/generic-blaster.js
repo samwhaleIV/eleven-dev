@@ -1,6 +1,13 @@
-const FIRE_TIMEOUT = 120;
-const PROJECTILE_VELOCITY = 10;
-const PROJECTILE_COLOR = "rgba(0,0,0,1)";
+const FIRE_TIMEOUT = 60;
+const PROJECTILE_VELOCITY = 13;
+const PROJECTILE_COLOR = "black";
+
+const PROJECTILE_MAX_DISTANCE = 20;
+
+const DECAY_DURATION = 35;
+const DECAY_SIZE = 0.075;
+const DECAY_COLOR = "orange";
+const DECAY_OFFSET = 0.025;
 
 const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
@@ -13,7 +20,36 @@ const DEFAULT_PROJECTILE_POINTS = Object.freeze({
     3: makeProjectilePoint(6,12.1,true)     //left
 });
 
-function Projectile(x,y,direction,extraVelocity,terminate) {
+function DecayEffect(x,y,terminate) {
+    const duration = DECAY_DURATION;
+    const start = performance.now();
+
+    const decayDeviation = () => Math.random() * DECAY_OFFSET - DECAY_OFFSET / 2;
+
+    this.x = x + decayDeviation();
+    this.y = y + decayDeviation();
+
+    this.width = DECAY_SIZE; this.height = 0;
+
+    this.color = DECAY_COLOR;
+
+    this.render = (context,x,y,width,height,time) => {
+        let delta = (time.now - start) / duration;
+        if(delta > 1) {
+            terminate(); return;
+        } else if(delta < 0) {
+            delta = 0;
+        }
+
+        x = Math.floor(x); y = Math.floor(y);
+        context.beginPath();
+        context.arc(x,y,width - width * delta,Math.PI * 2,0);
+        context.fillStyle = this.color;
+        context.fill();
+    };
+}
+
+function Projectile(world,x,y,direction,extraVelocity,terminate) {
 
     if(!extraVelocity) extraVelocity = 0;
 
@@ -31,7 +67,9 @@ function Projectile(x,y,direction,extraVelocity,terminate) {
     this.x -= this.width / 2;
     this.y -= this.height / 2;
 
-    this.collides = false;
+    this.collides = true;
+    this.noCollide = {[Eleven.CollisionTypes.Player]:true};
+    this.collisionType = Eleven.CollisionTypes.PlayerProjectile;
 
     this.velocity = PROJECTILE_VELOCITY;
 
@@ -47,7 +85,33 @@ function Projectile(x,y,direction,extraVelocity,terminate) {
             case 3: this.x -= change; break;
         }
         totalChange += change;
-        if(Math.abs(totalChange) > 100) {
+        const collides = world.collisionLayer.collides(this);
+
+        if(collides) {
+            if(collides && collides.isHitBox) collides = collides.target;
+
+            switch(direction) {
+                case 1: this.x = collides.x; break;
+                case 2: this.y = collides.y; break;
+
+                case 3: this.x = collides.x + collides.width - this.width / 2; break;
+                case 0: this.y = collides.y + collides.height - this.height / 2; break;
+
+            }
+            
+            this.x += this.width / 2;
+            this.y += this.height / 2;
+
+            if(collides.onHit) collides.onHit(this);
+            let particleEffectID;
+            particleEffectID = world.spriteLayer.add(new DecayEffect(this.x,this.y,()=>{
+                world.spriteLayer.remove(particleEffectID);
+            },collides.zIndex + 1));
+            terminate();
+            return;
+        }
+
+        if(collides || Math.abs(totalChange) > PROJECTILE_MAX_DISTANCE) {
             terminate();
         }
     };
@@ -87,17 +151,18 @@ function GenericBlaster(image,textureY,projectilePoints) {
 
         let projectileID;
         
-        const extraVelocity = this.owner.moving ? this.owner.tilesPerSecond : 0;
+        const extraVelocity = this.owner.moving ? this.owner.velocity : 0;
         projectileID = this.world.spriteLayer.add(
-            new Projectile(x,y,direction,extraVelocity,()=>{
+            new Projectile(this.world,x,y,direction,extraVelocity,()=>{
                 this.world.spriteLayer.remove(projectileID);
             }),zIndex
         );
     };
 
     const asyncFire = () => {
+        const delay = performance.now();
         requestAnimationFrame(()=>{
-            fireStart = performance.now();
+            fireStart = performance.now() - delay;
             shoot();
             (async () => {
                 await Eleven.FrameBoundTimeout(FIRE_TIMEOUT);

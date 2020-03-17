@@ -92,6 +92,60 @@ const table = Object.freeze({
         height: 0.25,
         x: 0,
         y: 0
+    },
+    14: {
+        x: 0.25,
+        y: 0,
+        height: 1,
+        width: 0.75
+    },
+    15: {
+        x: 0,
+        y: 0,
+        height: 1,
+        width: 0.75
+    },
+    18: {
+        x: 0.75,
+        y: 0,
+        height: 1,
+        width: 0.25
+    },
+    19: {
+        x: 0,
+        y: 0,
+        height: 1,
+        width: 0.25
+    },
+    20: {
+        x: 2 / 16,
+        width: 12 / 16,
+        height: 14 / 16,
+        y: 2 / 16
+    },
+    22: {
+        x: 2 / 16,
+        width: 14 / 16,
+        height: 1,
+        y: 0
+    },
+    23: {
+        x: 0,
+        width: 14 / 16,
+        height: 1,
+        y: 0
+    },
+    26: {
+        x: 2 / 16,
+        width: 14 / 16,
+        height: 14 / 16,
+        y: 0.125
+    },
+    27: {
+        x: 0,
+        width: 14 / 16,
+        height: 14 / 16,
+        y: 2 / 16
     }
 });
 

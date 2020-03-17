@@ -5,6 +5,8 @@ import TestScript from "./world-scripts/test-script.js";
 const {CanvasManager, AudioManager, ResourceManager} = Eleven;
 
 function SetupCanvasManagerSizing() {
+    return;
+    
     (({Width,Height}) => {
 
     CanvasManager.setSize(Width,Height);
