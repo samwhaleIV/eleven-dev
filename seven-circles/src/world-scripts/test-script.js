@@ -2,37 +2,10 @@ const {ResourceManager, AudioManager, CollisionTypes} = Eleven;
 
 import GenericBlaster from "../weapons/generic-blaster.js";
 
-function Dummy(world,x,y) {
-    this.x = x; this.y = y;
-    this.width = 0.5;
-    this.height = 0.5
-
-    this.collisionType = CollisionTypes.Default;
-    this.collides = true;
-
-    this.color = "red";
-
-    let timeout = null;
-    this.onHit = projectile => {
-        clearTimeout(timeout);
-        AudioManager.playTone(1000,1);
-        this.color = "blue";
-        timeout = setTimeout(()=>this.color="red",200);
-    };
-
-    this.render = (context,x,y,width,height) => {
-        context.fillStyle = this.color;
-        context.fillRect(x,y,width,height);
-    };
-}
-
 function TestScript(world) {
     world.setMap("test");
 
-    world.spriteLayer.add(new Dummy(world,12,2.75));
-
     const player = world.addPlayer(9,10);
-    player.showHitBox = false;
 
     this.interaction = async data => {
         if(data.value === 8) {
@@ -47,8 +20,26 @@ function TestScript(world) {
     this.load = async () => {
 
         ResourceManager.queueImage("player-gun.png");
+        ResourceManager.queueImage("enemy-gun.png");
+        ResourceManager.queueImage("other.png");
+
         ResourceManager.queueAudio("pew.mp3");
         await ResourceManager.load();
+
+
+        const NPC = world.addNPC(11,8,ResourceManager.getImage("other"));
+        NPC.setWeapon(GenericBlaster,ResourceManager.getImage("enemy-gun"));
+
+        NPC.onHit = async () => {
+            world.playerController.lock();
+            await world.showMessage("Oof, owie, my bones!");
+            world.spriteLayer.remove(NPC.ID);
+            await world.showMessageInstant("*dies*");
+            world.playerController.unlock();
+        };
+
+        this.NPC = NPC;
+
     };
 
     world.dispatchRenderer.addBackground((context,{width,height})=>{

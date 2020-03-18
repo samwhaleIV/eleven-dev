@@ -1,15 +1,22 @@
 import Constants from "../constants.js";
-import Player from "./player.js";
 
-const PLAYER_SPRITE = Constants.PlayerSprite;
+const {AnimatedSprite, MultiLayer, CollisionTypes} = Eleven;
 
-const {AnimatedSprite, ResourceManager, MultiLayer} = Eleven;
+const AVATAR_SPEED = Constants.AvatarSpeed;
 
-function GetPlayerBase(x,y) {
-    const sprite = new AnimatedSprite(ResourceManager.getImage(PLAYER_SPRITE),x,y);
+function GetAvatarBase(world,x,y,collisionType,image) {
+    const sprite = new AnimatedSprite(image,x,y);
 
-    sprite.collisionType = Eleven.CollisionTypes.Player;
+    sprite.world = world;
+    sprite.velocity = AVATAR_SPEED;
+
+    sprite.collisionType = collisionType;
     sprite.collides = true;
+    sprite.noCollide = {
+        [CollisionTypes.PlayerProjectile]: true,
+        [CollisionTypes.EnemyProjectile]: true
+    };
+
     const updateLayer = new MultiLayer();
     const renderLayer = new MultiLayer();
     renderLayer.add(sprite.render);
@@ -30,10 +37,4 @@ function GetPlayerBase(x,y) {
     return sprite;
 }
 
-function GetPlayerSprite(x,y,...parameters) {
-    const player = GetPlayerBase(x,y);
-    Player.apply(player,parameters);
-    return player;
-}
-
-export default GetPlayerSprite;
+export default GetAvatarBase;

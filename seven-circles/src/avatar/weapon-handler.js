@@ -1,4 +1,4 @@
-function PlayerWeaponHandler() {
+function WeaponHandler() {
     let weapon = null, weaponUpdateID, weaponRenderID;
 
     this.setWeapon = (newWeapon,...parameters) => {
@@ -51,4 +51,4 @@ function PlayerWeaponHandler() {
     };
 }
 
-export default PlayerWeaponHandler;
+export default WeaponHandler;

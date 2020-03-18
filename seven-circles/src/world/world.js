@@ -3,9 +3,8 @@ import GetInputDevices from "./input-devices.js";
 import InputCodes from "./input-codes.js";
 import WorldMessage from "./world-message.js";
 import Constants from "../constants.js";
-import GetPlayerSprite from "./player-base.js";
-
-const DEFAULT_PLAYER_SPEED = Constants.PlayerSpeed;
+import GetPlayerSprite from "../avatar/player.js";
+import GetEnemySprite from "../avatar/enemy.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -217,15 +216,18 @@ World.prototype.addCustomPlayer = function(sprite,...parameters) {
     }
     this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
     this.playerController = InstallPlayer(this,sprite);
-    sprite.velocity = DEFAULT_PLAYER_SPEED;
-    sprite.world = this;
     this.player = sprite;
     return sprite;
 }
 
 World.prototype.addPlayer = function(...parameters) {
-    const sprite = GetPlayerSprite.apply(null,parameters);
+    const sprite = GetPlayerSprite.apply(this,parameters);
     return this.addCustomPlayer(sprite);
+}
+World.prototype.addNPC = function(...parameters) {
+    const NPC = GetEnemySprite.apply(this,parameters);
+    this.spriteLayer.add(NPC);
+    return NPC;
 }
 
 const cache = (world,layerCount,layerStart,isTop,location) => {
