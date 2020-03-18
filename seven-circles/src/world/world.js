@@ -4,7 +4,7 @@ import InputCodes from "./input-codes.js";
 import WorldMessage from "./world-message.js";
 import Constants from "../constants.js";
 import GetPlayerSprite from "../avatar/player.js";
-import GetEnemySprite from "../avatar/enemy.js";
+import GetNPCSprite from "../avatar/npc.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -225,7 +225,7 @@ World.prototype.addPlayer = function(...parameters) {
     return this.addCustomPlayer(sprite);
 }
 World.prototype.addNPC = function(...parameters) {
-    const NPC = GetEnemySprite.apply(this,parameters);
+    const NPC = GetNPCSprite.apply(this,parameters);
     this.spriteLayer.add(NPC);
     return NPC;
 }

@@ -1,140 +1,23 @@
+import GenericProjectile from "./generic-projectile.js";
+
 const FIRE_TIMEOUT = 60;
-const PROJECTILE_VELOCITY = 13;
 
-const PLAYER_PROJECTILE_COLOR = "#0000FF";
-const ENEMY_PROJECTILE_COLOR = "#FF0000";
-
-const PROJECTILE_MAX_DISTANCE = 20;
-
-const DECAY_DURATION = 35;
-const DECAY_SIZE = 0.075;
-const DECAY_COLOR = "orange";
-const DECAY_OFFSET = 0.025;
+const {FrameBoundTimeout} = Eleven;
 
 const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
 };
 
-const DEFAULT_PROJECTILE_POINTS = Object.freeze({
+const PROJECTILE_POINTS = Object.freeze({
     0: makeProjectilePoint(11.5,11.6,true), //up
     1: makeProjectilePoint(10,12.1,true),   //right
     2: makeProjectilePoint(4.6,11.6,false), //down
     3: makeProjectilePoint(6,12.1,true)     //left
 });
 
-function DecayEffect(x,y,terminate) {
-    const duration = DECAY_DURATION;
-    const start = performance.now();
-
-    const decayDeviation = () => Math.random() * DECAY_OFFSET - DECAY_OFFSET / 2;
-
-    this.x = x + decayDeviation();
-    this.y = y + decayDeviation();
-
-    this.width = DECAY_SIZE; this.height = 0;
-
-    this.color = DECAY_COLOR;
-
-    this.render = (context,x,y,width,height,time) => {
-        let delta = (time.now - start) / duration;
-        if(delta > 1) {
-            terminate(); return;
-        } else if(delta < 0) {
-            delta = 0;
-        }
-
-        x = Math.floor(x); y = Math.floor(y);
-        context.beginPath();
-        context.arc(x,y,width - width * delta,Math.PI * 2,0);
-        context.fillStyle = this.color;
-        context.fill();
-    };
-}
-
-function Projectile(
-    world,color,collisionType,noCollide,x,y,direction,extraVelocity,terminate
-) {
-
-    if(!extraVelocity) extraVelocity = 0;
-
-    this.width = 0.2; this.height = 0.2;
-
-    switch(direction) {
-        case 2: case 0: this.width /= 2; break;
-        case 1: case 3: this.height /= 2; break;
-    }
-
-    this.x = x; this.y = y;
-
-    this.x -= this.width / 2;
-    this.y -= this.height / 2;
-
-    this.collides = true;
-    this.collisionType = collisionType;
-    this.noCollide = noCollide;
-
-    this.velocity = PROJECTILE_VELOCITY;
-
-    let totalChange = 0;
-
-    this.update = time => {
-        let change = (this.velocity + extraVelocity) * (time.delta / 1000);
-
-        switch(direction) {
-            case 0: this.y -= change; break;
-            case 1: this.x += change; break;
-            case 2: this.y += change; break;
-            case 3: this.x -= change; break;
-        }
-        totalChange += change;
-        let collides = world.collisionLayer.collides(this);
-
-        if(collides) {
-            if(collides && collides.isHitBox) collides = collides.target;
-
-            switch(direction) {
-                case 1: this.x = collides.x; break;
-                case 2: this.y = collides.y; break;
-
-                case 3: this.x = collides.x + collides.width - this.width / 2; break;
-                case 0: this.y = collides.y + collides.height - this.height / 2; break;
-
-            }
-            
-            this.x += this.width / 2;
-            this.y += this.height / 2;
-
-            if(collides.onHit) collides.onHit(this);
-            let particleEffectID;
-            particleEffectID = world.spriteLayer.add(new DecayEffect(this.x,this.y,()=>{
-                world.spriteLayer.remove(particleEffectID);
-            },collides.zIndex + 1));
-            terminate();
-            return;
-        }
-
-        if(collides || Math.abs(totalChange) > PROJECTILE_MAX_DISTANCE) {
-            terminate();
-        }
-    };
-
-    this.render = (context,x,y,width,height) => {
-        x = Math.floor(x); y = Math.floor(y);
-        context.fillStyle = color;
-        context.fillRect(x,y,width,height);
-    }
-}
-
 function GenericBlaster(image) {
-    const projectilePoints = DEFAULT_PROJECTILE_POINTS;
 
     let fireStart = null;
-
-    const projectileColor = this.owner.isPlayer ? PLAYER_PROJECTILE_COLOR : ENEMY_PROJECTILE_COLOR;
-    const collisionType = Eleven.CollisionTypes[
-        this.owner.isPlayer ? "PlayerProjectile" : "EnemyProjectile"
-    ];
-    const noCollide = {[this.owner.collisionType]:true};
 
     this.render = (context,x,y,width,height) => {
         const {directionMatrix, direction} = this.owner;
@@ -148,21 +31,20 @@ function GenericBlaster(image) {
     const shoot = () => {
         let {x, y, direction} = this.owner;
 
-        const offset = projectilePoints[direction];
+        const offset = PROJECTILE_POINTS[direction];
 
         Eleven.AudioManager.play(pewSound);
 
-        x += offset.x + (this.owner.xOffset || 0);
-        y += offset.y + (this.owner.yOffset || 0);
+        x += (offset.x * this.owner.width) + (this.owner.xOffset || 0);
+        y += (offset.y * this.owner.height) + (this.owner.yOffset || 0);
 
         let zIndex = this.owner.zIndex;
         offset.behind ? zIndex-- : zIndex++;
 
         let projectileID;
-        
-        const extraVelocity = this.owner.moving ? this.owner.velocity : 0;
+
         projectileID = this.world.spriteLayer.add(
-            new Projectile(this.world,projectileColor,collisionType,noCollide,x,y,direction,extraVelocity,()=>{
+            new GenericProjectile(this.world,this.owner,x,y,()=>{
                 this.world.spriteLayer.remove(projectileID);
             }),zIndex
         );
@@ -174,7 +56,7 @@ function GenericBlaster(image) {
             fireStart = performance.now() - delay;
             shoot();
             (async () => {
-                await Eleven.FrameBoundTimeout(FIRE_TIMEOUT);
+                await FrameBoundTimeout(FIRE_TIMEOUT);
                 fireStart = null;
             })();
         });

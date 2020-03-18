@@ -1,21 +1,11 @@
-import Constants from "../constants.js";
-
 const {AnimatedSprite, MultiLayer, CollisionTypes} = Eleven;
 
-const AVATAR_SPEED = Constants.AvatarSpeed;
-
-function GetAvatarBase(world,x,y,collisionType,image) {
+function GetAvatarBase(world,x,y,image) {
     const sprite = new AnimatedSprite(image,x,y);
 
     sprite.world = world;
-    sprite.velocity = AVATAR_SPEED;
-
-    sprite.collisionType = collisionType;
+    sprite.collisionType = CollisionTypes.Avatar;
     sprite.collides = true;
-    sprite.noCollide = {
-        [CollisionTypes.PlayerProjectile]: true,
-        [CollisionTypes.EnemyProjectile]: true
-    };
 
     const updateLayer = new MultiLayer();
     const renderLayer = new MultiLayer();

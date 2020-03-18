@@ -1,3 +1,7 @@
+const {CollisionTypes} = Eleven;
+
+const COLLISION_TYPE = CollisionTypes.Default;
+
 const BAD_COLLISION_TYPE = type => {
     throw Error(`Collision type ${type} is not implemented!`);
 };
@@ -154,6 +158,6 @@ function CollisionMaker(x,y,value) {
     const tableValue = table[value];
     x += tableValue.x; y += tableValue.y;
     const {width,height} = tableValue;
-    return {x,y,width,height,value};
+    return {x,y,width,height,value,collisionType:COLLISION_TYPE};
 }
 export default CollisionMaker;
