@@ -45,13 +45,11 @@ function TestScript(world) {
         
         (async () => {
             while(true) {
-                await new Promise(resolve=>setTimeout(resolve,1500));
-                await NPC.controller.move(0,1);
+                await Eleven.FrameTimeout(500);
+                NPC.attack();
             }
         })();
 
-        NPC.x -= 3.6969696969695345346211;
-        NPC.y += 1.2312312543534534234234;
 
         this.NPC = NPC;
 

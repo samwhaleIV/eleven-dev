@@ -5,6 +5,7 @@ import WorldMessage from "./world-message.js";
 import Constants from "../constants.js";
 import GetPlayerSprite from "../avatar/player.js";
 import GetNPCSprite from "../avatar/npc.js";
+import InstallSpatialSound from "./spatial-sound.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -414,5 +415,6 @@ World.prototype.getLightingTile = function(x,y) {
 World.prototype.setLightingTile = function(x,y,value) {
     this.setTile(x,y,value,LIGHTING_LAYER);
 };
+InstallSpatialSound(World.prototype);
 
 export default World;

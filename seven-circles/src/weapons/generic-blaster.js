@@ -2,7 +2,7 @@ import GenericProjectile from "./generic-projectile.js";
 
 const FIRE_TIMEOUT = 60;
 
-const {FrameBoundTimeout} = Eleven;
+const {FrameTimeout} = Eleven;
 
 const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
@@ -33,10 +33,17 @@ function GenericBlaster(image) {
 
         const offset = PROJECTILE_POINTS[direction];
 
-        Eleven.AudioManager.play(pewSound);
-
         x += (offset.x * this.owner.width) + (this.owner.xOffset || 0);
         y += (offset.y * this.owner.height) + (this.owner.yOffset || 0);
+
+        let soundX, soundY;
+
+        if(this.owner.isPlayer) {
+            soundX = this.world.camera.x, soundY = this.world.camera.y;
+        } else {
+            soundX = x; soundY = y;
+        }
+        this.world.playSound({buffer:pewSound,x:soundX,y:soundY});
 
         let zIndex = this.owner.zIndex;
         offset.behind ? zIndex-- : zIndex++;
@@ -56,7 +63,7 @@ function GenericBlaster(image) {
             fireStart = performance.now() - delay;
             shoot();
             (async () => {
-                await FrameBoundTimeout(FIRE_TIMEOUT);
+                await FrameTimeout(FIRE_TIMEOUT);
                 fireStart = null;
             })();
         });
