@@ -69,7 +69,7 @@ function InstallSpatialSound(target) {
 
         let updater;
         if(useTarget) {
-            updater = sendTrackedPositionUpdate.bind(this,remoteControl,volume);
+            updater = sendTrackedPositionUpdate.bind(this,remoteControl,target,volume);
         } else {
             updater = sendPositionUpdate.bind(this,remoteControl,x,y,volume);
         }
