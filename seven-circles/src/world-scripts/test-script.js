@@ -6,7 +6,7 @@ import Alignments from "../avatar/alignments.js";
 function TestScript(world) {
     world.setMap("test");
 
-    const player = world.addPlayer(9,10);
+    const player = world.addPlayer(9,8);
 
     this.interaction = async data => {
         if(data.value === 8) {
@@ -17,25 +17,6 @@ function TestScript(world) {
             })();
         }
     }
-
-    world.spriteLayer.add(function(){
-        this.x = 5; this.y = 7;
-        this.width = 1; this.height = 1;
-
-        this.collides = true;
-        this.collisionType = CollisionTypes.Trigger;
-
-        let triggered = false;
-        this.hit = whomstve => {
-            if(triggered) return;
-            triggered = true;
-            whomstve.width += 1;
-            whomstve.height += 1;
-            whomstve.x -= 0.5;
-            whomstve.y -= 0.5;
-            console.log("AHhhhhhhhhhh! get off me!");
-        }
-    })
 
     this.load = async () => {
 
@@ -61,23 +42,16 @@ function TestScript(world) {
     
         NPC.alignment = Alignments.Hostile;
 
+        
         (async () => {
             while(true) {
-                if(Math.random() > 0.5) {
-                    await NPC.controller.move(Math.random() > 0.5 ? 1 : -1,0);
-                } else {
-                    await NPC.controller.move(0,Math.random() > 0.5 ? 1 : -1);
-                }
-            }
-        })();
-        (async () => {
-            while(true) {
-                await new Promise(resolve=>setTimeout(resolve,100));
-                NPC.controller.attack();
+                await new Promise(resolve=>setTimeout(resolve,1500));
+                await NPC.controller.move(0,1);
             }
         })();
 
-        NPC.x -= 0.3492949239429312;
+        NPC.x -= 3.6969696969695345346211;
+        NPC.y += 1.2312312543534534234234;
 
         this.NPC = NPC;
 

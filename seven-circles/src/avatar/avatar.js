@@ -15,17 +15,17 @@ function Avatar(isPlayer,...parameters) {
 
     this.isPlayer = isPlayer;
 
-    this.alignment = isPlayer ? Alignments.Friendly : Alignments.Neutral;
-
-    this.velocity = isPlayer ? PLAYER_VELOCITY : NPC_VELOCITY;
-
     if(this.isPlayer) {
         InstallHitBox(this,12/16,12/16);
         this.yOffset = -(2 / 16);
+        this.alignment = Alignments.Friendly;
+        this.velocity = PLAYER_VELOCITY;
     } else {
         NPCController.call(this);
         InstallHitBox(this,12/16,14/16);
         this.yOffset = 0;
+        this.alignment = Alignments.Neutral;
+        this.velocity = NPC_VELOCITY;
     }
 
 }
