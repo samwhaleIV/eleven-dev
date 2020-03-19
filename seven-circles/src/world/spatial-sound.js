@@ -18,8 +18,7 @@ const minMax = (value,min,max) => {
     return value;
 };
 
-function sendPositionUpdate(remoteControl,soundX,soundY) {
-
+function sendPositionUpdate(remoteControl,soundX,soundY,baseVolume) {
     let distanceScale = BASE_SCALE / this.camera.scale;
 
     if(distanceScale < 1) {
@@ -42,20 +41,39 @@ function sendPositionUpdate(remoteControl,soundX,soundY) {
     const pan = minMax(xDif / maxPanDistance,-1,1);
 
     remoteControl.setPan(pan);
-    remoteControl.setVolume(distance);
+    remoteControl.setVolume(distance * baseVolume);
+}
+
+function sendTrackedPositionUpdate(remoteControl,target,baseVolume) {
+    sendPositionUpdate.call(this,remoteControl,target.x,target.y,baseVolume);
 }
 
 function InstallSpatialSound(target) {
     target.playSound = async function({
-        buffer, volume, detune, x, y, loop, playbackRate
+        buffer, volume, detune, x, y, loop, playbackRate, target
     }) {
+        if(isNaN(volume)) volume = 1;
+
+        const useTarget = Boolean(target);
+
+        if(useTarget) {
+            if(isNaN(x)) x = target.x;
+            if(isNaN(y)) y = target.y;
+        }
+
         if(!x) x = this.camera.x; if(!y) y = this.camera.y;
     
         const remoteControl = AudioManager.playSound({
-            buffer, volume, detune, loop, playbackRate, usePanning: true
+            buffer, detune, volume, loop, playbackRate, usePanning: true
         });
+
+        let updater;
+        if(useTarget) {
+            updater = sendTrackedPositionUpdate.bind(this,remoteControl,volume);
+        } else {
+            updater = sendPositionUpdate.bind(this,remoteControl,x,y,volume);
+        }
     
-        const updater = sendPositionUpdate.bind(this,remoteControl,x,y);
         const updaterID = this.dispatchRenderer.addUpdate(updater,UPDATE_Z_INDEX);
     
         updater();
