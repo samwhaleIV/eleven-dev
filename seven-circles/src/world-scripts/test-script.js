@@ -4,9 +4,12 @@ import GenericBlaster from "../weapons/generic-blaster.js";
 import Alignments from "../avatar/alignments.js";
 
 function TestScript(world) {
-    world.setMap("test");
+    world.setMap("hell");
 
-    const player = world.addPlayer(9,8);
+    const player = world.addPlayer(7,24.5);
+    player.direction = 0;
+
+    return;
 
     this.interaction = async data => {
         if(data.value === 8) {

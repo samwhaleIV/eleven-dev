@@ -145,9 +145,7 @@ function World(callback) {
     this.grid = grid;
     this.camera = camera;
 
-    this.spriteFollower = new SpriteFollower(camera);
-    this.spriteFollower.target = null;
-    this.spriteFollower.enabled = false;
+    this.spriteFollower = new SpriteFollower(camera,null,false);
 
     this.script = null;
 
@@ -322,8 +320,7 @@ World.prototype.setMap = function(mapName) {
     this.player = null;
     this.playerController = null;
 
-    this.spriteFollower.target = null;
-    this.spriteFollower.enabled = false;
+    this.spriteFollower.reset();
     this.textMessage = null;
     this.textMessageStack.splice(0);
 
