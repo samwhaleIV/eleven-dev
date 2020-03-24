@@ -9,6 +9,11 @@ function TestScript(world) {
     const player = world.addPlayer(7,24.5);
     player.direction = 0;
 
+    world.dispatchRenderer.addBackground((context,{width,height})=>{
+        context.fillStyle = `rgb(20,0,0)`;
+        context.fillRect(0,0,width,height);
+    });
+
     return;
 
     this.interaction = async data => {
