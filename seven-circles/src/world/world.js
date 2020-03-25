@@ -334,7 +334,8 @@ World.prototype.setMap = function(mapName) {
         tileset: tileset,
         setRenderer: false, setSize: true,
         map: maps[mapName],
-        uvtcDecoding: true
+        uvtcDecoding: true,
+        fillEmpty: true
     });
     tileRenderer.paused = true;
     this.tileRenderer = tileRenderer;
