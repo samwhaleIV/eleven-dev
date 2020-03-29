@@ -111,8 +111,11 @@ function InputServer() {
 
     this.setBinds = (keyBindSet,clean=true) => {
         clearKeys();
-        keyBindSet.forEach(([value,code])=>{
-            setKeyBind(value,code,false);
+        if(!Array.isArray(keyBindSet)) {
+            keyBindSet = Object.entries(keyBindSet);
+        }
+        keyBindSet.forEach(([keyCode,inputCode])=>{
+            setBind(keyCode,inputCode,false);
         });
         if(clean) cleanDuplicates();
         fireChangeEvent();

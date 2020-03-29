@@ -1,0 +1,57 @@
+div.dev-key-binds {
+    width: 600px;
+    position: fixed;
+    background-color: #ffffffd9;
+    z-index: 10;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    font-family: sans-serif;
+    padding: 8px;
+    box-sizing: border-box;
+    user-select: none;
+    cursor: default;
+    overflow-y: auto;
+    padding-bottom: 0;
+    max-height: 700px;
+}
+div.dev-key-binds div {
+    height: 64px;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+    margin-bottom: 8px;
+}
+div.dev-key-binds div:nth-child(1) p {
+    text-align: center;
+    width: 100% !important;
+    margin: 0 !important;
+}
+div.dev-key-binds div p {
+    margin: 0;
+    display: inline-block;
+    line-height: 64px;
+    text-align: left;
+}
+div.dev-key-binds div p:nth-child(1) {
+    width: 48px;
+    font-weight: bold;
+    margin: 0 16px;
+}
+div.dev-key-binds div.editing {
+    animation-name: edit-blink;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in;
+    color: white;
+}
+
+@keyframes edit-blink {
+    from {
+        background-color: #514cc7;
+    }
+    to {
+        background-color: #513f84;
+    }
+}

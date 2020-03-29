@@ -7,9 +7,9 @@ const EXIT = "Escape";
 
 const InputCodes = Object.freeze({
     Up: MOVE_UP,
+    Down: MOVE_DOWN,
     Left: MOVE_LEFT,
     Right: MOVE_RIGHT,
-    Down: MOVE_DOWN,
     Click: CLICK,
     Exit: EXIT
 });
