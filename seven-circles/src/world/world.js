@@ -1,6 +1,5 @@
 import CollisionMaker from "./collision-maker.js";
-import GetInputDevices from "./input-devices.js";
-import InputCodes from "./input-codes.js";
+import InputCodes from "../user-interface/input-codes.js";
 import WorldMessage from "./world-message.js";
 import Constants from "../constants.js";
 import GetPlayerSprite from "../avatar/player.js";
@@ -56,6 +55,7 @@ function InstallPlayer(world,sprite) {
         [InputCodes.Down]: "down", [InputCodes.Right]: "right",
         [InputCodes.Up]: "up", [InputCodes.Left]: "left"
     });
+    world.refreshInput = input.refresh;
 
     const worldImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
     worldImpulse.layerHandler = sprite => {
@@ -133,7 +133,10 @@ function World(callback) {
         }
     });
 
-    const {managedGamepad, keyBind} = GetInputDevices();
+    const {InputServer} = SVCC.Runtime;
+    const managedGamepad = InputServer.getManagedGamepad();
+    const {keyBind} = InputServer;
+
     this.inputGamepad = managedGamepad.poll;
 
     this.managedGamepad = managedGamepad;
@@ -165,6 +168,8 @@ function World(callback) {
 
     this.textMessage = null;
     this.textMessageStack = new Array();
+
+    this.refreshInput = null;
 
     grid.bindToFrame(this);
     this.resize = data => {
@@ -319,6 +324,10 @@ World.prototype.runScript = async function(script) {
 World.prototype.setMap = function(mapName) {
     this.player = null;
     this.playerController = null;
+
+    this.refreshInput = null;
+    this.managedGamepad.keyDown = null;
+    this.managedGamepad.keyUp = null;
 
     this.spriteFollower.reset();
     this.textMessage = null;

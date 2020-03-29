@@ -1,6 +1,7 @@
 import World from "./world/world.js";
 import Constants from "./constants.js";
 import TestScript from "./world-scripts/test-script.js";
+import InputServer from "./user-interface/input-server.js";
 
 const {CanvasManager, AudioManager, ResourceManager} = Eleven;
 
@@ -34,6 +35,16 @@ function Runtime() {
             CanvasManager.markLoaded();
         }
     };
+
+    const inputServer = new InputServer();
+    this.InputServer = inputServer;
+    const inputWatchID = inputServer.addChangeListener(()=>{
+        const {frame} = CanvasManager;
+        if(!frame || !frame.refreshInput) return;
+        frame.refreshInput(inputServer.getBinds());
+    });
+
+    console.log(`Runtime watching for input changes (ID: ${inputWatchID})`);
 
     this.Start = () => {
         console.log("Hello, world!");
