@@ -1,25 +1,12 @@
 import World from "./world/world.js";
-import Constants from "./constants.js";
-import TestScript from "./world-scripts/test-script.js";
 import InputServer from "./user-interface/input-server.js";
+import SaveState from "./storage/save-state.js";
 
-const {CanvasManager, AudioManager, ResourceManager} = Eleven;
+const START_SCRIPT = "HelloWorld";
 
-function SetupCanvasManagerSizing() {
-    return;
-    
-    (({Width,Height}) => {
-
-    CanvasManager.setSize(Width,Height);
-
-    })(Constants.GameResolution);
-        
-    CanvasManager.enableBoxFill();
-}
+const {CanvasManager} = Eleven;
 
 function Runtime() {
-    SetupCanvasManagerSizing();
-
     this.LoadWorld = async script => {
         if(!CanvasManager.paused) {
             CanvasManager.paused = true;
@@ -44,11 +31,15 @@ function Runtime() {
         frame.refreshInput(inputServer.getBinds());
     });
 
-    console.log(`Runtime watching for input changes (ID: ${inputWatchID})`);
+    const saveState = new SaveState();
+    this.SaveState = saveState;
+    saveState.load();
+
+    console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
 
     this.Start = () => {
         console.log("Hello, world!");
-        this.LoadWorld(TestScript);
+        this.LoadWorld(HelloWorld);
     };
 }
 export default Runtime;

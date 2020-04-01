@@ -1,21 +1,43 @@
 import InputCodes from "./user-interface/input-codes.js";
 
+/*
+  Don't judge me, it's code for devs!
+  This isn't for the light of heart.
+
+  By using this service, you agree to let go
+  of all safeties a release-ready keybind system should provide to you.
+
+  These may, or may not include:
+
+  1. Making sure you actually have required keys bound to something other than nothing
+  2. An actual implementation of forbidden keys
+  3. Code with a low-memory footprint that doesn't take the DOM and shit all over it
+
+  If by some misfortunate 'accident' this ends up being the release version of the key bind GUI
+  I'm very sorry that this has happened but I'm sure there was a good reason for it.
+*/
+
 const MENU_CLASS = "dev-key-binds";
 const EDITING_CLASS = "editing";
 
-let menuShown = false;
-
 const {CanvasManager} = Eleven;
 
+let menuShown = false;
 let frameTargetOverride = null;
 
-const IS_FORBIDDEN_KEY = keyEvent => {
-    return false;
+const IS_FORBIDDEN_KEY = keyEvent => { //Short answer: No
+  /*
+    Did you come here to find the sacred VOID statement? There aren't many of these 'round these parts..
+    Your dedication is truly inspiring.
+
+    It's dangerous to go alone! Take this: 🍾
+  */
+
+    void keyEvent; return false; //There are things that happen here that you might not understand
 };
 
 const KEY_CODE_FORMAT = code => {
     const formattedCode = code.split(/(?=[A-Z])/).join(" ");
-    console.log(formattedCode);
     return formattedCode;
 };
 
@@ -70,6 +92,7 @@ function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
     entry.appendChild(value);
 
     entry.onclick = () => {
+        //Ignore this, this block of code is just an occupational hazard passing through
         if(!editingFilter()) return;
         data.editing = true;
         entry.classList.add(EDITING_CLASS);
@@ -143,4 +166,5 @@ function ShowDevKeyBindMenu() {
 
     return "Menu opened...";
 }
+
 export default ShowDevKeyBindMenu;

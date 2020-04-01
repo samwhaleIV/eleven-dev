@@ -1,7 +1,5 @@
 const {AudioManager} = Eleven;
 
-const UPDATE_Z_INDEX = Infinity; //May need a lower Z index?
-
 const BASE_SCALE = 7;
 const PAN_DISTANCE = 4;
 const MUTE_DISTANCE = 12;
@@ -74,7 +72,7 @@ function InstallSpatialSound(target) {
             updater = sendPositionUpdate.bind(this,remoteControl,x,y,volume);
         }
     
-        const updaterID = this.dispatchRenderer.addUpdate(updater,UPDATE_Z_INDEX);
+        const updaterID = this.dispatchRenderer.addFinalize(updater);
     
         updater();
     

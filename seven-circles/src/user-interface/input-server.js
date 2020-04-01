@@ -1,3 +1,4 @@
+import StorageHelper from "../storage/storage-helper.js";
 import InputCodes from "./input-codes.js";
 
 const LOCAL_STORAGE_ADDRESS = "ELEVEN_SVCC_KEY_BINDS";
@@ -39,23 +40,6 @@ function GetManagedGamepad() {
     return managedGamepad;
 }
 
-function LoadBinds(keyBindSource) {
-    const storageResult = localStorage.getItem(LOCAL_STORAGE_ADDRESS);
-    if(storageResult !== null && typeof storageResult === "string") {
-        let JSONResult = null;
-        try {
-            JSONResult = JSON.parse(storageResult);
-        } catch(error) {
-            console.error(error);
-        }
-        if(JSONResult !== null) {
-            Object.assign(keyBindSource,JSONResult);
-            return;
-        }
-    }
-    Object.assign(keyBindSource,DEFAULT_BINDS);
-}
-
 function FlipFlop(target) {
     //Remove duplicate values that might exist in the target, use as the last key of that value as the ultimate value
     //For example: {a:1,b:1,c:1} The key that is used is 'c', and 'a' and 'b' are removed from the target.
@@ -82,8 +66,11 @@ function InputServer() {
 
     const keyBindSource = new Object();
 
-    const saveBinds = SaveBinds.bind(this,keyBindSource);
-    this.saveBinds = saveBinds;
+    const {load,save} = StorageHelper.GetSet(
+        LOCAL_STORAGE_ADDRESS,keyBindSource,DEFAULT_BINDS
+    );
+
+    this.saveBinds = save;
 
     let listenerID = 1;
     const listeners = new Object();
@@ -157,7 +144,7 @@ function InputServer() {
 
     Object.freeze(this);
 
-    LoadBinds.call(this,keyBindSource);
+    load();
 }
 
 export default InputServer;

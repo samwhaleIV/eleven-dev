@@ -3,9 +3,8 @@ const {ResourceManager, CollisionTypes} = Eleven;
 import GenericBlaster from "../weapons/generic-blaster.js";
 import Alignments from "../avatar/alignments.js";
 
-function TestScript(world) {
+function Debug(world) {
     world.setMap("hell");
-
     const player = world.addPlayer(7,24.5);
     player.direction = 0;
 
@@ -74,4 +73,4 @@ function TestScript(world) {
     waterBackground.install(dispatchRenderer);*/
 }
 
-export default TestScript;
+export default Debug;

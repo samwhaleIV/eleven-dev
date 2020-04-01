@@ -170,7 +170,7 @@ const encodeLayer = layer => {
     if(emptyCount === maxCount) {
         return null;
     }
-    
+
     for(let i = 0;i < maxCount;i++) {
         const value = layer[i];
         layer[i] = INVERSE_CIPHER_LOOKUP[value];

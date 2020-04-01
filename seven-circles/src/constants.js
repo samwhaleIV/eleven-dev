@@ -5,7 +5,7 @@ const Constants = Object.freeze({
     DefaultCameraScale: 7,
     PlayerZIndex: 10000,
     PlayerSprite: "player",
-    GameResolution: {
+    RetroResolution: {
         Width: 900,
         Height: 700
     }

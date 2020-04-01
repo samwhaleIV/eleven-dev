@@ -10,7 +10,15 @@
             "name": "Compile Map Data",
             "cwd": "${workspaceFolder}\\map-builder",
             "program": "${workspaceFolder}\\map-builder\\index.js",
-            "console": "externalTerminal"
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Link Scripts (ScriptBook)",
+            "cwd": "${workspaceFolder}\\script-link",
+            "program": "${workspaceFolder}\\script-link\\index.js",
+            "console": "integratedTerminal"
         },
         {
             "type": "node",
