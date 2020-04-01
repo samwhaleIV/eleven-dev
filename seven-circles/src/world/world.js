@@ -5,6 +5,7 @@ import Constants from "../constants.js";
 import GetPlayerSprite from "../avatar/player.js";
 import GetNPCSprite from "../avatar/npc.js";
 import InstallSpatialSound from "./spatial-sound.js";
+import ScriptBook from "../scripts/script-book.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -301,7 +302,19 @@ const hasSuperForeground = tileRenderer => {
     return false;
 };
 
+World.prototype.unloadScript = function() {
+    if(this.script && this.script.unload) this.script.unload();
+    this.script = null;
+};
+
 World.prototype.runScript = async function(script) {
+    if(typeof script === "string") {
+        script = ScriptBook.Get(script);
+    }
+    if(!script) {
+        this.unloadScript(); return;
+    }
+
     const processPauseSequencing = CanvasManager.frame && !CanvasManager.paused;
 
     if(processPauseSequencing) {
@@ -309,8 +322,7 @@ World.prototype.runScript = async function(script) {
         CanvasManager.paused = true;
     }
 
-    if(this.script && this.script.unload) this.script.unload();
-    this.script = null;
+    this.unloadScript();
     if(typeof script === "function") script = new script(this);
     this.script = script;
     if(script.load) await script.load();

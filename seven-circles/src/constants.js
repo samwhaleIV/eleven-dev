@@ -5,6 +5,8 @@ const Constants = Object.freeze({
     DefaultCameraScale: 7,
     PlayerZIndex: 10000,
     PlayerSprite: "player",
+    GameStartScript: "HelloWorld",
+    GamePreloadScript: "Preload",
     RetroResolution: {
         Width: 900,
         Height: 700

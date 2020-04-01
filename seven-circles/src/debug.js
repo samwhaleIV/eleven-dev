@@ -23,5 +23,7 @@ function Debug() {
     };
 
     this.ConfigKeyBinds = ShowDevKeyBindMenu;
+
+    Object.freeze(this);
 }
 export default Debug;

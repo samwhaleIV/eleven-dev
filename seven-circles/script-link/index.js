@@ -12,12 +12,17 @@ const SCRIPT_FOLDER = "main/";
 const INPUT_FOLDER = SCRIPT_ROOT + SCRIPT_FOLDER;
 const OUTPUT_PATH = SCRIPT_ROOT + MANIFEST_FILE;
 
+const IMPORT_NEW_LINE_RATE = 8;
+
 let output = "";
 const writeLine = line => {
     if(!line) {
         output += NEW_LINE; return;
     }
     output += line + NEW_LINE;
+};
+const writeImportLine = (importName,path) => {
+    writeLine(`import ${importName} from "./${path}";`);
 };
 const write = text => {
     output += text;
@@ -27,7 +32,7 @@ writeLine(`/* Notice: This is an auto-generated file. Modifying it can have unex
 
 writeLine();
 
-writeLine(`import ScriptBook from "./script-book.js"`);
+writeImportLine("ScriptBook","script-book.js");
 
 writeLine();
 
@@ -43,7 +48,16 @@ const capitalize = (string,index,length) => {
     return part1 + part2;
 };
 
-const translateFileName = fileName => {
+const getScriptName = fileName => {
+    /*
+      This is only an approximation of the script name.
+
+      The true script identifier can be counter-specified in the function declaration itself.
+
+      Most of the time it will be the same if the developer follows the naming convention.
+    */
+
+    fileName = fileName.replace(/\s/g,"");
     const deadCaterpillar = fileName.split("-");
     let output = "";
     for(let i = 0;i<deadCaterpillar.length;i++) {
@@ -55,22 +69,24 @@ const translateFileName = fileName => {
 
 const scriptList = new Array();
 
+writeLine("/* Note that these import aliases might not reflect the real script identifier/function names. */");
+
 fs.readdirSync(INPUT_FOLDER).forEach(filePath => {
     const extension = path.extname(filePath);
     const fileName = path.basename(filePath,extension);
 
-    const scriptName = translateFileName(fileName);
-    writeLine(`import ${scriptName} from './${SCRIPT_FOLDER}${fileName}${extension}'`);
+    const scriptName = getScriptName(fileName);
+    writeImportLine(scriptName,SCRIPT_FOLDER + fileName + extension);
     
     scriptList.push(scriptName);
 });
 
 writeLine();
 
-writeLine(`ScriptBook.Import(`);
+writeLine(`const Scripts = ScriptBook.Import(`);
 for(let i = 0;i<scriptList.length;i++) {
-    switch(i % 3) {
-        case 2:
+    switch(i % IMPORT_NEW_LINE_RATE) {
+        case IMPORT_NEW_LINE_RATE - 1:
             writeLine(); 
         case 0:
             write(TAB);
@@ -81,9 +97,12 @@ for(let i = 0;i<scriptList.length;i++) {
     }
 }
 writeLine();
-writeLine(`)`);
+writeLine(`);`);
 writeLine();
 
+writeLine(`export default Scripts;`);
+
+writeLine();
 writeLine(`/* End of auto-generated file */`);
 
 fs.writeFileSync(OUTPUT_PATH,output);

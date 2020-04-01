@@ -1,7 +1,7 @@
-const {ResourceManager, CollisionTypes} = Eleven;
+const {ResourceManager, FrameTimeout, WaterBackground, CollisionTypes} = Eleven;
 
-import GenericBlaster from "../weapons/generic-blaster.js";
-import Alignments from "../avatar/alignments.js";
+import GenericBlaster from "../../weapons/generic-blaster.js";
+import Alignments from "../../avatar/alignments.js";
 
 function Debug(world) {
     world.setMap("hell");
@@ -27,10 +27,6 @@ function Debug(world) {
 
     this.load = async () => {
 
-        ResourceManager.queueImage("player-gun.png");
-        ResourceManager.queueImage("enemy-gun.png");
-        ResourceManager.queueImage("other.png");
-
         ResourceManager.queueAudio("pew.mp3");
         await ResourceManager.load();
 
@@ -52,7 +48,7 @@ function Debug(world) {
         
         (async () => {
             while(true) {
-                await Eleven.FrameTimeout(500);
+                await FrameTimeout(500);
                 NPC.attack();
             }
         })();
@@ -67,7 +63,7 @@ function Debug(world) {
     });
 
     /*
-    const waterBackground = new Eleven.WaterBackground(
+    const waterBackground = new WaterBackground(
         world.grid,world.tileset,80,112,10000
     );
     waterBackground.install(dispatchRenderer);*/
