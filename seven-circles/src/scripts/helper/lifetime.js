@@ -5,7 +5,7 @@ const POSITION_CONTAINER = "PlayerPosition";
 const NO_SCRIPT_HANDLE = "_none";
 
 const POSITION_DEFAULTS = Object.freeze({
-    x: 0, y: 0, direction: 0, scriptID: null
+    x: 0, y: 0, direction: 0, scriptID: NO_SCRIPT_HANDLE
 });
 
 const getPositionContainer = () => {
