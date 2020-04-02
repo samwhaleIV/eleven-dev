@@ -29,6 +29,7 @@ function Runtime() {
         }
     };
 
+    //use world.unloadScript when the runtime switches away from the world
 
     this.RunWorldScript = async script => {
         await Eleven.CanvasManager.frame.runScript(script);
@@ -42,14 +43,13 @@ function Runtime() {
         frame.refreshInput(inputServer.getBinds());
     });
 
-    const saveState = new SaveState();
-    this.SaveState = saveState;
-    saveState.load();
+    this.SaveState = SaveState;
+    SaveState.load();
 
     console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
 
     this.Start = () => {
-        this.LoadWorld(Constants.GamePreloadScript);
+        this.LoadWorld(PRELOAD_SCRIPT);
     };
 
     Object.freeze(this);

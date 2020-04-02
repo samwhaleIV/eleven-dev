@@ -323,6 +323,10 @@ World.prototype.runScript = async function(script) {
     }
 
     this.unloadScript();
+
+    //This is so the script lifetime can figure out what script called the lifetime request
+    this.script = script;
+
     if(typeof script === "function") script = new script(this);
     this.script = script;
     if(script.load) await script.load();
