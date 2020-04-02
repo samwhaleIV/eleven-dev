@@ -13,18 +13,22 @@ const PRELOAD_RESOURCES = `{
     ]
 }`;
 
-const GetStartScript = () => {
-    //TODO: Use lifetime nonsense...
+const GetStartScript = parameters => {
+    //TODO: Use lifetime logic. Delete parameters if invalid for script
+    let parametersValid = true;
+    if(!parametersValid) parameters.splice(0);
     return Scripts[GAME_START_SCRIPT];
 };
 
-function Preload(world) {
+function Preload(world,...parameters) {
     this.load = async () => {
         ResourceManager.queueManifest(PRELOAD_RESOURCES);
         ResourceManager.load();
     
-        const startScript = GetStartScript();
-        await world.runScript(startScript);
+        const startScript = GetStartScript(parameters);
+
+        //Pass the parameters through...
+        await world.runScript(startScript,...parameters);
     };
 }
 export default Preload;

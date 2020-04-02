@@ -313,7 +313,7 @@ World.prototype.unloadScript = function() {
     this.script = null;
 };
 
-World.prototype.runScript = async function(script) {
+World.prototype.runScript = async function(script,...parameters) {
     if(typeof script === "string") {
         script = ScriptBook.Get(script);
     }
@@ -333,7 +333,7 @@ World.prototype.runScript = async function(script) {
     //This is so the script lifetime can figure out what script called the lifetime request
     this.script = script;
 
-    if(typeof script === "function") script = new script(this);
+    if(typeof script === "function") script = new script(this,...parameters);
     this.script = script;
     if(script.load) await script.load();
 

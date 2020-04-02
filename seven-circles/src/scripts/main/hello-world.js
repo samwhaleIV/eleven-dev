@@ -4,7 +4,9 @@ const BACKGROUND_COLOR = `rgb(20,0,0)`;
 
 const START_POSITION = {x:7,y:24.5,direction:0};
 
-function HelloWorld(world) {
+function HelloWorld(world,data) {
+
+    console.log(data);
 
     const {
         resumePosition,
