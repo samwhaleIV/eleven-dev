@@ -65,9 +65,12 @@ const resumePosition = (player,defaults,scriptID) => {
         if(defaults) assignContainer(defaults,player); 
     }
 };
+const setPosition = (player,values) => {
+    assignContainer(values,player);
+};
 
 const Lifetime = Object.freeze({
-    storePosition,loadPosition,hasPosition,
+    storePosition,loadPosition,hasPosition,setPosition,
     clearPosition,resetPosition,resumePosition,
     save: SaveState.save, load: SaveState.load
 });

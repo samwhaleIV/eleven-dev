@@ -37,7 +37,8 @@ const {
     DispatchRenderer,
     TileCollision,
     PlayerController,
-    WorldImpulse
+    WorldImpulse,
+    TextSprite
 } = Eleven;
 
 let tileset = null;
@@ -163,6 +164,7 @@ function World(callback) {
     this.interactionLayer = null;
     this.collisionLayer = null;
     this.spriteLayer = null;
+    this.highSpriteLayer = null;
 
     this.playerController = null; this.player = null;
     this.keyDown = null; this.keyUp = null;
@@ -279,6 +281,7 @@ const updateTileBasedLayers = world => {
     );
 
     world.spriteLayer = new SpriteLayer(world.grid);
+    world.highSpriteLayer = new SpriteLayer(world.grid);
     world.collisionLayer = world.spriteLayer.getCollisionLayer();
 
     dispatchRenderer.clear();
@@ -290,6 +293,9 @@ const updateTileBasedLayers = world => {
     if(world.lightingLayer.hasLighting) {
         dispatchRenderer.addRender(world.lightingLayer.render);
     }
+
+    dispatchRenderer.addFinalize(world.highSpriteLayer.update);
+    dispatchRenderer.addFinalize(world.highSpriteLayer.render);
 
 };
 
@@ -438,6 +444,12 @@ World.prototype.getLightingTile = function(x,y) {
 World.prototype.setLightingTile = function(x,y,value) {
     this.setTile(x,y,value,LIGHTING_LAYER);
 };
+World.prototype.addTextSprite = function(data) {
+    const textSprite = new TextSprite(data);
+    this.highSpriteLayer.add(textSprite);
+    return textSprite;
+};
+
 InstallSpatialSound(World.prototype);
 
 export default World;

@@ -17,6 +17,8 @@ function SaveState() {
 
     const state = new Object();
 
+    this.address = LOCAL_STORAGE_ADDRESS;
+
     const {save,load} = StorageHelper.GetSet(
         LOCAL_STORAGE_ADDRESS,state,DefaultSaveState
     );

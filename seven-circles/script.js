@@ -16,4 +16,9 @@ const SVCC = Namespace.create({
 });
 
 Namespace.makeGlobal(SVCC);
-SVCC.Runtime.Start();
+
+if(DEV) {
+    SVCC.Runtime.DevStart();
+} else {
+    SVCC.Runtime.Start();
+}

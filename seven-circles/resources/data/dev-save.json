@@ -1,0 +1,8 @@
+{
+    "_UseDevSave": false,
+    "PlayerPosition": {
+        "_deserialize": true,
+        "x": 0, "y": 0, "scriptID": "HelloWorld",
+        "direction": 0
+    }
+}

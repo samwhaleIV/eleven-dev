@@ -3,10 +3,15 @@ import InputServer from "./user-interface/input-server.js";
 import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
+import saveState from "./storage/save-state.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 
-const {CanvasManager} = Eleven;
+const USE_DEV_SAVE_KEY = "_UseDevSave";
+
+const {CanvasManager, ResourceManager} = Eleven;
+
+const DEV_SAVE = "dev-save";
 
 function Runtime() {
 
@@ -44,11 +49,24 @@ function Runtime() {
     });
 
     this.SaveState = SaveState;
-    SaveState.load();
 
     console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
 
     this.Start = () => {
+        console.log("Use 'index-dev.html', there is not a release candidate yet!");
+        window.location.href += "index-dev.html"; return;
+    };
+    this.DevStart = async () => {
+        localStorage.clear();
+        await ResourceManager.queueJSON(DEV_SAVE).load();
+
+        const devSave = ResourceManager.getJSON(DEV_SAVE);
+
+        if(devSave && devSave[USE_DEV_SAVE_KEY]) {
+            localStorage.setItem(SaveState.address,JSON.stringify(devSave));
+        }
+
+        SaveState.load();
         this.LoadWorld(PRELOAD_SCRIPT);
     };
 
