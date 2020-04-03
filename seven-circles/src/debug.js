@@ -1,7 +1,7 @@
-import ShowDevKeyBindMenu from "./dev-keybinds.js";
+import DevKeyBindMenu from "./dev-keybinds.js";
 import Constants from "./constants.js";
 
-const {CanvasManager} = Eleven;
+const {CanvasManager,DOMInterface} = Eleven;
 
 function Debug() {
     this.PanZoomWorld = () => {
@@ -22,8 +22,24 @@ function Debug() {
         CanvasManager.enableBoxFill();
     };
 
-    this.ConfigKeyBinds = ShowDevKeyBindMenu;
+    const keyBindMenu = DOMInterface.getMenu(DevKeyBindMenu);
+    this.ConfigKeyBinds = () => keyBindMenu.show();
+
+    const testMenu = DOMInterface.getMenu(TestMenu);
+    this.ShowTestMenu = () => testMenu.show();
+    this.CloseTestMenu = () => testMenu.close();
+    this.TestMenuIsVisible = () => testMenu.visible;
 
     Object.freeze(this);
 }
+
+function TestMenu() {
+    const div = document.createElement("div");
+    div.classList.add("center");
+    div.style.width = "400px";
+    div.style.height = "400px";
+    div.style.backgroundColor = "orange";
+    return div;
+}
+
 export default Debug;

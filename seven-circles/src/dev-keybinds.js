@@ -124,13 +124,10 @@ function GetInvertBinds() {
     return InvertBinds(SVCC.Runtime.InputServer.getBinds());
 }
 
-function ShowDevKeyBindMenu() {
-    if(menuShown) return "Menu already active!";
-    menuShown = true;
-    TryAssistFrameInThisWeirdTransition();
+function DevKeyBindMenu({terminate}) {
 
     const menu = document.createElement("div");
-    menu.className = MENU_CLASS;
+    menu.className = MENU_CLASS; menu.classList.add("center");
 
     const binds = GetInvertBinds();
 
@@ -146,13 +143,13 @@ function ShowDevKeyBindMenu() {
     menu.appendChild(GetExitButton(()=>{
         if(!editingFilter()) return;
 
-        const inverseBinds = InvertBinds(binds);
-        SVCC.Runtime.InputServer.setBinds(inverseBinds);
+        const {InputServer} = SVCC.Runtime;
 
-        SVCC.Runtime.InputServer.saveBinds();
-        document.body.removeChild(menu);
-        ResumeFrame();
-        menuShown = false;
+        const inverseBinds = InvertBinds(binds);
+        InputServer.setBinds(inverseBinds);
+        InputServer.saveBinds();
+
+        terminate();
     }));
 
     Object.entries(InputCodes).forEach(([displayName,inputCode])=>{
@@ -162,9 +159,7 @@ function ShowDevKeyBindMenu() {
         entries.push(data); menu.appendChild(entry);
     });
 
-    document.body.appendChild(menu);
-
-    return "Menu opened...";
+    return menu;
 }
 
-export default ShowDevKeyBindMenu;
+export default DevKeyBindMenu;

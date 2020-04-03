@@ -3,7 +3,6 @@ import InputServer from "./user-interface/input-server.js";
 import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
-import saveState from "./storage/save-state.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 
