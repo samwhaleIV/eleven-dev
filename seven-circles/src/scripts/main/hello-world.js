@@ -6,8 +6,6 @@ const START_POSITION = {x:7,y:24.5,direction:0};
 
 function HelloWorld(world,data) {
 
-    console.log(data);
-
     const {
         resumePosition,
         setPosition,
@@ -40,5 +38,30 @@ function HelloWorld(world,data) {
         context.fillStyle = BACKGROUND_COLOR;
         context.fillRect(0,0,width,height);
     });
+
+    const {ParticleSystem} = Eleven;
+
+    const colors = ["red","orange","yellow","green","cyan","blue","purple"];
+    let colorIndex = 0;
+
+    this.emit = () => {
+        const pool = ParticleSystem.getEmitterPool(ParticleSystem.getType(
+            "Gravity",()=>{
+                const color = colors[colorIndex];
+                colorIndex = (colorIndex + 1) % colors.length;
+                return color;
+            }
+        ),colors.length);
+
+        const ID = world.dispatchRenderer.addRender((context,size,time)=>{
+            pool.render(context,size.halfWidth,size.halfHeight,time);
+        });
+
+        const duration = 300;
+
+        pool.stream(duration,duration/colors.length);
+    };
+
+    this.emit();
 }
 export default HelloWorld;
