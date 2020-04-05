@@ -6,6 +6,8 @@ import GetPlayerSprite from "../avatar/player.js";
 import GetNPCSprite from "../avatar/npc.js";
 import InstallSpatialSound from "./spatial-sound.js";
 import ScriptBook from "../scripts/script-book.js";
+import ZIndexBook from "./z-indices.js";
+import ParticleSprite from "./particle-sprite.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -24,8 +26,6 @@ const MAPS_FILE_TYPE = ".json";
 
 const PLAYER_SPRITE = Constants.PlayerSprite;
 const PLAYER_SPRITE_FILE_TYPE = ".png";
-
-const PLAYER_Z_INDEX = Constants.PlayerZIndex;
 
 const {
     CanvasManager,
@@ -221,7 +221,7 @@ World.prototype.addCustomPlayer = function(sprite,...parameters) {
     if(typeof sprite === "function") {
         sprite = new sprite(...parameters);
     }
-    this.spriteLayer.add(sprite,PLAYER_Z_INDEX);
+    this.spriteLayer.add(sprite,ZIndexBook.Player);
     this.playerController = InstallPlayer(this,sprite);
     this.player = sprite;
     return sprite;
@@ -233,7 +233,7 @@ World.prototype.addPlayer = function(...parameters) {
 }
 World.prototype.addNPC = function(...parameters) {
     const NPC = GetNPCSprite.apply(this,parameters);
-    this.spriteLayer.add(NPC);
+    this.spriteLayer.add(NPC,ZIndexBook.NPC);
     return NPC;
 }
 
@@ -446,8 +446,25 @@ World.prototype.setLightingTile = function(x,y,value) {
 };
 World.prototype.addTextSprite = function(data) {
     const textSprite = new TextSprite(data);
-    this.highSpriteLayer.add(textSprite);
+    this.highSpriteLayer.add(textSprite,ZIndexBook.TextSprite);
     return textSprite;
+};
+function addParticles(x,y,emitter,target,size) {
+    const particleSprite = new ParticleSprite(x,y,emitter,target,size);
+    const ID = this.highSpriteLayer.add(
+        particleSprite,ZIndexBook.ParticleSprite
+    );
+    particleSprite.ID = ID; return particleSprite;
+}
+World.prototype.addParticles = function(x,y,emitter,size) {
+    return addParticles.call(this,x,y,emitter,null,size);
+};
+World.prototype.addTrackedParticles = function(target,emitter,size) {
+    return addParticles.call(this,null,null,emitter,target,size);
+};
+World.prototype.removeParticles = function(particleSprite) {
+    const ID = typeof particleSprite === "number" ? particleSprite : particleSprite.ID;
+    this.highSpriteLayer.remove(ID);
 };
 
 InstallSpatialSound(World.prototype);
