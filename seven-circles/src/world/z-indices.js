@@ -8,6 +8,7 @@ const ZIndexBook = Object.freeze({
     ParticleSprite: 5,
 
     /* Finalize layer */
+    Fader: 20,
     WorldMessage: 10,
     highSpriteLayer: 5
 });

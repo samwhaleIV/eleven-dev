@@ -25,7 +25,7 @@ function HelloWorld(world,data) {
     world.addTextSprite({
         world: world,
         text: "The world can now have text sprites!",
-        followTarget: player,
+        target: player,
         color: "white",
         y: -0.7,
         backgroundPadding: 2,
@@ -43,5 +43,14 @@ function HelloWorld(world,data) {
 
     world.addParticles(START_POSITION.x + 0.5,START_POSITION.y + 0.5,emitterPool);
     emitterPool.stream();
+
+    (async()=>{
+        const fader = world.whiteFader();
+        await fader.fadeOut(1000);
+        await fader.reverse();
+        console.log("Done!");
+    })();
+
+    //world.fadeToWhite(1000).then(world.popFader);
 }
 export default HelloWorld;

@@ -18,6 +18,7 @@ const SUPER_FOREGROUND_LAYER = 2;
 const COLLISION_LAYER = 3;
 const INTERACTION_LAYER = 4;
 const LIGHTING_LAYER = 5;
+const FADER_DURATION = 5000;
 
 const TILESET_NAME = "world-tileset";
 const TILESET_FILE_TYPE = ".png";
@@ -38,7 +39,8 @@ const {
     TileCollision,
     PlayerController,
     WorldImpulse,
-    TextSprite
+    TextSprite,
+    Fader,Faders
 } = Eleven;
 
 let tileset = null;
@@ -99,6 +101,38 @@ function InstallPlayer(world,sprite) {
     return playerController;
 }
 
+function FaderList(dispatchRenderer) {
+    const faders = new Object();
+    this.add = fader => {
+        const ID = dispatchRenderer.addFinalize(
+            fader.render,ZIndexBook.Fader
+        );
+        fader.ID = ID; faders[ID] = fader;
+        return fader;
+    };
+    this.remove = ID => {
+        if(typeof ID === "string") ID = Number(ID);
+        dispatchRenderer.removeFinalize(ID);
+        delete faders[ID];
+    };
+    this.clear = () => {
+        Object.keys(faders).forEach(this.remove);
+    };
+    this.list = () => {
+        return Object.values(faders);
+    };
+    this.reload = () => {
+        Object.entries(faders).forEach(([oldID,fader])=>{
+            delete faders[oldID]; this.add(fader);
+        });
+    };
+    this.pop = () => {
+        const faderList = Object.keys(faders);
+        if(!faderList.length) return;
+        this.remove(faderList[faderList.length-1]);
+    };
+}
+
 function World(callback) {
 
     this.load = async () => {
@@ -156,6 +190,10 @@ function World(callback) {
 
     const dispatchRenderer = new DispatchRenderer();
     this.dispatchRenderer = dispatchRenderer;
+    const faderList = new FaderList(dispatchRenderer);
+    this.faderList = faderList;
+    this.clearFaders = faderList.clear;
+    this.popFader = faderList.pop;
 
     this.tileRenderer = null;
 
@@ -257,14 +295,14 @@ const cache = (world,layerCount,layerStart,isTop,location) => {
 
 World.prototype.cacheBackgroundForeground = function(location) {
     cache(this,2,BACKGROUND_LAYER,false,location);
-};
+}
 World.prototype.cacheSuperForeground = function(location) {
     cache(this,1,SUPER_FOREGROUND_LAYER,true,location);
-};
+}
 
 World.prototype.disableSuperForeground = function() {
     this.grid.decacheTop();
-};
+}
 
 const updateTileBasedLayers = world => {
     const {grid, tileRenderer, dispatchRenderer} = world;
@@ -316,7 +354,7 @@ const hasSuperForeground = tileRenderer => {
 World.prototype.unloadScript = function() {
     if(this.script && this.script.unload) this.script.unload();
     this.script = null;
-};
+}
 
 World.prototype.runScript = async function(script,...parameters) {
     if(typeof script === "string") {
@@ -383,12 +421,14 @@ World.prototype.setMap = function(mapName) {
     if(hasSuperForeground(tileRenderer)) {
         this.cacheSuperForeground();
     }
-};
+
+    this.faderList.reload();
+}
 
 World.prototype.getTile = function(layer,x,y) {
     if(!this.tileRenderer) return null;
     return this.tileRenderer.getTile(x,y,layer);
-};
+}
 
 World.prototype.setTile = function(layer,x,y,value) {
     if(!this.tileRenderer) return;
@@ -411,49 +451,49 @@ World.prototype.setTile = function(layer,x,y,value) {
             if(this.interactionLayer) this.interactionLayer.reset();
             break;
     }
-};
+}
 
 World.prototype.getBackgroundTile = function(x,y) {
     return this.getTile(x,y,BACKGROUND_LAYER);
-};
+}
 World.prototype.setBackgroundTile = function(x,y,value) {
     this.setTile(x,y,value,BACKGROUND_LAYER);
-};
+}
 World.prototype.getForegroundTile = function(x,y) {
     return this.getTile(x,y,FOREGROUND_LAYER);
-};
+}
 World.prototype.setForegroundTile = function(x,y,value) {
     this.setTile(x,y,value,FOREGROUND_LAYER);
-};
+}
 World.prototype.getSuperForegroundTile = function(x,y) {
     return this.getTile(x,y,SUPER_FOREGROUND_LAYER);
-};
+}
 World.prototype.setSuperForegroundTile = function(x,y,value) {
     this.setTile(x,y,value,SUPER_FOREGROUND_LAYER);
-};
+}
 World.prototype.getCollisionTile = function(x,y) {
     return this.getTile(x,y,COLLISION_LAYER);
-};
+}
 World.prototype.setCollisionTile = function(x,y,value) {
     this.setTile(x,y,value,COLLISION_LAYER);
-};
+}
 World.prototype.getInteractionTile = function(x,y) {
     return this.getTile(x,y,INTERACTION_LAYER);
-};
+}
 World.prototype.setInteractionTile = function(x,y,value) {
     this.setTile(x,y,value,INTERACTION_LAYER);
-};
+}
 World.prototype.getLightingTile = function(x,y) {
     return this.getTile(x,y,LIGHTING_LAYER);
-};
+}
 World.prototype.setLightingTile = function(x,y,value) {
     this.setTile(x,y,value,LIGHTING_LAYER);
-};
+}
 World.prototype.addTextSprite = function(data) {
     const textSprite = new TextSprite(data);
     this.highSpriteLayer.add(textSprite,ZIndexBook.TextSprite);
     return textSprite;
-};
+}
 function addParticles(x,y,emitter,target,size) {
     const particleSprite = new ParticleSprite(x,y,emitter,target,size);
     const ID = this.highSpriteLayer.add(
@@ -463,14 +503,57 @@ function addParticles(x,y,emitter,target,size) {
 }
 World.prototype.addParticles = function(x,y,emitter,size) {
     return addParticles.call(this,x,y,emitter,null,size);
-};
+}
 World.prototype.addTrackedParticles = function(target,emitter,size) {
     return addParticles.call(this,null,null,emitter,target,size);
-};
+}
 World.prototype.removeParticles = function(particleSprite) {
     const ID = typeof particleSprite === "number" ? particleSprite : particleSprite.ID;
     this.highSpriteLayer.remove(ID);
-};
+}
+
+World.prototype.addFader = function(renderer) {
+    return this.faderList.add(new Fader(renderer));
+}
+World.prototype.blackFader = function() {
+    return this.addFader(Faders.Black);
+}
+World.prototype.whiteFader = function() {
+    return this.addFader(Faders.White);
+}
+World.prototype.removeFader = function(fader) {
+    const ID = typeof fader === "number" ? fader : fader.ID;
+    this.faderList.remove(ID);
+}
+World.prototype.fade = function(renderer,duration,fadeTo) {
+    if(isNaN(duration)) duration = FADER_DURATION;
+    return new Promise(resolve => {
+        const fader = this.addFader(renderer);
+        const didStart = fader.start({
+            polarity: Boolean(fadeTo),
+            duration, callback: resolve
+        });
+        if(!didStart) resolve();
+    });
+}
+World.prototype.fadeFrom = function(renderer,duration) {
+    return this.fade(renderer,duration,false);
+}
+World.prototype.fadeTo = function(renderer,duration) {
+    return this.fade(renderer,duration,true);
+}
+World.prototype.fadeToBlack = function(duration) {
+    return this.fadeTo(Faders.Black,duration);
+}
+World.prototype.fadeToWhite = async function(duration) {
+    return this.fadeTo(Faders.White,duration);
+}
+World.prototype.fadeFromBlack = async function(duration) {
+    return this.fadeFrom(Faders.Black,duration);
+}
+World.prototype.fadeFromWhite = async function(duration) {
+    return this.fadeFrom(Faders.White,duration);
+}
 
 InstallSpatialSound(World.prototype);
 
