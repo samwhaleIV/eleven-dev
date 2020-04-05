@@ -1,11 +1,11 @@
+import ZIndexBook from "./z-indices.js";
+
 const {TextLayer, SpeechBox} = Eleven;
 
 const TEXT_BOX_WIDTH = 800;
 const TEXT_BOX_HEIGHT = 300;
 const BOTTOM_MARGIN = 5;
 const TEXT_SCALE = 4;
-
-const MESSAGE_Z_INDEX = 1000;
 
 function WorldMessage(dispatchRenderer,text,instant) {
     this.complete = false;
@@ -26,7 +26,7 @@ function WorldMessage(dispatchRenderer,text,instant) {
         context.fillStyle = "white";
         context.fillRect(x,y,textLayer.width,textLayer.height);
         textLayer.render(context,x,y);
-    },MESSAGE_Z_INDEX);
+    },ZIndexBook.WorldMessage);
 
     const speechBox = new SpeechBox(textLayer);
 

@@ -5,7 +5,11 @@ const ZIndexBook = Object.freeze({
 
     /* High sprite layer */
     TextSprite: 10,
-    ParticleSprite: 5
+    ParticleSprite: 5,
+
+    /* Finalize layer */
+    WorldMessage: 10,
+    highSpriteLayer: 5
 });
 
 export default ZIndexBook;

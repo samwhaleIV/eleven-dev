@@ -294,8 +294,13 @@ const updateTileBasedLayers = world => {
         dispatchRenderer.addRender(world.lightingLayer.render);
     }
 
-    dispatchRenderer.addFinalize(world.highSpriteLayer.update);
-    dispatchRenderer.addFinalize(world.highSpriteLayer.render);
+    const highSpriteZIndex = ZIndexBook.highSpriteLayer
+    dispatchRenderer.addFinalize(
+        world.highSpriteLayer.update,highSpriteZIndex
+    );
+    dispatchRenderer.addFinalize(
+        world.highSpriteLayer.render,highSpriteZIndex
+    );
 
 };
 
