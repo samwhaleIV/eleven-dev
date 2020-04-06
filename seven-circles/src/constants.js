@@ -3,6 +3,7 @@ const Constants = Object.freeze({
     PlayerSpeed: 2.5,
     NPCSpeed: 3,
     DefaultCameraScale: 7,
+    TriggerTiles: 15,
     PlayerSprite: "player",
     GameStartScript: "HelloWorld",
     GamePreloadScript: "Preload",

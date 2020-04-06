@@ -20,6 +20,8 @@ const INTERACTION_LAYER = 4;
 const LIGHTING_LAYER = 5;
 const FADER_DURATION = 5000;
 
+const TRIGGER_TILES = Constants.TriggerTiles;
+
 const TILESET_NAME = "world-tileset";
 const TILESET_FILE_TYPE = ".png";
 const MAPS_NAME = "maps";
@@ -27,6 +29,13 @@ const MAPS_FILE_TYPE = ".json";
 
 const PLAYER_SPRITE = Constants.PlayerSprite;
 const PLAYER_SPRITE_FILE_TYPE = ".png";
+
+const FOR_SCRIPT_PARSE_ONLY = () => {
+    throw Error("This method is only for use during the initial script sequencing!");
+};
+const VALIDATE_PARSE_ONLY_METHOD = world => {
+    if(world.pendingScriptData === null) FOR_SCRIPT_PARSE_ONLY(); 
+};
 
 const {
     CanvasManager,
@@ -54,6 +63,19 @@ function InstallPlayer(world,sprite) {
     const playerController = new PlayerController(
         sprite,collisionLayer,tileCollision
     );
+    playerController.triggerHandler = sprite => {
+        const {script} = world; if(!script) return;
+        const {trigger,noTrigger} = script;
+        if(!trigger && !noTrigger) return;
+
+        const result = interactionLayer.collides(sprite);
+
+        if(!result || result.value > TRIGGER_TILES) {
+            if(noTrigger) noTrigger();
+        } else {
+            if(trigger) trigger(result.value);
+        }
+    };
 
     const input = playerController.getInputHandler({
         [InputCodes.Down]: "down", [InputCodes.Right]: "right",
@@ -66,8 +88,9 @@ function InstallPlayer(world,sprite) {
         if(sprite.impulse) sprite.impulse(worldImpulse.source);
     };
     worldImpulse.tileHandler = tile => {
-        if(!world.script || !world.script.interaction) return;
-        world.script.interaction(tile);
+        if(tile <= TRIGGER_TILES) return;
+        if(!world.script || !world.script.interact) return;
+        world.script.interact(tile);
     };
 
     world.spriteFollower.target = sprite;
@@ -203,6 +226,7 @@ function World(callback) {
     this.collisionLayer = null;
     this.spriteLayer = null;
     this.highSpriteLayer = null;
+    this.pendingScriptData = null;
 
     this.playerController = null; this.player = null;
     this.keyDown = null; this.keyUp = null;
@@ -375,9 +399,19 @@ World.prototype.runScript = async function(script,...parameters) {
 
     //This is so the script lifetime can figure out what script called the lifetime request
     this.script = script;
+    if(typeof script === "function") {
 
-    if(typeof script === "function") script = new script(this,...parameters);
-    this.script = script;
+        this.pendingScriptData = new Object();
+        script = new script(this,...parameters);
+
+        this.script = script;
+
+        if(this.pendingScriptData !== null) {
+            Object.assign(this.script,this.pendingScriptData);
+            this.pendingScriptData = null;
+        }
+    }
+
     if(script.load) await script.load();
 
     if(processPauseSequencing) {
@@ -554,6 +588,35 @@ World.prototype.fadeFromBlack = async function(duration) {
 World.prototype.fadeFromWhite = async function(duration) {
     return this.fadeFrom(Faders.White,duration);
 }
+World.prototype.setTriggerHandlers = function(triggerSet) {
+    VALIDATE_PARSE_ONLY_METHOD(this);
+
+    const worldTriggerSet = new Object();
+
+    triggerSet.forEach(([ID,handler,fireOnce=false])=>{
+        worldTriggerSet[ID] = {fireOnce,handler,fired:false};
+    });
+
+    let activeTrigger = null;
+
+    const sendTrigger = ID => {
+        const triggerData = worldTriggerSet[ID];
+        if(triggerData.fireOnce && triggerData.fired) return;
+        triggerData.handler(!triggerData.fired);
+        triggerData.fired = true;
+    };
+
+    const trigger = ID => {
+        if(activeTrigger === null || activeTrigger !== ID) {
+            sendTrigger(ID); activeTrigger = ID;
+        }
+    };
+    const noTrigger = () => {
+        activeTrigger = null;
+    };
+
+    Object.assign(this.pendingScriptData,{trigger,noTrigger});
+};
 
 InstallSpatialSound(World.prototype);
 

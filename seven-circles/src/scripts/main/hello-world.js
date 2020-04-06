@@ -48,8 +48,13 @@ function HelloWorld(world,data) {
         const fader = world.whiteFader();
         await fader.fadeOut(1000);
         await fader.reverse();
-        console.log("Done!");
+        console.log("Done!"); world.removeFader(fader);
     })();
+
+    world.setTriggerHandlers([
+        [2,firstTime=>console.log("2 triggered",firstTime)],
+        [5,firstTime=>console.log("5 triggered",firstTime)],
+    ]);
 
     //world.fadeToWhite(1000).then(world.popFader);
 }
