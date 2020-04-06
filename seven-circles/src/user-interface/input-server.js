@@ -1,7 +1,8 @@
 import StorageHelper from "../storage/storage-helper.js";
 import InputCodes from "./input-codes.js";
+import Constants from "../constants.js";
 
-const LOCAL_STORAGE_ADDRESS = "ELEVEN_SVCC_KEY_BINDS";
+const LOCAL_STORAGE_ADDRESS = Constants.KeyBindAddress;
 const {KeyBind, ManagedGamepad} = Eleven;
 const {Up, Down, Left, Right, Click, Exit} = InputCodes;
 

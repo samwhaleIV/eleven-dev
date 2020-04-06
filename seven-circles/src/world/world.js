@@ -160,23 +160,9 @@ function World(callback) {
 
     this.load = async () => {
 
-        const loadMaps = maps === null;
-        const loadTileset = tileset === null;
-
-        const loadPlayer = playerImage === null;
-
-        if(loadMaps || loadTileset || loadPlayer) {
-
-            if(loadTileset) ResourceManager.queueImage(TILESET_NAME + TILESET_FILE_TYPE);
-            if(loadMaps) ResourceManager.queueJSON(MAPS_NAME + MAPS_FILE_TYPE);
-            if(loadPlayer) ResourceManager.queueImage(PLAYER_SPRITE + PLAYER_SPRITE_FILE_TYPE);
-
-            await ResourceManager.load();
-
-            if(loadTileset) tileset = ResourceManager.getImage(TILESET_NAME);
-            if(loadMaps) maps = ResourceManager.getJSON(MAPS_NAME);
-            if(loadPlayer) playerImage = ResourceManager.getImage(PLAYER_SPRITE);
-        }
+        tileset = ResourceManager.getImage(TILESET_NAME);
+        maps = ResourceManager.getJSON(MAPS_NAME);
+        playerImage = ResourceManager.getImage(PLAYER_SPRITE);
 
         if(callback) await callback(this);
     }
@@ -524,6 +510,10 @@ World.prototype.setLightingTile = function(x,y,value) {
     this.setTile(x,y,value,LIGHTING_LAYER);
 }
 World.prototype.addTextSprite = function(data) {
+    if(data.center) {
+        if(!isNaN(data.x)) data.x += 0.5;
+        if(!isNaN(data.y)) data.y += 0.5;
+    }
     const textSprite = new TextSprite(data);
     this.highSpriteLayer.add(textSprite,ZIndexBook.TextSprite);
     return textSprite;

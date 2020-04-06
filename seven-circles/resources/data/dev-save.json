@@ -1,8 +1,16 @@
 {
-    "_UseDevSave": false,
-    "PlayerPosition": {
-        "_deserialize": true,
-        "x": 0, "y": 0, "scriptID": "HelloWorld",
-        "direction": 0
+    "CleanSlate": true,
+    "Container": "SerializeTest",
+    "Containers": {
+        "SerializeTest": {
+            "PlayerPosition": {
+                "_deserialize": true,
+                "x": 0, "y": 0, "scriptID": "HelloWorld",
+                "serializeData": {
+                    "DevData": "l33t haxors"
+                },
+                "direction": 0
+            }
+        }
     }
 }

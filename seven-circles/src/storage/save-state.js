@@ -2,8 +2,9 @@ import StorageHelper from "./storage-helper.js";
 import DefaultSaveState from "./default-save-state.js";
 import Container from "./container.js";
 import SerializeHelper from "./serialize-helper.js";
+import Constants from "../constants.js";
 
-const LOCAL_STORAGE_ADDRESS = "SVCC_SAVE_STATE_DATA";
+const LOCAL_STORAGE_ADDRESS = Constants.SaveStateAddress;
 
 const DANGER_DANGER_HIGH_VOLTAGE = () => {
     console.warn("Notice: Hard resets are not intended to be performed programmatically!");
@@ -16,8 +17,6 @@ const NOT_CONTAINER_TYPE = key => {
 function SaveState() {
 
     const state = new Object();
-
-    this.address = LOCAL_STORAGE_ADDRESS;
 
     const {save,load} = StorageHelper.GetSet(
         LOCAL_STORAGE_ADDRESS,state,DefaultSaveState

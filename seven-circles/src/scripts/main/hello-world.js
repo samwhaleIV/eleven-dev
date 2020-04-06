@@ -4,7 +4,15 @@ const BACKGROUND_COLOR = `rgb(20,0,0)`;
 
 const START_POSITION = {x:7,y:24.5,direction:0};
 
-function HelloWorld(world,data) {
+function HelloWorld(world,oldData) {
+
+    if(oldData) {
+        console.log("Serialization data:",oldData);
+    }
+
+    this.serialize = () => {
+        return {NothingToSeeHere:"Move along"};
+    };
 
     const {
         resumePosition
@@ -19,7 +27,8 @@ function HelloWorld(world,data) {
         world: world,
         text: "They can go anywhere!\n(And support multiple lines)",
         color: "white",
-        x: player.x + 0.5, y: player.y + 0.5,
+        center: true,
+        x: player.x, y: player.y
     });
     
     world.addTextSprite({
@@ -55,6 +64,10 @@ function HelloWorld(world,data) {
         [2,firstTime=>console.log("2 triggered",firstTime)],
         [5,firstTime=>console.log("5 triggered",firstTime)],
     ]);
+
+    this.load = () => {
+        Lifetime.hardSerialize(player);
+    };
 
     //world.fadeToWhite(1000).then(world.popFader);
 }

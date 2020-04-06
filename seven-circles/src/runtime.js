@@ -5,12 +5,16 @@ import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
+const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
+const GLOBAL_PRELOAD = Constants.GlobalResourceFile;
 
-const USE_DEV_SAVE_KEY = "_UseDevSave";
+const CLEAN_SLATE = "CleanSlate";
+const CONTAINERS = "Containers";
+const CONTAINER = "Container";
 
 const {CanvasManager, ResourceManager} = Eleven;
 
-const DEV_SAVE = "dev-save";
+const DEV_SAVE = Constants.DevSaveFile;
 
 function Runtime() {
 
@@ -51,18 +55,35 @@ function Runtime() {
 
     console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
 
-    this.Start = () => {
+    const globalPreload = async () => {
+        await ResourceManager.queueText(GLOBAL_PRELOAD + ".json").load();
+        const manifest = ResourceManager.getText(GLOBAL_PRELOAD);
+        await ResourceManager.queueManifest(manifest).load();
+    };
+
+    this.Start = async () => {
+        await globalPreload();
         console.log("Use 'index-dev.html', there is not a release candidate yet!");
         window.location.href += "index-dev.html"; return;
     };
     this.DevStart = async () => {
-        localStorage.clear();
+        await globalPreload();
+
         await ResourceManager.queueJSON(DEV_SAVE).load();
 
         const devSave = ResourceManager.getJSON(DEV_SAVE);
 
-        if(devSave && devSave[USE_DEV_SAVE_KEY]) {
-            localStorage.setItem(SaveState.address,JSON.stringify(devSave));
+        if(devSave) {
+
+            if(devSave[CLEAN_SLATE]) localStorage.clear();
+
+            const container = devSave[CONTAINER];
+            const containers = devSave[CONTAINERS];
+            if(container && containers) {
+                localStorage.setItem(SAVE_STATE_ADDRESS,JSON.stringify(
+                    containers[container]
+                ));
+            }
         }
 
         SaveState.load();

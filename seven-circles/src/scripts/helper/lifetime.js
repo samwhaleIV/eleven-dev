@@ -1,8 +1,10 @@
 import SaveState from "../../storage/save-state.js";
+import Scripts from "../manifest.js";
+import Constants from "../../constants.js";
 
 const POSITION_CONTAINER = "PlayerPosition";
-
 const NO_SCRIPT_HANDLE = "_none";
+const GAME_START_SCRIPT = Constants.GameStartScript;
 
 const POSITION_DEFAULTS = Object.freeze({
     x: 0, y: 0, direction: 0, scriptID: NO_SCRIPT_HANDLE
@@ -13,21 +15,46 @@ const getPositionContainer = () => {
     return container.data;
 };
 
-const getWorldScript = player => {
+const trySerialize = (script,container) => {
+    if(!container || !script.serialize) return;
+    container.serializeData = script.serialize();
+};
+
+const getWorldScript = (player,serializeContainer) => {
     const {world} = player; if(!world) return NO_SCRIPT_HANDLE;
     const {script} = world; if(!script) return NO_SCRIPT_HANDLE;
     switch(typeof script) {
-        case "object": return script.constructor.name;
+        case "object":
+            trySerialize(script,serializeContainer);
+            return script.constructor.name;
         case "function": return script.name;
         default: return NO_SCRIPT_HANDLE;
     }
 };
 
-const storePosition = (player,scriptID) => {
+const getStartScript = () => {
+    let script = GAME_START_SCRIPT;
+    let parameters = [];
+
+    const {scriptID,serializeData} = getPositionContainer();
+    if(scriptID in Scripts) {
+        script = scriptID;
+        if(serializeData) parameters.push(serializeData);
+    }
+
+    return {script:Scripts[script],parameters};
+};
+
+const serialize = (player,scriptID) => {
     const container = getPositionContainer();
-    container.x = player.x; container.y = player.y;
-    container.direction = player.direction;
-    container.scriptID = scriptID || getWorldScript(player);
+
+    const {x,y,direction} = player;
+
+    container.x = x; container.y = y;
+    container.direction = direction;
+
+    if(!scriptID) scriptID = getWorldScript(player,container);
+    container.scriptID = scriptID;
 };
 const assignContainer = (container,player) => {
     player.x = container.x; player.y = container.y;
@@ -69,10 +96,18 @@ const setPosition = (player,values) => {
     assignContainer(values,player);
 };
 
+const save = () => SaveState.save();
+const load = () => SaveState.load();
+const getContainer = () => SaveState.getContainer();
+
+const hardSerialize = (player,scriptID) => {
+    serialize(player,scriptID); save();
+};
+
 const Lifetime = Object.freeze({
-    storePosition,loadPosition,hasPosition,setPosition,
-    clearPosition,resetPosition,resumePosition,
-    save: SaveState.save, load: SaveState.load
+    serialize,loadPosition,hasPosition,setPosition,
+    clearPosition,resetPosition,resumePosition,getStartScript,
+    getContainer,save,load,hardSerialize
 });
 
 export default Lifetime;

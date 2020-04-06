@@ -9,7 +9,7 @@
     <script src="../eleven/engine/eleven.js" type="module"></script>
 </head>
 <body>
-    <script>globalThis.DEV = true;</script>
+    <script>Object.defineProperty(globalThis,"DEV",{value:true,enumerable:true});</script>
     <script src="script.js" type="module"></script>
 </body>
 </html>

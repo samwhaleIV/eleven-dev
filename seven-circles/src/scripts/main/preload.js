@@ -1,34 +1,22 @@
-import Scripts from "../manifest.js";
+import Lifetime from "../helper/lifetime.js";
 import Constants from "../../constants.js";
 
-const GAME_START_SCRIPT = Constants.GameStartScript;
+const PRELOAD_FILES = Constants.WorldPreloadFile;
 
 const {ResourceManager} = Eleven;
 
-const PRELOAD_RESOURCES = `{
-    "Image": [
-        "player-gun.png",
-        "enemy-gun.png",
-        "other.png"
-    ]
-}`;
-
-const GetStartScript = parameters => {
-    //TODO: Use lifetime logic. Delete parameters if invalid for script
-    let parametersValid = true;
-    if(!parametersValid) parameters.splice(0);
-    return Scripts[GAME_START_SCRIPT];
-};
-
-function Preload(world,...parameters) {
+function Preload(world) {
     this.load = async () => {
-        ResourceManager.queueManifest(PRELOAD_RESOURCES);
-        ResourceManager.load();
-    
-        const startScript = GetStartScript(parameters);
+        ResourceManager.queueText(PRELOAD_FILES + ".json");
+        await ResourceManager.load();
 
-        //Pass the parameters through...
-        await world.runScript(startScript,...parameters);
+        ResourceManager.queueManifest(
+            ResourceManager.getText(PRELOAD_FILES)
+        );
+        await ResourceManager.load();
+    
+        const {script,parameters} = Lifetime.getStartScript();
+        await world.runScript(script,...parameters);
     };
 }
 export default Preload;
