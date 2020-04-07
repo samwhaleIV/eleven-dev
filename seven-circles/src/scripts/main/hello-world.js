@@ -69,6 +69,11 @@ function HelloWorld(world,oldData) {
         Lifetime.hardSerialize(player);
     };
 
+    this.useItem = ID => {
+        console.log("Used item",ID);
+        return true;
+    };
+
     //world.fadeToWhite(1000).then(world.popFader);
 }
 export default HelloWorld;

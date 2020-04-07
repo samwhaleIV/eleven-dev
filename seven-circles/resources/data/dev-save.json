@@ -1,6 +1,6 @@
 {
     "CleanSlate": true,
-    "Container": "SerializeTest",
+    "Container": null,
     "Containers": {
         "SerializeTest": {
             "PlayerPosition": {

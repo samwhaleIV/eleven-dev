@@ -3,6 +3,7 @@ import InputServer from "./user-interface/input-server.js";
 import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
+import Inventory from "./user-interface/inventory.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
@@ -18,16 +19,23 @@ const DEV_SAVE = Constants.DevSaveFile;
 
 function Runtime() {
 
+    const inputServer = new InputServer();
+
     const scriptCount = Object.keys(Scripts).length;
     console.log(`%cLoaded ${scriptCount} script${scriptCount!==1?"s":""} from './scripts/manifest.js'`,"background: white; color: black",Scripts);
 
+    const setFrame = async (frame,parameters) => {
+        inputServer.managedGamepad.reset();
+        await CanvasManager.setFrame(frame,parameters);
+    };
+    
     this.LoadWorld = async (script,...parameters) => {
         if(!CanvasManager.paused) {
             CanvasManager.paused = true;
             CanvasManager.markLoading();
         }
 
-        await Eleven.CanvasManager.setFrame(World,[async world=>{
+        await setFrame(World,[async world=>{
             if(script) await world.runScript(script,...parameters);
         }]);
 
@@ -43,7 +51,6 @@ function Runtime() {
         await Eleven.CanvasManager.frame.runScript(script,...parameters);
     };
 
-    const inputServer = new InputServer();
     this.InputServer = inputServer;
     const inputWatchID = inputServer.addChangeListener(()=>{
         const {frame} = CanvasManager;
@@ -66,6 +73,14 @@ function Runtime() {
         console.log("Use 'index-dev.html', there is not a release candidate yet!");
         window.location.href += "index-dev.html"; return;
     };
+
+    let inventory = null;
+
+    Object.defineProperty(this,"Inventory",{
+        get: () => inventory,
+        enumerable: true
+    });
+
     this.DevStart = async () => {
         await globalPreload();
 
@@ -87,6 +102,9 @@ function Runtime() {
         }
 
         SaveState.load();
+
+        inventory = new Inventory();
+
         this.LoadWorld(PRELOAD_SCRIPT);
     };
 

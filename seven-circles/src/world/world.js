@@ -23,12 +23,8 @@ const FADER_DURATION = 5000;
 const TRIGGER_TILES = Constants.TriggerTiles;
 
 const TILESET_NAME = "world-tileset";
-const TILESET_FILE_TYPE = ".png";
 const MAPS_NAME = "maps";
-const MAPS_FILE_TYPE = ".json";
-
 const PLAYER_SPRITE = Constants.PlayerSprite;
-const PLAYER_SPRITE_FILE_TYPE = ".png";
 
 const FOR_SCRIPT_PARSE_ONLY = () => {
     throw Error("This method is only for use during the initial script sequencing!");
@@ -96,8 +92,14 @@ function InstallPlayer(world,sprite) {
     world.spriteFollower.target = sprite;
     world.spriteFollower.enabled = true;
 
+    const keyUp = input.keyUp;
     const keyDown = event => {
-        if(event.impulse === InputCodes.Click) {
+        if(event.impulse === InputCodes.Inventory) {
+            if(event.repeat) return;
+            if(!playerController.locked) {
+                SVCC.Runtime.Inventory.show();
+            }
+        } else if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
             if(world.canAdvanceMessage()) {
                 world.advanceMessage(); return;
@@ -113,8 +115,7 @@ function InstallPlayer(world,sprite) {
         }
     };
 
-    const keyUp = input.keyUp;
-
+    world.inputGamepad = world.managedGamepad.poll;
     world.managedGamepad.keyDown = keyDown;
     world.managedGamepad.keyUp = keyUp;
 
@@ -179,7 +180,7 @@ function World(callback) {
     });
 
     const {InputServer} = SVCC.Runtime;
-    const managedGamepad = InputServer.getManagedGamepad();
+    const managedGamepad = InputServer.managedGamepad;
     const {keyBind} = InputServer;
 
     this.inputGamepad = managedGamepad.poll;

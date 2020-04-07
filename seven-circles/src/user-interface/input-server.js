@@ -4,7 +4,7 @@ import Constants from "../constants.js";
 
 const LOCAL_STORAGE_ADDRESS = Constants.KeyBindAddress;
 const {KeyBind, ManagedGamepad} = Eleven;
-const {Up, Down, Left, Right, Click, Exit} = InputCodes;
+const {Up, Down, Left, Right, Click, Exit, Inventory} = InputCodes;
 
 const DEFAULT_BINDS = {
     "KeyW": Up,
@@ -12,7 +12,8 @@ const DEFAULT_BINDS = {
     "KeyA": Left,
     "KeyD": Right,
     "Enter": Click,
-    "Escape": Exit
+    "Escape": Exit,
+    "KeyE": Inventory
 };
 
 function GetManagedGamepad() {
@@ -23,7 +24,8 @@ function GetManagedGamepad() {
             Left: Left,
             Right: Right,
             ButtonA: Click,
-            ButtonB: Exit
+            ButtonB: Exit,
+            ButtonX: Inventory
         },
         whitelist: true,
         triggerThreshold: 0.1,
@@ -125,7 +127,8 @@ function InputServer() {
     this.codes = InputCodes;
     this.keyBind = keyBind;
 
-    this.getManagedGamepad = GetManagedGamepad;
+    const managedGamepad = GetManagedGamepad();
+    this.managedGamepad = managedGamepad;
 
     const getShallowCopy = () => {
         return Object.assign(new Object(),keyBindSource);

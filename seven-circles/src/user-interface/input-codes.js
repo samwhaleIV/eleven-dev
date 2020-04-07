@@ -4,6 +4,7 @@ const MOVE_RIGHT = "MoveRight";
 const MOVE_DOWN = "MoveDown";
 const CLICK = "Enter";
 const EXIT = "Escape";
+const INVENTORY = "Inventory";
 
 const InputCodes = Object.freeze({
     Up: MOVE_UP,
@@ -11,7 +12,8 @@ const InputCodes = Object.freeze({
     Left: MOVE_LEFT,
     Right: MOVE_RIGHT,
     Click: CLICK,
-    Exit: EXIT
+    Exit: EXIT,
+    Inventory: INVENTORY
 });
 
 export default InputCodes;

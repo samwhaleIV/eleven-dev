@@ -1,4 +1,4 @@
-import InputCodes from "./user-interface/input-codes.js";
+import InputCodes from "./input-codes.js";
 
 /*
   Don't judge me, it's code for devs!
@@ -20,11 +20,6 @@ import InputCodes from "./user-interface/input-codes.js";
 const MENU_CLASS = "dev-key-binds";
 const EDITING_CLASS = "editing";
 
-const {CanvasManager} = Eleven;
-
-let menuShown = false;
-let frameTargetOverride = null;
-
 const IS_FORBIDDEN_KEY = keyEvent => { //Short answer: No
   /*
     Did you come here to find the sacred VOID statement? There aren't many of these 'round these parts..
@@ -41,23 +36,6 @@ const KEY_CODE_FORMAT = code => {
     return formattedCode;
 };
 
-function TryAssistFrameInThisWeirdTransition() {
-    const {frame} = CanvasManager;
-    if(frame) {
-        const target = frame.getDeepest();
-        frameTargetOverride = target;
-        target.child = {render:()=>{}};
-        if(frame.refreshInput) frame.refreshInput();
-    }
-}
-function ResumeFrame() {
-    if(frameTargetOverride) {
-        frameTargetOverride.child = null;
-        frameTargetOverride = null;
-        const {frame} = CanvasManager;
-        if(frame.refreshInput) frame.refreshInput();
-    }
-}
 
 function GetExitButton(callback) {
     const button = document.createElement("div");

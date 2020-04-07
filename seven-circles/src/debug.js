@@ -1,4 +1,4 @@
-import DevKeyBindMenu from "./dev-keybinds.js";
+import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
 import Constants from "./constants.js";
 import ImageGen from "./image-gen.js";
 
