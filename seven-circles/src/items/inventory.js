@@ -3,7 +3,7 @@ import SaveState from "../storage/save-state.js";
 import InventoryMenu from "../user-interface/inventory-menu.js";
 
 const {DOMInterface,ResourceManager} = Eleven;
-const CONTAINER_KEY = "INVENTORY";
+const CONTAINER_KEY = "Inventory";
 const ITEM_FILE = "items";
 const ITEM_TEXTURE_SIZE = 16;
 

@@ -1,7 +1,16 @@
 {
     "CleanSlate": true,
-    "Container": null,
+    "Container": "PillTest",
+
     "Containers": {
+
+        "PillTest": {
+            "Inventory": {
+                "big-pill": 20,
+                "small-pill": 20
+            }
+        },
+
         "SerializeTest": {
             "PlayerPosition": {
                 "_deserialize": true,
@@ -12,5 +21,6 @@
                 "direction": 0
             }
         }
+
     }
 }
