@@ -55,8 +55,11 @@ function Inventory() {
         const itemContainer = getItemContainer();
         const items = new Array();
         Object.entries(itemContainer).forEach(([itemType,count])=>{
+            if(!count) return;
             const item = ItemLookup[itemType];
-            for(let i = 0;i<count;i++) items.push(item);
+            const cloneItem = Object.assign(new Object(),item);
+            if(count >= 2) cloneItem.name += ` - ${count}`;
+            items.push(cloneItem);
         });
         return items;
     };
