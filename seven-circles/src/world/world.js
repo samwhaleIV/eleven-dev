@@ -8,7 +8,7 @@ import InstallSpatialSound from "./spatial-sound.js";
 import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import ParticleSprite from "./particle-sprite.js";
-import SummonTable from "./summon-table.js";
+import ItemUseTable from "../items/item-use-table.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -85,11 +85,18 @@ function InstallPlayer(world,sprite) {
     });
     world.refreshInput = input.refresh;
 
+    const {Inventory} = SVCC.Runtime;
+
     const playerImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
     playerImpulse.layerHandler = sprite => {
-        if(sprite.impulse) sprite.impulse({
-            source: playerImpulse.source,world,script: world.script,self: sprite
-        });
+        if(sprite.impulse) {
+            const impulseData = {
+                source: playerImpulse.source,
+                world,script: world.script,
+                self: sprite, inventory: Inventory
+            };
+            sprite.impulse(impulseData);
+        }
     };
     playerImpulse.tileHandler = tile => {
         if(tile <= TRIGGER_TILES) return;
@@ -104,15 +111,18 @@ function InstallPlayer(world,sprite) {
     const keyUp = input.keyUp;
     const keyDown = event => {
         if(event.impulse === InputCodes.Inventory) {
-            if(!event.repeat && !playerController.locked) {
-                SVCC.Runtime.Inventory.show();
+            if(event.repeat) return;
+            if(playerController.locked) {
+                if(!world.canAdvanceMessage()) return;
+                world.advanceMessage();
+            } else {
+                Inventory.show();
             }
         } else if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
             if(world.canAdvanceMessage()) {
-                world.advanceMessage(); return;
-            }
-            if(!playerController.locked) {
+                world.advanceMessage();
+            } else if(!playerController.locked) {
                 if(sprite.hasWeapon()) {
                     sprite.attack(); return;
                 }
@@ -348,7 +358,7 @@ World.prototype.summonSprite = function(sprite) {
     sprite.x = safeSummonPosition(x);
     sprite.y = safeSummonPosition(y);
 
-    const collides = this.collisionLayer.collides(sprite);
+    const collides = this.collisionLayer.collides(sprite) || this.tileCollision.collides(sprite);
     if(collides) this.spriteLayer.remove(sprite.ID);
 
     return !collides;
@@ -692,21 +702,25 @@ World.prototype.useItem = function(safeID,removeItem,message) {
 
     return true;
 }
-World.prototype.genericItemHandler = function(safeID) {
-    const summonData = SummonTable[safeID];
+World.prototype.sendPlayerBasedAction = function(target) {
+    return target({script:this.script,world:this,player:this.player});
+}
+World.prototype.itemHandler = function(safeID) {
+    const summonData = ItemUseTable[safeID];
     if(summonData === undefined) return false;
 
-    const {tileID, action, spriteData, shouldRetain, verifyPlacement} = summonData;
+    const {
+        tileID, action, spriteData, retain, verifyPlacement
+    } = summonData;
 
     let canPlace = true;
     if(verifyPlacement) canPlace = verifyPlacement(this.script,this);
 
     if((isNaN(tileID) || !canPlace) && action) {
         if(action) {
-            const callback = action(this.script,this);
-            if(callback) {
-                callback();
-                return this.useItem(safeID,!Boolean(shouldRetain));
+            const wasAbleToUse = this.sendPlayerBasedAction(action);
+            if(wasAbleToUse) {
+                return this.useItem(safeID,!Boolean(retain));
             } else {
                 return this.useItem(safeID,false,DID_NOTHING);
             }
@@ -724,17 +738,11 @@ World.prototype.genericItemHandler = function(safeID) {
             if(typeof spriteData === "function") newData = spriteData();
             Object.assign(sprite,newData);
         }
-        if(action) {
-            const callback = action(this.script,this);
-            if(callback) callback(sprite);
-        }
-        return this.useItem(safeID,!Boolean(shouldRetain));
+        if(action) this.sendPlayerBasedAction(action);
+        return this.useItem(safeID,!Boolean(retain));
     } else {
         return this.useItem(safeID,false,BAD_ITEM_PLACMEMENT);
     }
-}
-World.prototype.getGenericItemHandler = function() {
-    return World.prototype.genericItemHandler.bind(this);
 }
 InstallSpatialSound(World.prototype);
 
