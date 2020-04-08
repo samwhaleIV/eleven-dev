@@ -3,6 +3,8 @@ div.dev-key-binds {
     overflow-y: auto;
     padding-bottom: 0;
     max-height: 700px;
+    color: black;
+    background-color: #f4f4f4;
 }
 div.dev-key-binds div {
     height: 64px;
@@ -89,13 +91,12 @@ div.inventory {
     content: "X";
 }
 .inventory .item {
-    background-color: #fff;
+    background-color: #1c1c1c;
     width: 128px;
     height: 154px;
     margin: 0px 4px;
     margin-bottom: 8px;
-    outline: 1px solid hsla(0, 0%, 92%, 1);
-    color: black;
+    color: #fff;
     animation-duration: 2s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;

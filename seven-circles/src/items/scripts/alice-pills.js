@@ -19,6 +19,8 @@ const scale = (player,scale) => {
         hitBox.width = scale; hitBox.height = scale;
     }
 
+    if(player.width === 2) hitBox.width = 1.25;
+
     const widthDifference = startWidth - player.width;
     const heightDifference = startHeight - player.height;
 
