@@ -599,7 +599,9 @@ World.prototype.addTextSprite = function(data) {
     return textSprite;
 }
 function addParticles(x,y,emitter,target,size) {
-    const particleSprite = new ParticleSprite(x,y,emitter,target,size);
+    const particleSprite = new ParticleSprite(
+        x,y,emitter,target,this,size
+    );
     const ID = this.highSpriteLayer.add(
         particleSprite,ZIndexBook.ParticleSprite
     );

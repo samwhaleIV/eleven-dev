@@ -1,6 +1,7 @@
 const RENDER_BOX_SIZE = 2;
+const EMITTER_BASE_SCALE = 7;
 
-function ParticleSprite(x,y,emitter,target,size) {
+function ParticleSprite(x,y,emitter,target,world,size) {
     if(isNaN(size)) size = RENDER_BOX_SIZE;
 
     const halfSize = size / 2;
@@ -9,8 +10,12 @@ function ParticleSprite(x,y,emitter,target,size) {
 
     this.xOffset = 0; this.yOffset = 0;
 
+    const updateEmitterScale = () => {
+        emitter.scale = world.camera.scale / EMITTER_BASE_SCALE;
+    };
+
     if(target) {
-        this.update = () => {
+        const updatePosition = () => {
             let {x,y,xOffset,yOffset} = target;
 
             if(xOffset) x += xOffset; if(yOffset) y += yOffset;
@@ -19,9 +24,14 @@ function ParticleSprite(x,y,emitter,target,size) {
 
             this.x = x - halfSize, this.y = y - halfSize;
         };
-        this.update();
+        updatePosition();
+        this.update = () => {
+            updatePosition();
+            updateEmitterScale();
+        };
     } else {
         this.x = x - halfSize, this.y = y - halfSize;
+        this.update = updateEmitterScale;
     }
 
     this.render = (context,x,y,width,height,time) => {
