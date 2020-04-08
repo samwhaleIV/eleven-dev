@@ -40,7 +40,9 @@ const KEY_CODE_FORMAT = code => {
 function GetExitButton(callback) {
     const button = document.createElement("div");
     button.className = "button";
-    button.onclick = callback;
+    button.onclick = event => {
+        if(event.button === 0) callback();
+    };
     const text = document.createElement("p");
     text.appendChild(document.createTextNode("Close Menu"));
     button.appendChild(text);
@@ -69,7 +71,8 @@ function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
 
     entry.appendChild(value);
 
-    entry.onclick = () => {
+    entry.onclick = event => {
+        if(event.button !== 0) return;
         //Ignore this, this block of code is just an occupational hazard passing through
         if(!editingFilter()) return;
         data.editing = true;

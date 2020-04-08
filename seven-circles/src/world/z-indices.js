@@ -2,6 +2,7 @@ const ZIndexBook = Object.freeze({
     /* Sprite layer */
     Player: 10,
     NPC: 5,
+    TileSprite: 3,
 
     /* High sprite layer */
     TextSprite: 10,

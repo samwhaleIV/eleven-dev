@@ -1,20 +1,30 @@
-import Items from "./items.js";
+import {Items, ItemLookup} from "./items.js";
 import InputCodes from "./input-codes.js";
+import SaveState from "../storage/save-state.js";
 
 const {DOMInterface,ResourceManager} = Eleven;
-
+const CONTAINER_KEY = "INVENTORY";
 const ITEM_FILE = "items";
 const ITEM_TEXTURE_SIZE = 16;
+
 const DOM_MAX_COLUMNS = 5;
+const SELECTED_CLASS = "selected";
+const MENU_CLASS = "inventory center";
+const CLOSE_BUTTON_CLASS = "close-button";
+const ITEM_CLASS = "item";
 
-function getItems(imageList) {
-    const items = Items.map(({name,ID,action})=>{
-        return [name,imageList[ID],action];
-    });
+const TITLE_CLASS = "title";
+const TITLE = "Items";
+const NO_ITEMS_TEXT = "You don't have any items.";
+const NO_ITEMS_CLASS = "no-items";
 
-    items.forEach(item=>items.push(item));
-    return items;
-}
+const AUTO_SCROLL_SETTINGS = {
+    behavior: "smooth", block: "center", inline: "center"
+};
+
+const ITEM_DOES_NOT_EXIST = safeID => {
+    throw Error(`Invalid item! Type '${safeID}' does not exist!`);
+};
 
 function getNamedDiv(name) {
     const div = document.createElement("div");
@@ -22,58 +32,60 @@ function getNamedDiv(name) {
     return div;
 }
 
-function InstallInventoryItems(uiExit,managedGamepad,imageList,proxyFrame,menu) {
-    const itemsList = getItems(imageList);
-    const hasItems = itemsList.length >= 1;
+function InstallInventoryItems(
+    uiExit,managedGamepad,proxyFrame,menu
+) {
+    let itemsList = this.getDisplayItems();
+    const itemCount = itemsList.length;
+    const columns = DOM_MAX_COLUMNS;
+
+    const rowCount = Math.ceil(itemCount / columns);
+    const lastRowLength = columns - (rowCount * columns - itemCount);
+    const lastRowStart = itemCount - lastRowLength;
 
     let selected, selectedID, itemAction;
-    let itemCount = 0;
 
     const clearHover = () => {
-        if(selected) selected.classList.remove("selected");
+        if(selected) {
+            selected.classList.remove(SELECTED_CLASS);
+        }
         selected = null, selectedID = null, itemAction = null;
     };
     clearHover();
 
-    const uiItems = new Array();
-
-    const setHover = ([uiItem,ID,action]) => {
+    const setHover = ([uiItem,ID,action],fromKey) => {
         clearHover();
         selected = uiItem, selectedID = ID;
         itemAction = action;
-        selected.classList.add("selected");
+        selected.classList.add(SELECTED_CLASS);
+        if(!fromKey) return;
+        selected.scrollIntoView(AUTO_SCROLL_SETTINGS);
     };
 
     const trySetSelection = difference => {
         if(selectedID === null) {
-            setHover(uiItems[0]);
+            setHover(itemsList[0],true);
             return false;
         }
         if(difference) {
             const index = selectedID + difference;
             if(index >= 0 && index < itemCount) {
-                setHover(uiItems[index]);
+                setHover(itemsList[index],true);
             }
         }
         return true;
     };
 
-    const maxColumns = DOM_MAX_COLUMNS;
-
     const horizontalMove = positive => {
         if(!trySetSelection()) return;
-
-        const rowCount = Math.ceil(itemCount / maxColumns);
-        const lastRowLength = maxColumns - (rowCount * maxColumns - itemCount);
-        const lastRowStart = itemCount - lastRowLength;
 
         let length, column;
         if(selectedID >= lastRowStart) {
             length = lastRowLength;
             column = selectedID - lastRowStart;
         } else {
-            length = maxColumns;
-            column = selectedID % maxColumns;
+            length = columns;
+            column = selectedID % columns;
         }
         if(positive) {
             if(column + 1 < length) {
@@ -86,81 +98,90 @@ function InstallInventoryItems(uiExit,managedGamepad,imageList,proxyFrame,menu) 
         }
     };
 
-    const uiLeft = () => horizontalMove(false);
-    const uiRight = () => horizontalMove(true);
+    const verticalMove = positive => {
+        if(!trySetSelection() || rowCount < 1) return;
 
-    const uiUp = () => {
-        if(!trySetSelection()) return;
+        const onLastRow = selectedID >= lastRowStart;
+        const halfDifference = (columns - lastRowLength) / 2;
 
-        const rowCount = Math.ceil(itemCount / maxColumns);
-        if(rowCount === 1) return;
-
-        const lastRowLength = maxColumns - (rowCount * maxColumns - itemCount);
-        const lastRowStart = itemCount - lastRowLength;
-
-        if(selectedID >= lastRowStart) {
-            const halfDifference = (maxColumns - lastRowLength) / 2;
-            trySetSelection(-maxColumns + Math.floor(halfDifference));
-        } else {
-            trySetSelection(-maxColumns);
-        }
-    };
-    const uiDown = () => {
-        if(!trySetSelection()) return;
-
-        const rowCount = Math.ceil(itemCount / maxColumns);
-        if(rowCount === 1) return;
-
-        const lastRowLength = maxColumns - (rowCount * maxColumns - itemCount);
-        const lastRowStart = itemCount - lastRowLength;
-
-
-        if(selectedID >= lastRowStart) {
-            return;
-        } else if(selectedID >= lastRowStart - maxColumns) {
-            const halfDifference = (maxColumns - lastRowLength) / 2;
-            const column = selectedID % 5;
-            if(halfDifference === 0.5 && column === 0) {
-                trySetSelection(maxColumns);
+        if(positive) {
+            if(onLastRow) {
                 return;
+            } else if(selectedID >= lastRowStart - columns) {
+                const column = selectedID % columns;
+                if(halfDifference === 0.5 && column === 0) {
+                    trySetSelection(columns);
+                    return;
+                }
+                if(column < halfDifference || column >= columns - halfDifference) return;
+    
+                const index = selectedID + columns - halfDifference;
+                trySetSelection(Math.floor(index-selectedID));
+            } else {
+                trySetSelection(columns);
             }
-            if(column < halfDifference || column >= maxColumns - halfDifference) return;
-
-            const index = selectedID + maxColumns - halfDifference;
-            trySetSelection(Math.floor(index-selectedID));
         } else {
-            trySetSelection(maxColumns);
+            if(onLastRow) {
+                trySetSelection(-columns + Math.floor(halfDifference));
+            } else {
+                trySetSelection(-columns);
+            }
         }
     };
+
+    const hasItemFilter = (target,...parameters) => {
+        return () => {
+            if(itemCount) target.apply(null,parameters);
+        };
+    };
+
+    const uiUp = hasItemFilter(verticalMove,false);
+    const uiDown = hasItemFilter(verticalMove,true);
+    const uiLeft = hasItemFilter(horizontalMove,false);
+    const uiRight = hasItemFilter(horizontalMove,true);
+
     const uiAccept = () => {
+        if(itemCount && !selected) {
+            trySetSelection(); return;
+        }
         if(!itemAction) return;
         if(itemAction()) uiExit();
     };
+    const actionTable = {
+        [InputCodes.Inventory]: uiExit,
+        [InputCodes.Exit]: uiExit,
+        [InputCodes.Up]: uiUp,
+        [InputCodes.Down]: uiDown,
+        [InputCodes.Left]: uiLeft,
+        [InputCodes.Right]: uiRight,
+        [InputCodes.Click]: uiAccept
+    };
     const keyDown = key => {
         if(key.repeat) return;
-        switch(key.impulse) {
-            case InputCodes.Inventory:
-            case InputCodes.Exit: uiExit(); return;
-        }
-        if(!hasItems) return;
-        switch(key.impulse) {
-            case InputCodes.Up: uiUp(); return;
-            case InputCodes.Down: uiDown(); return;
-            case InputCodes.Left: uiLeft(); return;
-            case InputCodes.Right: uiRight(); return;
-            case InputCodes.Click: uiAccept(); return;
-        }
+        const action = actionTable[key.impulse];
+        if(action) action();
     };
 
     proxyFrame.keyDown = SVCC.Runtime.InputServer.keyBind.impulse(keyDown);
     proxyFrame.inputGamepad = managedGamepad.poll;
     managedGamepad.keyDown = keyDown;
 
-    itemsList.forEach((item,index) => {
+    if(!itemCount) {
+        const noItems = document.createElement("p");
+        noItems.className = NO_ITEMS_CLASS;
+        noItems.appendChild(document.createTextNode(NO_ITEMS_TEXT));
+        menu.appendChild(noItems);
+        return;
+    }
+
+    const tryAccept = event => {
+        if(event.button === 0) uiAccept();
+    };
+
+    itemsList = itemsList.map((item,index)=>{
         const [name,imageData,action] = item;
 
-        itemCount++;
-        const uiItem = getNamedDiv("item");
+        const uiItem = getNamedDiv(ITEM_CLASS);
 
         const image = new Image();
         image.src = imageData;
@@ -171,21 +192,20 @@ function InstallInventoryItems(uiExit,managedGamepad,imageList,proxyFrame,menu) 
         uiItem.appendChild(label);
 
         const hoverData = [uiItem,index,action];
-        uiItems.push(hoverData);
 
-        uiItem.onpointerover = () => setHover(hoverData);
+        uiItem.onpointerover = setHover.bind(null,hoverData,false);
         uiItem.onpointerout = clearHover;
-        uiItem.onpointerdown = uiAccept;
+        uiItem.onclick = tryAccept;
 
         menu.appendChild(uiItem);
+
+        return hoverData;
     });
 
-    if(hasItems) trySetSelection();
+    if(itemCount >= 2) trySetSelection();
 }
 
-function InventoryMenu({terminate,proxyFrame},imageList) {
-
-    let itemTerminator = null;
+function InventoryMenu({terminate,proxyFrame}) {
 
     const {InputServer} = SVCC.Runtime;
     const managedGamepad = InputServer.managedGamepad;
@@ -195,14 +215,23 @@ function InventoryMenu({terminate,proxyFrame},imageList) {
         managedGamepad.restore(); terminate();
     };
     
-    const menu = getNamedDiv("inventory center");
+    const menu = getNamedDiv(MENU_CLASS);
+    
+    const title = document.createElement("h1");
+    title.className = TITLE_CLASS;
+    title.appendChild(document.createTextNode(TITLE));
+    menu.appendChild(title);
 
-    itemTerminator = InstallInventoryItems(uiExit,managedGamepad,imageList,proxyFrame,menu);
+    InstallInventoryItems.call(
+        this,uiExit,managedGamepad,proxyFrame,menu
+    );
 
-    const closeButton = getNamedDiv("close-button");
+    const closeButton = getNamedDiv(CLOSE_BUTTON_CLASS);
     menu.appendChild(closeButton);
 
-    closeButton.onclick = uiExit;
+    closeButton.onclick = event => {
+        if(event.button === 0) uiExit();
+    };
 
     return menu;
 }
@@ -213,12 +242,10 @@ function getImageList() {
     if(!itemImage) return imageList;
 
     const size = ITEM_TEXTURE_SIZE;
-
     const itemCount = itemImage.width / size;
 
     const buffer = document.createElement("canvas");
-    buffer.width = size;
-    buffer.height = size;
+    buffer.width = size; buffer.height = size;
 
     const context = buffer.getContext("2d",{alpha:true});
 
@@ -233,10 +260,64 @@ function getImageList() {
 
 function Inventory() {
     const imageList = getImageList();
-    const menu = DOMInterface.getMenu(InventoryMenu);
-    this.show = callback => {
-        menu.show(imageList,callback);
+    const menu = DOMInterface.getMenu(InventoryMenu.bind(this));
+
+    const getItemContainer = () => {
+        let container = SaveState.get(CONTAINER_KEY);
+        if(!container) {
+            container = new Object();
+            SaveState.set(CONTAINER_KEY,container);
+        }
+        Items.forEach(({safeID}) => {
+            if(!(safeID in container)) {
+                container[safeID] = 0;
+            }
+        });
+        return container;
     };
+
+    const getItems = () => {
+        const itemContainer = getItemContainer();
+        const items = new Array();
+        Object.entries(itemContainer).forEach(([itemType,count])=>{
+            const item = ItemLookup[itemType];
+            for(let i = 0;i<count;i++) items.push(item);
+        });
+        return items;
+    };
+
+    const displayItemMapper = ({name,ID,action}) => [name,imageList[ID],action];
+    this.getDisplayItems = () => getItems().map(displayItemMapper);
+
+    this.getItems = getItems;
+
+    this.hasItem = safeID => {
+        const itemContainer = getItemContainer();
+        const count = itemContainer[safeID];
+        return count >= 1;
+    };
+    this.removeItem = safeID => {
+        const itemContainer = getItemContainer();
+        const count = itemContainer[safeID];
+        if(count >= 1) {
+            itemContainer[safeID] = count - 1;
+            return true;
+        } else {
+            return false;
+        }
+    };
+    this.addItem = safeID => {
+        const itemContainer = getItemContainer();
+        if(!(safeID in itemContainer)) ITEM_DOES_NOT_EXIST(safeID);
+        itemContainer[safeID] += 1;
+    };
+    this.clearItems = () => {
+        const container = new Object();
+        Items.forEach(item => container[item.safeID] = 0);
+        SaveState.set(CONTAINER_KEY,container);
+    };
+
+    this.show = menu.show.bind(null,imageList);
     this.close = menu.close;
 }
 export default Inventory;

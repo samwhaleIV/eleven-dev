@@ -8,6 +8,7 @@ import InstallSpatialSound from "./spatial-sound.js";
 import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import ParticleSprite from "./particle-sprite.js";
+import SummonTable from "./summon-table.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -25,6 +26,9 @@ const TRIGGER_TILES = Constants.TriggerTiles;
 const TILESET_NAME = "world-tileset";
 const MAPS_NAME = "maps";
 const PLAYER_SPRITE = Constants.PlayerSprite;
+
+const DID_NOTHING = "This item doesn't want to do anything right now.";
+const BAD_ITEM_PLACMEMENT = "The item doesn't want to go here!";
 
 const FOR_SCRIPT_PARSE_ONLY = () => {
     throw Error("This method is only for use during the initial script sequencing!");
@@ -45,7 +49,9 @@ const {
     PlayerController,
     WorldImpulse,
     TextSprite,
-    Fader,Faders
+    Fader,Faders,
+    TileSprite,
+    CollisionTypes
 } = Eleven;
 
 let tileset = null;
@@ -79,15 +85,18 @@ function InstallPlayer(world,sprite) {
     });
     world.refreshInput = input.refresh;
 
-    const worldImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
-    worldImpulse.layerHandler = sprite => {
-        if(sprite.impulse) sprite.impulse(worldImpulse.source);
+    const playerImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
+    playerImpulse.layerHandler = sprite => {
+        if(sprite.impulse) sprite.impulse({
+            source: playerImpulse.source,world,script: world.script,self: sprite
+        });
     };
-    worldImpulse.tileHandler = tile => {
+    playerImpulse.tileHandler = tile => {
         if(tile <= TRIGGER_TILES) return;
         if(!world.script || !world.script.interact) return;
         world.script.interact(tile);
     };
+    world.playerImpulse = playerImpulse;
 
     world.spriteFollower.target = sprite;
     world.spriteFollower.enabled = true;
@@ -95,8 +104,7 @@ function InstallPlayer(world,sprite) {
     const keyUp = input.keyUp;
     const keyDown = event => {
         if(event.impulse === InputCodes.Inventory) {
-            if(event.repeat) return;
-            if(!playerController.locked) {
+            if(!event.repeat && !playerController.locked) {
                 SVCC.Runtime.Inventory.show();
             }
         } else if(event.impulse === InputCodes.Click) {
@@ -108,7 +116,7 @@ function InstallPlayer(world,sprite) {
                 if(sprite.hasWeapon()) {
                     sprite.attack(); return;
                 }
-                worldImpulse.impulse();
+                playerImpulse.impulse();
             }
         } else {
             input.keyDown(event);
@@ -216,6 +224,7 @@ function World(callback) {
     this.pendingScriptData = null;
 
     this.playerController = null; this.player = null;
+    this.playerImpulse = null;
     this.keyDown = null; this.keyUp = null;
 
     this.textMessage = null;
@@ -284,6 +293,65 @@ World.prototype.addNPC = function(...parameters) {
     const NPC = GetNPCSprite.apply(this,parameters);
     this.spriteLayer.add(NPC,ZIndexBook.NPC);
     return NPC;
+}
+World.prototype.addTileSprite = function(x,y,tileID,collides) {
+    const tileSize = BASE_TILE_SIZE;
+    const {tileset} = this;
+
+    const totalColumns = tileset.width / tileSize;
+
+    const textureColumn = tileID % totalColumns;
+    const textureRow = Math.floor(tileID / totalColumns);
+
+    const tileSprite = new TileSprite(
+        x,y,tileset,textureColumn,textureRow,tileSize
+    );
+
+    if(collides) {
+        tileSprite.collides = true;
+        tileSprite.collisionType = CollisionTypes.Default;
+    }
+
+    this.spriteLayer.add(tileSprite,ZIndexBook.TileSprite);
+    return tileSprite;
+}
+const safeSummonPosition = value => Math.round(value * 16) / 16;
+
+World.prototype.summonSprite = function(sprite) {
+    const {direction, hitBox} = this.player;
+
+    const extraDistance = 1 / 32;
+
+    let x, y;
+
+    switch(direction) {
+        case 0: //up
+        case 2: //down
+            x = hitBox.x + hitBox.width / 2 - sprite.width / 2;
+            if(direction === 0) {
+                y = hitBox.y - sprite.height - extraDistance;
+            } else {
+                y = hitBox.y + hitBox.height + extraDistance;
+            }
+            break;
+        case 1: //right
+        case 3: //left
+            y = hitBox.y + hitBox.height / 2 - sprite.height / 2;
+            if(direction === 3) {
+                x = hitBox.x - sprite.width - extraDistance;
+            } else {
+                x = hitBox.x + hitBox.width + extraDistance;
+            }
+            break;
+    }
+
+    sprite.x = safeSummonPosition(x);
+    sprite.y = safeSummonPosition(y);
+
+    const collides = this.collisionLayer.collides(sprite);
+    if(collides) this.spriteLayer.remove(sprite.ID);
+
+    return !collides;
 }
 
 const cache = (world,layerCount,layerStart,isTop,location) => {
@@ -410,6 +478,7 @@ World.prototype.runScript = async function(script,...parameters) {
 World.prototype.setMap = function(mapName) {
     this.player = null;
     this.playerController = null;
+    this.playerImpulse = null;
 
     this.refreshInput = null;
     this.managedGamepad.keyDown = null;
@@ -607,8 +676,66 @@ World.prototype.setTriggerHandlers = function(triggerSet) {
     };
 
     Object.assign(this.pendingScriptData,{trigger,noTrigger});
-};
+}
+World.prototype.useItem = function(safeID,removeItem,message) {
+    const {Inventory} = SVCC.Runtime;
 
+    if(removeItem) Inventory.removeItem(safeID);
+
+    if(message) {
+        this.playerController.lock();
+        (async ()=>{
+            await this.showMessageInstant(message);
+            this.playerController.unlock();
+        })();
+    }
+
+    return true;
+}
+World.prototype.genericItemHandler = function(safeID) {
+    const summonData = SummonTable[safeID];
+    if(summonData === undefined) return false;
+
+    const {tileID, action, spriteData, shouldRetain, verifyPlacement} = summonData;
+
+    let canPlace = true;
+    if(verifyPlacement) canPlace = verifyPlacement(this.script,this);
+
+    if((isNaN(tileID) || !canPlace) && action) {
+        if(action) {
+            const callback = action(this.script,this);
+            if(callback) {
+                callback();
+                return this.useItem(safeID,!Boolean(shouldRetain));
+            } else {
+                return this.useItem(safeID,false,DID_NOTHING);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    const sprite = this.addTileSprite(0,0,tileID,true);
+    const didSummon = this.summonSprite(sprite);
+
+    if(didSummon) {
+        if(spriteData) {
+            let newData = spriteData;
+            if(typeof spriteData === "function") newData = spriteData();
+            Object.assign(sprite,newData);
+        }
+        if(action) {
+            const callback = action(this.script,this);
+            if(callback) callback(sprite);
+        }
+        return this.useItem(safeID,!Boolean(shouldRetain));
+    } else {
+        return this.useItem(safeID,false,BAD_ITEM_PLACMEMENT);
+    }
+}
+World.prototype.getGenericItemHandler = function() {
+    return World.prototype.genericItemHandler.bind(this);
+}
 InstallSpatialSound(World.prototype);
 
 export default World;
