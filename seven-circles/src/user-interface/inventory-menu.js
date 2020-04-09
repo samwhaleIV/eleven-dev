@@ -176,6 +176,7 @@ function InstallInventoryItems(
         const uiItem = getNamedDiv(ITEM_CLASS);
 
         const image = new Image();
+        image.setAttribute("draggable",false);
         image.src = imageData;
         uiItem.appendChild(image);
 

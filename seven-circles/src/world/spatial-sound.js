@@ -78,7 +78,7 @@ function InstallSpatialSound(target) {
     
         await remoteControl.waitForEnd();
     
-        this.dispatchRenderer.removeUpdate(updaterID);
+        this.dispatchRenderer.removeFinalize(updaterID);
     };
 }
 export default InstallSpatialSound;
