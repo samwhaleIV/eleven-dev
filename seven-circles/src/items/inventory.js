@@ -11,6 +11,10 @@ const ITEM_DOES_NOT_EXIST = safeID => {
     throw Error(`Invalid item! Type '${safeID}' does not exist!`);
 };
 
+const validateSafeID = safeID => {
+    if(!(safeID in ItemLookup)) ITEM_DOES_NOT_EXIST(safeID);
+};
+
 function getImageList() {
     const imageList = new Array();
     const itemImage = ResourceManager.getImage(ITEM_FILE);
@@ -44,9 +48,7 @@ function Inventory() {
             SaveState.set(CONTAINER_KEY,container);
         }
         Items.forEach(({safeID}) => {
-            if(!(safeID in container)) {
-                container[safeID] = 0;
-            }
+            if(!(safeID in container)) container[safeID] = 0;
         });
         return container;
     };
@@ -69,30 +71,46 @@ function Inventory() {
 
     this.getItems = getItems;
 
-    this.hasItem = safeID => {
+    const countItem = safeID => {
+        validateSafeID(safeID);
+
         const itemContainer = getItemContainer();
-        const count = itemContainer[safeID];
-        return count >= 1;
+        return itemContainer[safeID];
     };
-    this.removeItem = safeID => {
+
+    this.hasItem = safeID => {
+        return countItem(safeID) >= 1;
+    };
+    this.countItem = countItem;
+
+    this.removeItem = (safeID,amount) => {
+        validateSafeID(safeID);
+
+        if(isNaN(amount)) amount = 1;
+
         const itemContainer = getItemContainer();
-        const count = itemContainer[safeID];
-        if(count >= 1) {
-            itemContainer[safeID] = count - 1;
-            return true;
-        } else {
-            return false;
-        }
+
+        let newCount = itemContainer[safeID] - amount;
+        if(newCount < 0) newCount = 0;
+        itemContainer[safeID] = newCount;
     };
     this.addItem = safeID => {
+        validateSafeID(safeID);
+
         const itemContainer = getItemContainer();
-        if(!(safeID in itemContainer)) ITEM_DOES_NOT_EXIST(safeID);
         itemContainer[safeID] += 1;
     };
-    this.clearItems = () => {
+    this.clearAll = () => {
         const container = new Object();
         Items.forEach(item => container[item.safeID] = 0);
         SaveState.set(CONTAINER_KEY,container);
+    };
+
+    this.clearType = safeID => {
+        validateSafeID(safeID);
+
+        const itemContainer = getItemContainer();
+        itemContainer[safeID] = 0;
     };
 
     this.show = menu.show.bind(null,imageList);
