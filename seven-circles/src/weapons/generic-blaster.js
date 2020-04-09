@@ -1,6 +1,7 @@
 import GenericProjectile from "./generic-projectile.js";
 
 const FIRE_TIMEOUT = 60;
+const NAME = "generic-blaster";
 
 const {FrameTimeout} = Eleven;
 
@@ -16,6 +17,8 @@ const PROJECTILE_POINTS = Object.freeze({
 });
 
 function GenericBlaster(image) {
+
+    this.name = NAME;
 
     let fireStart = null;
 
@@ -75,5 +78,7 @@ function GenericBlaster(image) {
     };
 
 }
+
+Object.defineProperty(GenericBlaster,"name",{value:NAME,enumerable:true});
 
 export default GenericBlaster;

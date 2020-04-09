@@ -49,6 +49,10 @@ function WeaponHandler() {
         if(weapon.attack) weapon.attack();
 
     };
+
+    this.getWeapon = () => {
+        return weapon;
+    };
 }
 
 export default WeaponHandler;

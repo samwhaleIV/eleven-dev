@@ -43,7 +43,6 @@ const getSpriteData = () => {
 
 function Present(tileID=DEFAULT_TILE_ID) {
     this.tileID = tileID;
-    this.spriteData = spriteData;
     this.spriteData = getSpriteData;
 }
 export default Present;

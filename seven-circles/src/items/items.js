@@ -4,7 +4,8 @@ const ITEM_DATA = [
     ["Sink","sink"],
     ["Present","present"],
     ["Big Pill","big-pill"],
-    ["Small Pill","small-pill"]
+    ["Small Pill","small-pill"],
+    ["Blaster","blaster"]
 ];
 
 const ItemLookup = new Object();

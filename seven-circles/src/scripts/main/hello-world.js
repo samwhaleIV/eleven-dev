@@ -1,5 +1,4 @@
 import Lifetime from "../helper/lifetime.js";
-import GenericBlaster from "../../weapons/generic-blaster.js";
 
 const BACKGROUND_COLOR = `rgb(20,0,0)`;
 
@@ -75,8 +74,6 @@ function HelloWorld(world,oldData) {
     this.load = () => {
         Lifetime.hardSerialize(player);
     };
-
-    player.setWeapon(GenericBlaster,Eleven.ResourceManager.getImage("player-gun"));
 
     //world.fadeToWhite(1000).then(world.popFader);
 }

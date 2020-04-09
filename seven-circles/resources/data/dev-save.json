@@ -6,6 +6,7 @@
 
         "PillTest": {
             "Inventory": {
+                "blaster": 1,
                 "big-pill": 20,
                 "small-pill": 20
             }
