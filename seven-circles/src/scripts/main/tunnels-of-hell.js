@@ -1,17 +1,13 @@
 import KeyDoor from "../helper/key-door.js";
 import PickupField from "../helper/pickup-field.js";
-import TileWall from "../helper/tile-wall.js";
-
-const BACKGROUND_COLOR = `rgb(20,0,0)`;
+import AddColorBackground from "../helper/color-background.js";
 
 function TunnelsOfHell(world) {
     world.setMap("tunnels-of-hell");
+    AddColorBackground(world,`rgb(20,0,0)`);
+
     const player = world.addPlayer(4,3.5);
     player.direction = "down";
-    world.dispatchRenderer.addBackground((context,{width,height})=>{
-        context.fillStyle = BACKGROUND_COLOR;
-        context.fillRect(0,0,width,height);
-    });
 
     const doors = KeyDoor.getDoors(world,[
         [8,14,"verticalRed"],
