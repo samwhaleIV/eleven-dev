@@ -207,9 +207,6 @@ function getDoors(world,doors,IDStart) {
         );
     }
 
-    world.pushCollisionChanges();
-    world.pushInteractionChanges();
-
     const handler = KeyDoorHandler(world,keyDoors);
     const get = index => keyDoors[index];
     const count = keyDoors.length;

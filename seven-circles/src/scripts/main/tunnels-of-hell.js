@@ -1,6 +1,7 @@
 import KeyDoor from "../helper/key-door.js";
 import PickupField from "../helper/pickup-field.js";
 import AddColorBackground from "../helper/color-background.js";
+import SpriteDoor from "../helper/sprite-door.js";
 
 function TunnelsOfHell(world) {
     world.setMap("tunnels-of-hell");
@@ -29,8 +30,8 @@ function TunnelsOfHell(world) {
         [49,13,"yellow-key"]
     ]);
 
-    const endWallLeft = new KeyDoor(world,57,8,"grayDoor",true);
-    const endWallRight = new KeyDoor(world,71,8,"grayDoor",false);
+    const endWallLeft = new SpriteDoor(world,57,8,11,12,13,4,5,true,2000);
+    const endWallRight = new SpriteDoor(world,71,8,11,12,13,4,5,false,500);
 
     this.interact = data => {
         if(pickupField.tryPickup(data)) return;

@@ -177,9 +177,14 @@ function FaderList(dispatchRenderer) {
 
 function World(callback) {
 
+    this.tilesetColumns = 0;
+    this.tileSize = BASE_TILE_SIZE;
+
     this.load = async () => {
 
         tileset = ResourceManager.getImage(TILESET_NAME);
+        this.tilesetColumns = tileset.width / BASE_TILE_SIZE;
+
         maps = ResourceManager.getJSON(MAPS_NAME);
         playerImage = ResourceManager.getImage(PLAYER_SPRITE);
 
@@ -308,17 +313,21 @@ World.prototype.addNPC = function(...parameters) {
     this.spriteLayer.add(NPC,ZIndexBook.NPC);
     return NPC;
 }
+World.prototype.getTextureXY = function(tileID,premultiply=true) {
+    let textureColumn = tileID % this.tilesetColumns;
+    let textureRow = Math.floor(tileID / this.tilesetColumns);
+    if(premultiply) {
+        textureColumn *= this.tileSize;
+        textureRow *= this.tileSize;
+    }
+    return [textureColumn,textureRow];
+}
 World.prototype.addTileSprite = function(x,y,tileID,collides) {
     const tileSize = BASE_TILE_SIZE;
-    const {tileset} = this;
-
-    const totalColumns = tileset.width / tileSize;
-
-    const textureColumn = tileID % totalColumns;
-    const textureRow = Math.floor(tileID / totalColumns);
+    const [textureColumn,textureRow] = this.getTextureXY(tileID,false);
 
     const tileSprite = new TileSprite(
-        x,y,tileset,textureColumn,textureRow,tileSize
+        x,y,this.tileset,textureColumn,textureRow,tileSize
     );
 
     if(collides) {
