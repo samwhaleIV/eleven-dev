@@ -242,6 +242,10 @@ function World(callback) {
 
     this.refreshInput = null;
 
+    this.collisionChangePending = false;
+    this.interactionChangePending = false;
+    this.lightingChangePending = false;
+
     grid.bindToFrame(this);
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
@@ -394,6 +398,11 @@ World.prototype.disableSuperForeground = function() {
 
 const updateTileBasedLayers = world => {
     const {grid, tileRenderer, dispatchRenderer} = world;
+
+    world.lightingChangePending = false;
+    world.collisionChangePending = false;
+    world.interactionChangePending = false;
+
     world.lightingLayer = new UVTCLighting(
         grid,tileRenderer,LIGHTING_LAYER
     );
@@ -477,6 +486,7 @@ World.prototype.runScript = async function(script,...parameters) {
     }
 
     if(script.load) await script.load();
+    this.pushTileChanges();
 
     if(processPauseSequencing) {
         CanvasManager.markLoaded();
@@ -549,24 +559,43 @@ World.prototype.setTile = function(layer,x,y,value) {
             break;
     }
 }
-
 World.prototype.setCollisionTile = function(x,y,value) {
     this.setTile(COLLISION_LAYER,x,y,value);
+    this.collisionChangePending = true;
 }
 World.prototype.setInteractionTile = function(x,y,value) {
     this.setTile(INTERACTION_LAYER,x,y,value);
+    this.interactionChangePending = true;
 }
 World.prototype.setLightingTile = function(x,y,value) {
     this.setTile(LIGHTING_LAYER,x,y,value);
+    this.lightingChangePending = true;
 }
 World.prototype.pushCollisionChanges = function() {
-    if(this.tileCollision) this.tileCollision.reset();
+    if(!this.collisionChangePending) return;
+
+    this.tileCollision.reset();
+    this.collisionChangePending = false;
+    if(DEV) console.log("World performance: Tile collision layer reset!");
 }
 World.prototype.pushInteractionChanges = function() {
-    if(this.interactionLayer) this.interactionLayer.reset();
+    if(!this.interactionChangePending) return;
+
+    this.interactionLayer.reset();
+    this.interactionChangePending = false;
+    if(DEV) console.log("World performance: Tile interaction layer reset!");
 }
 World.prototype.pushLightingChanges = function() {
-    if(this.lightingLayer) this.lightingLayer.refresh();
+    if(!this.lightingChangePending) return;
+
+    this.lightingLayer.refresh();
+    this.lightingChangePending = false;
+    if(DEV) console.log("World performance: Tile lighting layer refreshed!");
+}
+World.prototype.pushTileChanges = function() {
+    this.pushCollisionChanges();
+    this.pushInteractionChanges();
+    this.pushLightingChanges();
 }
 World.prototype.getBackgroundTile = function(x,y) {
     return this.getTile(BACKGROUND_LAYER,x,y);

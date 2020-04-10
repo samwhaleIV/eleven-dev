@@ -12,18 +12,19 @@ function KeyDoorHandler(world,doors) {
                 if(type !== door.color) continue;
 
                 if(matchesDoor) {
-                    door.open(); return;
+                    door.open(); return true;
                 }
             }
             if(matchedAnyDoor) {
+                world.playerController.lock();
                 (async () => {
                     world.playerController.lock();
                     await world.showMessageInstant(`A ${type} key doesn't work here!`);
                     world.playerController.unlock();
                 })();
-                return;
+                return true;
             }
-            world.script.interact(data);
+            return false;
         }});
     };
 }

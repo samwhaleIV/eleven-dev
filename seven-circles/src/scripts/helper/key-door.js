@@ -1,7 +1,26 @@
-const verticalCollisionValue = 9;
-const horizontalCollisionValue = 1;
+import KeyDoorHandler from "./key-door-handler.js";
+import GetInteractionStart from "./get-interaction-start.js";
+
+const INTERACTION_ID_START = GetInteractionStart();
+const VERTICAL_COLLISION_VALUE = 9;
+const HORIZONTAL_COLLISION_VALUE = 1;
 
 const frames = {
+    grayDoor: {
+        vertical: true,
+        color: "gray",
+        top: 11,
+        middle: 11,
+        bottom: 11,
+        topOpen: 12,
+        bottomOpen: 13,
+        collision: 1,
+        collisionOpen: {
+            top: 4,
+            middle: 0,
+            bottom: 5
+        }
+    },
     verticalRed: {
         vertical: true,
         color: "red",
@@ -59,54 +78,83 @@ const frames = {
 };
 
 const defaultFrame = frames.verticalRed;
+const defaultVerticalCollision = {
+    top: VERTICAL_COLLISION_VALUE,
+    middle: 0,
+    bottom: VERTICAL_COLLISION_VALUE
+};
 
 const verticalOpen = (x,y,world,frame) => {
     world.setForegroundTile(x,y,frame.topOpen);
     world.setForegroundTile(x,y+1,0);
     world.setForegroundTile(x,y+2,frame.bottomOpen);
 
-    world.setCollisionTile(x,y,verticalCollisionValue);
-    world.setCollisionTile(x,y+1,0);
-    world.setCollisionTile(x,y+2,verticalCollisionValue);
+    const collision = frame.collisionOpen || defaultVerticalCollision;
 
-    world.pushCollisionChanges();
+    world.setCollisionTile(x,y,collision.top);
+    world.setCollisionTile(x,y+1,collision.middle);
+    world.setCollisionTile(x,y+2,collision.bottom);
 };
 const verticalClose = (x,y,world,frame) => {
     world.setForegroundTile(x,y,frame.top);
     world.setForegroundTile(x,y+1,frame.middle);
     world.setForegroundTile(x,y+2,frame.bottom);
 
-    world.setCollisionTile(x,y,verticalCollisionValue);
-    world.setCollisionTile(x,y+1,verticalCollisionValue);
-    world.setCollisionTile(x,y+2,verticalCollisionValue);
+    const collision = frame.collision || VERTICAL_COLLISION_VALUE;
 
-    world.pushCollisionChanges();
+    world.setCollisionTile(x,y,collision);
+    world.setCollisionTile(x,y+1,collision);
+    world.setCollisionTile(x,y+2,collision);
 };
 const horizontalOpen = (x,y,world,frame) => {
     world.setForegroundTile(x,y,frame.leftOpen);
     world.setForegroundTile(x+1,y,0);
     world.setForegroundTile(x+2,y,frame.rightOpen);
 
-    world.setCollisionTile(x,y,horizontalCollisionValue);
+    world.setCollisionTile(x,y,HORIZONTAL_COLLISION_VALUE);
     world.setCollisionTile(x+1,y,0);
-    world.setCollisionTile(x+2,y,horizontalCollisionValue);
-
-    world.pushCollisionChanges();
+    world.setCollisionTile(x+2,y,HORIZONTAL_COLLISION_VALUE);
 };
 const horizontalClose = (x,y,world,frame) => {
     world.setForegroundTile(x,y,frame.left);
     world.setForegroundTile(x+1,y,frame.middle);
     world.setForegroundTile(x+2,y,frame.right);
 
-    world.setCollisionTile(x,y,horizontalCollisionValue);
-    world.setCollisionTile(x+1,y,horizontalCollisionValue);
-    world.setCollisionTile(x+2,y,horizontalCollisionValue);
+    world.setCollisionTile(x,y,HORIZONTAL_COLLISION_VALUE);
+    world.setCollisionTile(x+1,y,HORIZONTAL_COLLISION_VALUE);
+    world.setCollisionTile(x+2,y,HORIZONTAL_COLLISION_VALUE);
 };
 
-function KeyDoor({
-    world, frame = defaultFrame,
-    x = 0, y = 0, interactionType = null
-}) {
+const installInteraction = (x,y,world,frame,type) => {
+    if(frame.vertical) {
+        world.setInteractionTile(x,y,type);
+        world.setInteractionTile(x,y+1,type);
+        world.setInteractionTile(x,y+2,type);
+    } else {
+        world.setInteractionTile(x,y,type);
+        world.setInteractionTile(x+1,y,type);
+        world.setInteractionTile(x+2,y,type);
+    }
+};
+
+const open = (x,y,world,frame,pauseHardUpdates) => {
+    if(frame.vertical) {
+        verticalOpen(x,y,world,frame);
+    } else {
+        horizontalOpen(x,y,world,frame);
+    }
+    if(!pauseHardUpdates) world.pushCollisionChanges();
+};
+const close = (x,y,world,frame,pauseHardUpdates) => {
+    if(frame.vertical) {
+        verticalClose(x,y,world,frame);
+    } else {
+        horizontalClose(x,y,world,frame);
+    }
+    if(!pauseHardUpdates) world.pushCollisionChanges();
+};
+
+function KeyDoor(world,x,y,frame,startOpen,interactionType) {
     if(typeof frame === "string") {
         frame = frames[frame];
     }
@@ -115,41 +163,65 @@ function KeyDoor({
         get: () => opened,
         enumerable: true
     });
-    this.open = () => {
+    this.open = pauseHardUpdates => {
         if(opened) return;
-        if(frame.vertical) {
-            verticalOpen(x,y,world,frame);
-        } else {
-            horizontalOpen(x,y,world,frame);
-        }
+        open(x,y,world,frame,pauseHardUpdates);
         opened = true;
     };
-    this.close = () => {
+    this.close = pauseHardUpdates => {
         if(!opened) return;
-        if(frame.vertical) {
-            verticalClose(x,y,world,frame);
-        } else {
-            horizontalClose(x,y,world,frame);
-        }
+        close(x,y,world,frame,pauseHardUpdates);
         opened = false;
+    };
+    this.toggle = pauseHardUpdates => {
+        if(opened) {
+            this.close(pauseHardUpdates);
+        } else {
+            this.open(pauseHardUpdates);
+        }
     };
     this.color = frame.color || null;
 
-    if(interactionType !== null) {
-        if(frame.vertical) {
-            world.setInteractionTile(x,y,interactionType);
-            world.setInteractionTile(x,y+1,interactionType);
-            world.setInteractionTile(x,y+2,interactionType);
-        } else {
-            world.setInteractionTile(x,y,interactionType);
-            world.setInteractionTile(x+1,y,interactionType);
-            world.setInteractionTile(x+2,y,interactionType);
-        }
-        world.pushInteractionChanges();
-    }
+    if(interactionType !== null) installInteraction(
+        x,y,world,frame,interactionType
+    );
 
     this.interactionValue = world.getInteractionTile(x,y);
 
-    opened = true; this.close();
+    opened = !Boolean(startOpen); this.toggle(true);
 }
+
+function getDoors(world,doors,IDStart) {
+    if(isNaN(IDStart)) IDStart = INTERACTION_ID_START;
+
+    const keyDoors = new Array(doors.length);
+
+    for(let i = 0;i<doors.length;i++) {
+        let [x,y,frame,interactionType] = doors[i];
+        if(interactionType === undefined) {
+            interactionType = IDStart;
+            IDStart++;
+        }
+        keyDoors[i] = new KeyDoor(
+            world,x,y,frame,false,interactionType
+        );
+    }
+
+    world.pushCollisionChanges();
+    world.pushInteractionChanges();
+
+    const handler = KeyDoorHandler(world,keyDoors);
+    const get = index => keyDoors[index];
+    const count = keyDoors.length;
+
+    return Object.freeze({get,handler,count});
+}
+
+Object.defineProperty(KeyDoor,"getDoors",{
+    value: getDoors,
+    enumerable: true,
+    configurable: false,
+    writable: false
+});
+
 export default KeyDoor;

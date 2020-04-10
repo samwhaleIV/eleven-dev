@@ -7,7 +7,6 @@ function StaticPickup(world,x,y,item) {
         world.setCollisionTile(x,y,0);
         world.pushCollisionChanges();
         SVCC.Runtime.Inventory.addItem(item);
-
         return true;
     };
 }
