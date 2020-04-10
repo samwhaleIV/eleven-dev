@@ -1,80 +1,117 @@
-import Lifetime from "../helper/lifetime.js";
+import StarField from "../helper/star-field.js";
 
-const BACKGROUND_COLOR = `rgb(20,0,0)`;
+const TITLE_TEXT = "";
+const TITLE_FONT = "22px sans-serif";
 
-const START_POSITION = {x:7,y:24.5,direction:0};
+const TITLE_FADE_IN_DURATION = 2000;
+const TITLE_FADE_OUT_DURATION = 1000;
+const TEXT_TIME = 3000;
+const TEXT_DELAY = 3000;
 
-function HelloWorld(world,oldData) {
+const FADE_IN_TIME = 8000;
 
-    if(oldData) {
-        console.log("Serialization data:",oldData);
-    }
+const FIRST_SCRIPT_FADE_IN = 3000;
+const FADE_OUT_TIME = 3000;
 
-    this.serialize = () => {
-        return {NothingToSeeHere:"Move along"};
+const TEXT_LINES = [
+    "Stars. That's cool.",
+    "What makes you so sure they're stars?",
+    "That wasn't my point, okay? I'm just saying they're cool.",
+    "Oh. Yeah. They're cool, I guess."
+];
+
+function Title() {
+    this.text = TITLE_TEXT;
+
+    let fadeInStart = null;
+    let fadeOutStart = null;
+
+    let fadeInResolve, fadeOutResolve;
+
+    const canFade = () => {
+        return fadeInStart === null && fadeOutStart === null;
     };
 
-    const {
-        resumePosition
-    } = Lifetime;
+    this.fadeIn = () => {
+        if(!canFade()) return;
+        return new Promise(resolve => {
+            fadeInStart = performance.now();
+            fadeInResolve = resolve;
+        });
+    };
 
-    world.setMap("hell");
-    const player = world.addPlayer();
+    this.fadeOut = () => {
+        if(!canFade()) return;
+        return new Promise(resolve => {
+            fadeOutStart = performance.now();
+            fadeOutResolve = resolve;
+        });
+    };
 
-    resumePosition(player,START_POSITION);
-    /*
+    this.render = (context,{halfWidth,halfHeight},{now}) => {
+        context.translate(halfWidth,halfHeight);
 
-    world.addTextSprite({
-        world: world,
-        text: "They can go anywhere!\n(And support multiple lines)",
-        color: "white",
-        center: true,
-        x: player.x, y: player.y
-    });
-    
-    world.addTextSprite({
-        world: world,
-        text: "The world can now have text sprites!",
-        target: player,
-        color: "white",
-        y: -0.7,
-        backgroundPadding: 2,
-        backgroundColor: "black"
-    });
-    */
+        let t = 1;
 
-    world.dispatchRenderer.addBackground((context,{width,height})=>{
-        context.fillStyle = BACKGROUND_COLOR;
-        context.fillRect(0,0,width,height);
-    });
+        if(fadeInStart !== null) {
+            t = (now - fadeInStart) / TITLE_FADE_IN_DURATION;
+            if(t < 0) t = 0; else if(t > 1) {
+                t = 1; fadeInStart = null; fadeInResolve();
+            }
+        } else if(fadeOutStart !== null) {
+            t = (now - fadeOutStart) / TITLE_FADE_OUT_DURATION;
+            if(t < 0) t = 0; else if(t > 1) {
+                t = 1; fadeOutStart = null; fadeOutResolve(); 
+            }
+            t = 1 - t;
+        }
 
-    /*
-    const {ParticleSystem} = Eleven;
+        context.fillStyle = `rgba(255,255,255,${t})`;
 
-    const emitterPool = ParticleSystem.getRainbowPool();
+        context.textBaseline = "middle";
+        context.textAlign = "center";
+        context.font = TITLE_FONT;
+        context.fillText(this.text,0,0);
 
-    world.addParticles(START_POSITION.x + 0.5,START_POSITION.y + 0.5,emitterPool);
-    emitterPool.stream();
+        context.translate(-halfWidth,-halfHeight);
+    }
+}
 
+function HelloWorld(world) {
+    world.setMap("empty");
+    const {dispatchRenderer} = world;
 
-    (async()=>{
-        const fader = world.whiteFader();
-        await fader.fadeOut(1000);
-        await fader.reverse();
-        console.log("Done!"); world.removeFader(fader);
-    })();
+    const title = new Title();
+    const starField = new StarField();
 
-    */
-
-    world.setTriggerHandlers([
-        [2,firstTime=>console.log("2 triggered",firstTime)],
-        [5,firstTime=>console.log("5 triggered",firstTime)],
-    ]);
+    dispatchRenderer.addBackground(starField.render);
+    dispatchRenderer.addBackground(title.render);
 
     this.load = () => {
-        Lifetime.hardSerialize(player);
+        (async () => {
+            if(DEV) {
+                world.runScript("TunnelsOfHell");
+                return;
+            }
+            await world.fadeFromBlack(FADE_IN_TIME);
+            world.popFader();
+            for(let i = 0;i<TEXT_LINES.length;i++) {
+                title.text = TEXT_LINES[i];
+                await title.fadeIn();
+                await Eleven.FrameTimeout(TEXT_TIME);
+                await title.fadeOut();
+                title.text = "";
+                await Eleven.FrameTimeout(TEXT_DELAY);
+            }
+            await world.fadeToBlack(FADE_OUT_TIME);
+            world.runScript("TunnelsOfHell");
+            world.playerController.lock();
+            world.popFader();
+            await world.fadeFromBlack(FIRST_SCRIPT_FADE_IN);
+            world.popFader();
+            world.playerController.unlock();
+        })();
     };
-
-    //world.fadeToWhite(1000).then(world.popFader);
+    
 }
 export default HelloWorld;
