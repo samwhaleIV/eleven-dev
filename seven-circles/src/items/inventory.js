@@ -94,11 +94,13 @@ function Inventory() {
         if(newCount < 0) newCount = 0;
         itemContainer[safeID] = newCount;
     };
-    this.addItem = safeID => {
+    this.addItem = (safeID,amount) => {
         validateSafeID(safeID);
 
+        if(isNaN(amount)) amount = 1;
+
         const itemContainer = getItemContainer();
-        itemContainer[safeID] += 1;
+        itemContainer[safeID] += amount;
     };
     this.clearAll = () => {
         const container = new Object();

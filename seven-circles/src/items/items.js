@@ -5,7 +5,12 @@ const ITEM_DATA = [
     ["Present","present"],
     ["Big Pill","big-pill"],
     ["Small Pill","small-pill"],
-    ["Blaster","blaster"]
+    ["Blaster","blaster"],
+    ["Red Key","red-key"],
+    ["Blue Key","blue-key"],
+    ["Green Key","green-key"],
+    ["Yellow Key","yellow-key"],
+    ["Pink Key","pink-key"],
 ];
 
 const ItemLookup = new Object();

@@ -3,7 +3,7 @@ function WeaponHandler() {
 
     this.setWeapon = (newWeapon,...parameters) => {
         if(weapon !== null) {
-            this.clearWeapon(); return;
+            this.clearWeapon();
         }
 
         if(typeof newWeapon === "function") {

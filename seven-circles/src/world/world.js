@@ -370,8 +370,7 @@ const cache = (world,layerCount,layerStart,isTop,location) => {
     const cacheMethod = isTop ? grid.cacheTop : grid.cache;
     grid.renderer = tileRenderer;
 
-    tileRenderer.layerCount = layerCount;
-    tileRenderer.layerStart = layerStart;
+    tileRenderer.setLayerRange(layerStart,layerCount);
 
     if(location) {
         cacheMethod.call(grid,location.x,location.y,1,1);
@@ -530,9 +529,16 @@ World.prototype.getTile = function(layer,x,y) {
     return this.tileRenderer.getTile(x,y,layer);
 }
 
+const batchedLayers = {
+    [LIGHTING_LAYER]: true,
+    [COLLISION_LAYER]: true,
+    [INTERACTION_LAYER]: true
+};
+
 World.prototype.setTile = function(layer,x,y,value) {
     if(!this.tileRenderer) return;
     this.tileRenderer.setTile(x,y,value,layer);
+    if(batchedLayers[layer]) return;
     switch(layer) {
         case BACKGROUND_LAYER:
         case FOREGROUND_LAYER:
@@ -541,53 +547,53 @@ World.prototype.setTile = function(layer,x,y,value) {
         case SUPER_FOREGROUND_LAYER:
             this.cacheSuperForeground({x,y});
             break;
-        case LIGHTING_LAYER:
-            if(this.lightingLayer) this.lightingLayer.refresh();
-            break;
-        case COLLISION_LAYER:
-            if(this.tileCollision) this.tileCollision.reset();
-            break;
-        case INTERACTION_LAYER:
-            if(this.interactionLayer) this.interactionLayer.reset();
-            break;
     }
 }
 
-World.prototype.getBackgroundTile = function(x,y) {
-    return this.getTile(x,y,BACKGROUND_LAYER);
-}
-World.prototype.setBackgroundTile = function(x,y,value) {
-    this.setTile(x,y,value,BACKGROUND_LAYER);
-}
-World.prototype.getForegroundTile = function(x,y) {
-    return this.getTile(x,y,FOREGROUND_LAYER);
-}
-World.prototype.setForegroundTile = function(x,y,value) {
-    this.setTile(x,y,value,FOREGROUND_LAYER);
-}
-World.prototype.getSuperForegroundTile = function(x,y) {
-    return this.getTile(x,y,SUPER_FOREGROUND_LAYER);
-}
-World.prototype.setSuperForegroundTile = function(x,y,value) {
-    this.setTile(x,y,value,SUPER_FOREGROUND_LAYER);
-}
-World.prototype.getCollisionTile = function(x,y) {
-    return this.getTile(x,y,COLLISION_LAYER);
-}
 World.prototype.setCollisionTile = function(x,y,value) {
-    this.setTile(x,y,value,COLLISION_LAYER);
-}
-World.prototype.getInteractionTile = function(x,y) {
-    return this.getTile(x,y,INTERACTION_LAYER);
+    this.setTile(COLLISION_LAYER,x,y,value);
 }
 World.prototype.setInteractionTile = function(x,y,value) {
-    this.setTile(x,y,value,INTERACTION_LAYER);
-}
-World.prototype.getLightingTile = function(x,y) {
-    return this.getTile(x,y,LIGHTING_LAYER);
+    this.setTile(INTERACTION_LAYER,x,y,value);
 }
 World.prototype.setLightingTile = function(x,y,value) {
-    this.setTile(x,y,value,LIGHTING_LAYER);
+    this.setTile(LIGHTING_LAYER,x,y,value);
+}
+World.prototype.pushCollisionChanges = function() {
+    if(this.tileCollision) this.tileCollision.reset();
+}
+World.prototype.pushInteractionChanges = function() {
+    if(this.interactionLayer) this.interactionLayer.reset();
+}
+World.prototype.pushLightingChanges = function() {
+    if(this.lightingLayer) this.lightingLayer.refresh();
+}
+World.prototype.getBackgroundTile = function(x,y) {
+    return this.getTile(BACKGROUND_LAYER,x,y);
+}
+World.prototype.setBackgroundTile = function(x,y,value) {
+    this.setTile(BACKGROUND_LAYER,x,y,value);
+}
+World.prototype.getForegroundTile = function(x,y) {
+    return this.getTile(FOREGROUND_LAYER,x,y);
+}
+World.prototype.setForegroundTile = function(x,y,value) {
+    this.setTile(FOREGROUND_LAYER,x,y,value);
+}
+World.prototype.getSuperForegroundTile = function(x,y) {
+    return this.getTile(SUPER_FOREGROUND_LAYER,x,y);
+}
+World.prototype.setSuperForegroundTile = function(x,y,value) {
+    this.setTile(SUPER_FOREGROUND_LAYER,x,y,value);
+}
+World.prototype.getCollisionTile = function(x,y) {
+    return this.getTile(COLLISION_LAYER,x,y);
+}
+World.prototype.getInteractionTile = function(x,y) {
+    return this.getTile(INTERACTION_LAYER,x,y);
+}
+World.prototype.getLightingTile = function(x,y) {
+    return this.getTile(LIGHTING_LAYER,x,y);
 }
 World.prototype.addTextSprite = function(data) {
     if(data.center) {

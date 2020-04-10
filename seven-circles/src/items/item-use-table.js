@@ -2,6 +2,7 @@ import Pickup from "./scripts/pickup.js";
 import Present from "./scripts/present.js";
 import {BigPill,SmallPill} from "./scripts/alice-pills.js";
 import Blaster from "./scripts/blaster.js";
+import Key from "./scripts/key.js";
 
 const ItemUseTable = Object.freeze({
     "elf-rock": new Pickup(27,"elf-rock"),
@@ -10,7 +11,12 @@ const ItemUseTable = Object.freeze({
     "present": new Present(30),
     "big-pill": new BigPill(),
     "small-pill": new SmallPill(),
-    "blaster": new Blaster()
+    "blaster": new Blaster(),
+    "red-key": new Key("red"),
+    "blue-key": new Key("blue"),
+    "yellow-key": new Key("yellow"),
+    "green-key": new Key("green"),
+    "pink-key": new Key("pink"),
 });
 
 export default ItemUseTable;
