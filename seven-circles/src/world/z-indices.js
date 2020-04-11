@@ -12,6 +12,7 @@ const ZIndexBook = Object.freeze({
     /* Finalize layer */
     Fader: 20,
     WorldMessage: 10,
+    ObjectiveLabel: 9,
     highSpriteLayer: 5
 });
 

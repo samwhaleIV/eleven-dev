@@ -19,8 +19,7 @@ function PickupField(world,items) {
 
     this.tryPickup = ({value}) => {
         if(value in itemLookup) {
-            itemLookup[value].grab();
-            return true;
+            return itemLookup[value].grab();
         }
         return false;
     };

@@ -20,6 +20,8 @@ const TEXT_LINES = [
     "Oh. Yeah. They're cool, I guess."
 ];
 
+const TARGET_SCRIPT = "TunnelsOfHell";
+
 function Title() {
     this.text = TITLE_TEXT;
 
@@ -87,10 +89,17 @@ function HelloWorld(world) {
     dispatchRenderer.addBackground(starField.render);
     dispatchRenderer.addBackground(title.render);
 
+    const tryPostIntroStart = () => {
+        if(world.script.postIntroStart) {
+            world.script.postIntroStart();
+        }
+    };
+
     this.load = () => {
         (async () => {
             if(DEV) {
-                world.runScript("TunnelsOfHell");
+                world.runScript(TARGET_SCRIPT);
+                tryPostIntroStart();
                 return;
             }
             await world.fadeFromBlack(FADE_IN_TIME);
@@ -104,12 +113,13 @@ function HelloWorld(world) {
                 await Eleven.FrameTimeout(TEXT_DELAY);
             }
             await world.fadeToBlack(FADE_OUT_TIME);
-            world.runScript("TunnelsOfHell");
+            world.runScript(TARGET_SCRIPT);
             world.playerController.lock();
             world.popFader();
             await world.fadeFromBlack(FIRST_SCRIPT_FADE_IN);
             world.popFader();
             world.playerController.unlock();
+            tryPostIntroStart();
         })();
     };
     

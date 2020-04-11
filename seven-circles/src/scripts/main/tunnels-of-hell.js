@@ -2,6 +2,8 @@ import KeyDoor from "../helper/key-door.js";
 import PickupField from "../helper/pickup-field.js";
 import AddColorBackground from "../helper/color-background.js";
 import SpriteDoor from "../helper/sprite-door.js";
+import ObjectiveText from "../helper/objective-text.js";
+import KeyWeapon from "../../weapons/key-weapon.js";
 
 function TunnelsOfHell(world) {
     world.setMap("tunnels-of-hell");
@@ -33,9 +35,41 @@ function TunnelsOfHell(world) {
     const endWallLeft = new SpriteDoor(world,57,8,11,12,13,4,5,true,2000);
     const endWallRight = new SpriteDoor(world,71,8,11,12,13,4,5,false,500);
 
+    const objectiveText = new ObjectiveText(world);
+
+    this.keyDoorOpened = door => {
+        if(objectiveText.status === "open-red-door" && door.color === "red") {
+            objectiveText.close();
+            objectiveText.status = null;
+        }
+        console.log("Door opened:",door);
+    };
+
+    player.watchWeaponChange(weapon=>{
+        if(weapon) {
+            if(objectiveText.status === "equip-red-key" && weapon.name === KeyWeapon.name && weapon.color === "red") {
+                objectiveText.text = "Open the red door!";
+                objectiveText.status = "open-red-door";
+            }
+        }
+    });
+
     this.interact = data => {
-        if(pickupField.tryPickup(data)) return;
+        const pickedUpItem = pickupField.tryPickup(data);
+        if(pickedUpItem) {
+            if(pickedUpItem === "red-key" && objectiveText.status === "get-red-key") {
+                objectiveText.lines = ["Access your items","and get your key!"];
+                objectiveText.status = "equip-red-key";
+            }
+            return;
+        }
+
         if(data.value === 16) endWallRight.toggle();
+    };
+
+    this.postIntroStart = () => {
+        objectiveText.status = "get-red-key";
+        objectiveText.text = "Find a red key!";
     };
 
     world.setTriggerHandlers([[1,()=>endWallLeft.close(),true]]);

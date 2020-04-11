@@ -12,7 +12,12 @@ function KeyDoorHandler(world,doors) {
                 if(type !== door.color) continue;
 
                 if(matchesDoor) {
-                    door.open(); return true;
+                    door.open();
+                    const {script} = world;
+                    if(script.keyDoorOpened) {
+                        script.keyDoorOpened(door);
+                    }
+                    return true;
                 }
             }
             if(matchedAnyDoor) {

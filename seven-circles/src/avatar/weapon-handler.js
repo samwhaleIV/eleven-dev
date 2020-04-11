@@ -1,6 +1,18 @@
 function WeaponHandler() {
     let weapon = null, weaponUpdateID, weaponRenderID;
 
+    let weaponChangeWatchers = new Array();
+
+    this.watchWeaponChange = handler => {
+        weaponChangeWatchers.push(handler);
+    };
+
+    const sendWeaponChange = () => {
+        for(let i = 0;i<weaponChangeWatchers.length;i++) {
+            weaponChangeWatchers[i](weapon);
+        }
+    }
+
     this.setWeapon = (newWeapon,...parameters) => {
         if(weapon !== null) {
             this.clearWeapon();
@@ -27,6 +39,8 @@ function WeaponHandler() {
         if(newWeapon.load) newWeapon.load();
 
         weapon = newWeapon;
+
+        sendWeaponChange();
     };
     this.clearWeapon = () => {
         if(weapon === null) return;
@@ -36,8 +50,9 @@ function WeaponHandler() {
 
         const oldWeapon = weapon;
         weapon = null;
-
         if(oldWeapon.unload) oldWeapon.unload();
+
+        sendWeaponChange();
     };
 
     this.hasWeapon = () => {
