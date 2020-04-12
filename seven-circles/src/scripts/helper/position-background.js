@@ -14,7 +14,11 @@ function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
     let didRender = false;
     let bufferX, bufferY;
 
-    const render = (context,size,time) => {
+    const {context,time} = Eleven.CanvasManager;
+
+    const render = () => {
+
+        didRender = false;
 
         const screenLocation = grid.getLocation(x,y);
 
@@ -24,10 +28,10 @@ function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
         const renderWidth = Math.floor(width * tileSize);
         const renderHeight = Math.floor(height * tileSize);
 
-        if(!grid.objectOnScreen(
+        if(!(renderWidth >= 1 && renderHeight >= 1) || !grid.objectOnScreen(
             renderX,renderY,renderWidth,renderHeight)
         ) {
-            didRender = false; return;
+            return;
         }
 
         buffer.width = renderWidth;
@@ -51,7 +55,7 @@ function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
     world.dispatchRenderer.addBackground(render);
     if(topLayer) {
         const {x,y,width,height} = topLayer;
-        world.dispatchRenderer.addRender(context=>{
+        world.dispatchRenderer.addRender(()=>{
             if(!didRender) return;
             const screenLocation = grid.getLocation(x,y);
 
