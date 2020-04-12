@@ -1,4 +1,4 @@
-import ZIndexBook from "../../world/z-indices.js";
+import ZIndexBook from "../../../world/z-indices.js";
 
 function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
     const {grid} = world;

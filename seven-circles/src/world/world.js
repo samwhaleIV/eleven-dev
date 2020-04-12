@@ -731,7 +731,9 @@ World.prototype.setTriggerHandlers = function(triggerSet) {
 
     const worldTriggerSet = new Object();
 
-    triggerSet.forEach(([ID,handler,fireOnce=false])=>{
+    triggerSet.forEach(trigger=>{
+        if(!trigger) return;
+        const [ID,handler,fireOnce=false] = trigger;
         worldTriggerSet[ID] = {fireOnce,handler,fired:false};
     });
 

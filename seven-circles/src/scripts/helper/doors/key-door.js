@@ -3,7 +3,7 @@ import GetInteractionStart from "../get-interaction-start.js";
 import DoorBase from "./door-base.js";
 
 const INTERACTION_ID_START = GetInteractionStart();
-const VERTICAL_COLLISION_VALUE = 9;
+const VERTICAL_COLLISION_VALUE = 1;
 const HORIZONTAL_COLLISION_VALUE = 1;
 
 const frames = {
@@ -15,7 +15,6 @@ const frames = {
         bottom: 11,
         topOpen: 12,
         bottomOpen: 13,
-        collision: 1,
         collisionOpen: {
             top: 4,
             middle: 0,
@@ -25,56 +24,66 @@ const frames = {
     verticalRed: {
         vertical: true,
         color: "red",
-        top: 392,
-        middle: 456,
-        bottom: 520,
-        topOpen: 584,
-        bottomOpen: 648
+        top: 777,
+        middle: 841,
+        bottom: 905,
+        topOpen: 649,
+        bottomOpen: 713
     },
     verticalBlue: {
         vertical: true,
         color: "blue",
-        top: 457,
-        middle: 521,
-        bottom: 585,
-        topOpen: 649,
-        bottomOpen: 713
+        top: 775,
+        middle: 839,
+        bottom: 903,
+        topOpen: 647,
+        bottomOpen: 711
     },
     horizontalYellow: {
         vertical: false,
         color: "yellow",
-        left: 393,
-        middle: 394,
-        right: 395,
-        leftOpen: 711,
-        rightOpen: 712
+        left: 842,
+        middle: 843,
+        right: 844,
+        leftOpen: 845,
+        rightOpen: 846
     },
     horizontalGreen: {
         vertical: false,
         color: "green",
-        left: 396,
-        middle: 397,
-        right: 398,
-        leftOpen: 775,
-        rightOpen: 776
+        left: 906,
+        middle: 907,
+        right: 908,
+        leftOpen: 909,
+        rightOpen: 910
     },
     verticalPink: {
         vertical: true,
         color: "pink",
-        top: 399,
-        middle: 463,
-        bottom: 527,
-        topOpen: 777,
-        bottomOpen: 841
+        top: 774,
+        middle: 838,
+        bottom: 902,
+        topOpen: 646,
+        bottomOpen: 710
     },
     verticalYellow: {
         vertical: true,
         color: "yellow",
-        top: 400,
-        middle: 464,
-        bottom: 528,
-        topOpen: 401,
-        bottomOpen: 465
+        top: 773,
+        middle: 837,
+        bottom: 901,
+        topOpen: 645,
+        bottomOpen: 709
+    },
+
+    horizontalChocolate: {
+        vertical: false,
+        color: "chocolate",
+        left: 778,
+        middle: 779,
+        right: 780,
+        leftOpen: 781,
+        rightOpen: 782
     }
 };
 

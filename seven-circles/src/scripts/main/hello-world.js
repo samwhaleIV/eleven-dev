@@ -1,4 +1,5 @@
 import StarField from "../helper/star-field.js";
+import FadeTransition from "../helper/fade-transition.js";
 
 const TITLE_TEXT = "";
 const TITLE_FONT = "22px sans-serif";
@@ -10,7 +11,6 @@ const TEXT_DELAY = 3000;
 
 const FADE_IN_TIME = 8000;
 
-const FIRST_SCRIPT_FADE_IN = 3000;
 const FADE_OUT_TIME = 3000;
 
 const TEXT_LINES = [
@@ -89,17 +89,13 @@ function HelloWorld(world) {
     dispatchRenderer.addBackground(starField.render);
     dispatchRenderer.addBackground(title.render);
 
-    const tryPostIntroStart = () => {
-        if(world.script.postIntroStart) {
-            world.script.postIntroStart();
-        }
-    };
-
     this.load = () => {
         (async () => {
             if(DEV) {
                 world.runScript(TARGET_SCRIPT);
-                tryPostIntroStart();
+                if(world.script.postFadeStart) {
+                    world.script.postFadeStart();
+                }
                 return;
             }
             await world.fadeFromBlack(FADE_IN_TIME);
@@ -112,14 +108,8 @@ function HelloWorld(world) {
                 title.text = "";
                 await Eleven.FrameTimeout(TEXT_DELAY);
             }
-            await world.fadeToBlack(FADE_OUT_TIME);
-            world.runScript(TARGET_SCRIPT);
-            world.playerController.lock();
-            world.popFader();
-            await world.fadeFromBlack(FIRST_SCRIPT_FADE_IN);
-            world.popFader();
-            world.playerController.unlock();
-            tryPostIntroStart();
+
+            FadeTransition(world,TARGET_SCRIPT,FADE_OUT_TIME);
         })();
     };
     

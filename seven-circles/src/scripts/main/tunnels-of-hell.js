@@ -4,13 +4,14 @@ import AddColorBackground from "../helper/color-background.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import ObjectiveText from "../helper/objective-text.js";
 import KeyWeapon from "../../weapons/key-weapon.js";
-import AddWaterBackground from "../helper/water-background.js";
+import AddFixedMilkBackground from "../helper/backgrounds/fixed-milk-background.js";
+import FadeTransition from "../helper/fade-transition.js";
 
 function TunnelsOfHell(world) {
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,`rgb(20,0,0)`);
 
-    AddWaterBackground(world,81,7,5,5,{
+    AddFixedMilkBackground(world,81,7,5,5,{
         width: 1,height: 1,y: 10.5,x: 83
     });
 
@@ -79,10 +80,13 @@ function TunnelsOfHell(world) {
         if(data.value === 16) endWallRight.toggle();
     };
 
-    this.postIntroStart = () => {
+    this.postFadeStart = () => {
         objectiveText.set("Find the red key!","get-red-key");
     };
 
-    world.setTriggerHandlers([[1,()=>endWallLeft.close(),true]]);
+    world.setTriggerHandlers([
+        [1,()=>endWallLeft.close(),true],
+        [3,()=>{FadeTransition(world,"chocolate-hell")},true]
+    ]);
 }
 export default TunnelsOfHell;
