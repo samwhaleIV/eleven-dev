@@ -1,7 +1,12 @@
 function AddColorBackground(world,color) {
-    world.dispatchRenderer.addBackground((context,{width,height})=>{
-        context.fillStyle = color;
-        context.fillRect(0,0,width,height);
-    });
+    const render = (()=>{
+        const {context,size} = Eleven.CanvasManager;
+        const render = () => {
+            context.fillStyle = color;
+            context.fillRect(0,0,size.width,size.height);
+        };
+        return render;
+    })();
+    world.dispatchRenderer.addBackground(render);
 }
 export default AddColorBackground;
