@@ -2,7 +2,7 @@ const Constants = Object.freeze({
     Namespace: "SVCC",
     PlayerSpeed: 2.5,
     NPCSpeed: 3,
-    DefaultCameraScale: 7,
+    DefaultCameraScale: 8,
     TriggerTiles: 15,
     DevSaveFile: "dev-save",
     GlobalResourceFile: "global-preload",

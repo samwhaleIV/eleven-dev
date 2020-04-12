@@ -145,8 +145,7 @@ function World() {
             uvtcDecoding: true
         });
 
-        renderer.layerCount = 2;
-        renderer.layerStart = 0;
+        renderer.setLayerRange(0,2);
         grid.cache();
         renderer.paused = true;
 
