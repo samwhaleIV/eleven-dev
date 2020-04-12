@@ -23,10 +23,10 @@ function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
 
     this.open = false;
 
-    const renderStatic = (context,x,y,width) => {
+    const renderStatic = (context,x,y,width,open) => {
         const renderSize = width;
 
-        if(this.open) {
+        if(open) {
             context.drawImage(
                 image,top[0],top[1],tileSize,tileSize,
                 x,y,renderSize,renderSize
@@ -88,22 +88,28 @@ function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
     this.render = (context,x,y,width,_,time) => {
         if(this.openStart !== null) {
             let t = (time.now-this.openStart) / duration;
-            if(t < 0) t = 0; else if(t > 1) {
+            if(t < 0) {
+                renderStatic(context,x,y,width,false);
+                return;
+            } else if(t > 1) {
                 this.openStart = null;
-                renderStatic(context,x,y,width);
+                renderStatic(context,x,y,width,this.open,true);
                 return;
             }
             renderMoving(context,x,y,width,t);
         } else if(this.closeStart !== null) {
             let t = (time.now-this.closeStart) / duration;
-            if(t < 0) t = 0; else if(t > 1) {
+            if(t < 0) {
+                renderStatic(context,x,y,width,true);
+                return;
+            } else if(t > 1) {
                 this.closeStart = null;
-                renderStatic(context,x,y,width);
+                renderStatic(context,x,y,width,false);
                 return;
             }
             renderMoving(context,x,y,width,1 - t);
         } else {
-            renderStatic(context,x,y,width);
+            renderStatic(context,x,y,width,this.open);
         }
     };
 }
@@ -181,7 +187,6 @@ function SpriteDoor(
     };
 
     DoorBase.call(this,world,open,close,startOpen);
-
     doorRenderer.openStart = null;
     doorRenderer.closeStart = null;
 

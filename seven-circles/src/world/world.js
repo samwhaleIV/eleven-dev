@@ -460,7 +460,7 @@ const updateTileBasedLayers = world => {
         dispatchRenderer.addRender(world.lightingLayer.render);
     }
 
-    const highSpriteZIndex = ZIndexBook.highSpriteLayer
+    const highSpriteZIndex = ZIndexBook.HighSpriteLayer;
     dispatchRenderer.addFinalize(
         world.highSpriteLayer.update,highSpriteZIndex
     );

@@ -4,10 +4,15 @@ import AddColorBackground from "../helper/color-background.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import ObjectiveText from "../helper/objective-text.js";
 import KeyWeapon from "../../weapons/key-weapon.js";
+import AddWaterBackground from "../helper/water-background.js";
 
 function TunnelsOfHell(world) {
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,`rgb(20,0,0)`);
+
+    AddWaterBackground(world,81,7,5,5,{
+        width: 1,height: 1,y: 10.5,x: 83
+    });
 
     const player = world.addPlayer(4,3.5);
     player.direction = "down";
@@ -32,7 +37,7 @@ function TunnelsOfHell(world) {
     ]);
 
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",true,2000,48);
-    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,500,49);
+    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,300,49);
 
     const objectiveText = new ObjectiveText(world);
 

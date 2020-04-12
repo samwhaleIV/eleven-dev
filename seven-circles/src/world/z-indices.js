@@ -9,11 +9,14 @@ const ZIndexBook = Object.freeze({
     TextSprite: 10,
     ParticleSprite: 5,
 
+    /* Render */
+    SuperImposedBackground: 2,
+
     /* Finalize layer */
     Fader: 20,
     WorldMessage: 10,
     ObjectiveLabel: 9,
-    highSpriteLayer: 5
+    HighSpriteLayer: 5
 });
 
 export default ZIndexBook;
