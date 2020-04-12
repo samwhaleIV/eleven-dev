@@ -15,19 +15,16 @@ const getGiftMessage = item => {
 
 const giveGift = ({world,self,inventory}) => {
     const {gift} = self;
-    world.playerController.lock();
     (async () => {
-        await world.showMessageInstant(getGiftMessage(gift));
+        world.playerController.lock();
+
+        await world.messageUnlocked(getGiftMessage(gift));
 
         world.spriteLayer.remove(self.ID);
         inventory.addItem(gift);
 
         world.playerController.unlock();
     })();
-};
-
-const spriteData = {
-    impulse: giveGift, retain: false
 };
 
 const getRandomPresent = () => {

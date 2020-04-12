@@ -175,7 +175,13 @@ function FaderList(dispatchRenderer) {
     };
 }
 
+let messageLock = false;
+const resolveStack = new Array();
+
 function World(callback) {
+
+    messageLock = false;
+    resolveStack.splice(0);
 
     this.tilesetColumns = 0;
     this.tileSize = BASE_TILE_SIZE;
@@ -258,9 +264,12 @@ function World(callback) {
     };
 }
 
-const resolveStack = new Array();
-
-World.prototype.showMessage = function(message,instant) {
+function showMessage(message,instant,lock) {
+    const canLock = !messageLock && this.playerController && lock;
+    if(canLock) {
+        messageLock = true;
+        this.playerController.lock();
+    }
     if(this.canAdvanceMessage()) {
         this.textMessageStack.push([message,instant]);
     } else {
@@ -270,8 +279,17 @@ World.prototype.showMessage = function(message,instant) {
         resolveStack.push(resolve);
     });
 }
-World.prototype.showMessageInstant = function(message) {
-    return this.showMessage(message,true);
+World.prototype.say = async function(message) {
+    return showMessage.call(this,message,false,true);
+}
+World.prototype.sayUnlocked = function(message) {
+    return showMessage.call(this,message,false,false);
+}
+World.prototype.message = function(message) {
+    return showMessage.call(this,message,true,true);
+}
+World.prototype.messageUnlocked = function(message) {
+    return showMessage.call(this,message,true,false);
 }
 World.prototype.canAdvanceMessage = function() {
     return Boolean(this.textMessage);
@@ -283,10 +301,14 @@ World.prototype.advanceMessage = function() {
             this.textMessage = null;
             if(this.textMessageStack.length >= 1) {
                 const newMessage = this.textMessageStack.shift();
-                this.showMessage.apply(this,newMessage);
+                showMessage.apply(this,newMessage);
             } else {
                 resolveStack.forEach(resolve=>resolve());
                 resolveStack.splice(0);
+                if(messageLock && this.playerController) {
+                    this.playerController.unlock();
+                }
+                messageLock = false;
             }
         } else {
             this.textMessage.advance();
@@ -738,13 +760,7 @@ World.prototype.useItem = function(safeID,removeItem,message) {
 
     if(removeItem) Inventory.removeItem(safeID);
 
-    if(message) {
-        this.playerController.lock();
-        (async ()=>{
-            await this.showMessageInstant(message);
-            this.playerController.unlock();
-        })();
-    }
+    if(message) this.message(message);
 
     return true;
 }

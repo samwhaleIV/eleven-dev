@@ -1,5 +1,6 @@
-import KeyDoorHandler from "./key-door-handler.js";
-import GetInteractionStart from "./get-interaction-start.js";
+import KeyDoorHandler from "./key-door-handler.js"
+import GetInteractionStart from "../get-interaction-start.js";
+import DoorBase from "./door-base.js";
 
 const INTERACTION_ID_START = GetInteractionStart();
 const VERTICAL_COLLISION_VALUE = 9;
@@ -77,7 +78,7 @@ const frames = {
     }
 };
 
-const defaultFrame = frames.verticalRed;
+const FALLBACK_FRAME = frames.verticalRed;
 const defaultVerticalCollision = {
     top: VERTICAL_COLLISION_VALUE,
     middle: 0,
@@ -137,58 +138,40 @@ const installInteraction = (x,y,world,frame,type) => {
     }
 };
 
-const open = (x,y,world,frame,pauseHardUpdates) => {
+const open = (x,y,world,frame) => {
     if(frame.vertical) {
         verticalOpen(x,y,world,frame);
     } else {
         horizontalOpen(x,y,world,frame);
     }
-    if(!pauseHardUpdates) world.pushCollisionChanges();
+    return true;
 };
-const close = (x,y,world,frame,pauseHardUpdates) => {
+const close = (x,y,world,frame) => {
     if(frame.vertical) {
         verticalClose(x,y,world,frame);
     } else {
         horizontalClose(x,y,world,frame);
     }
-    if(!pauseHardUpdates) world.pushCollisionChanges();
+    return true;
 };
 
-function KeyDoor(world,x,y,frame,startOpen,interactionType) {
+function KeyDoor(world,x,y,frame,startOpen,interactionValue) {
     if(typeof frame === "string") {
         frame = frames[frame];
     }
-    let opened = false;
-    Object.defineProperty(this,"opened",{
-        get: () => opened,
-        enumerable: true
-    });
-    this.open = pauseHardUpdates => {
-        if(opened) return;
-        open(x,y,world,frame,pauseHardUpdates);
-        opened = true;
-    };
-    this.close = pauseHardUpdates => {
-        if(!opened) return;
-        close(x,y,world,frame,pauseHardUpdates);
-        opened = false;
-    };
-    this.toggle = pauseHardUpdates => {
-        if(opened) {
-            this.close(pauseHardUpdates);
-        } else {
-            this.open(pauseHardUpdates);
-        }
-    };
+    if(!frame) frame = FALLBACK_FRAME;
+
     this.color = frame.color || null;
 
-    if(interactionType !== null) installInteraction(
-        x,y,world,frame,interactionType
+    if(!isNaN(interactionValue) && interactionValue !== null) installInteraction(
+        x,y,world,frame,interactionValue
     );
-
     this.interactionValue = world.getInteractionTile(x,y);
 
-    opened = !Boolean(startOpen); this.toggle(true);
+    const openTarget = open.bind(null,x,y,world,frame);
+    const closeTarget = close.bind(null,x,y,world,frame);
+
+    DoorBase.call(this,world,openTarget,closeTarget,startOpen);
 }
 
 function getDoors(world,doors,IDStart) {
@@ -197,21 +180,35 @@ function getDoors(world,doors,IDStart) {
     const keyDoors = new Array(doors.length);
 
     for(let i = 0;i<doors.length;i++) {
-        let [x,y,frame,interactionType] = doors[i];
-        if(interactionType === undefined) {
-            interactionType = IDStart;
+        let [x,y,frame,interactionValue] = doors[i];
+        if(interactionValue === undefined) {
+            interactionValue = IDStart;
             IDStart++;
         }
         keyDoors[i] = new KeyDoor(
-            world,x,y,frame,false,interactionType
+            world,x,y,frame,false,interactionValue
         );
     }
 
-    const handler = KeyDoorHandler(world,keyDoors);
+    const keyHandler = KeyDoorHandler(world,keyDoors);
+
+    const tryInteract = ({value}) => {
+        for(let i = 0;i<doors.length;i++) {
+            const keyDoor = keyDoors[i];
+            if(value === keyDoor.interactionValue) {
+                if(!keyDoor.opened) world.message(
+                    `You need a ${keyDoor.color} key to open this door!`
+                );
+                return true;
+            }
+        }
+        return false;
+    };
+
     const get = index => keyDoors[index];
     const count = keyDoors.length;
 
-    return Object.freeze({get,handler,count});
+    return Object.freeze({get,useKey:keyHandler,tryInteract,count});
 }
 
 Object.defineProperty(KeyDoor,"getDoors",{

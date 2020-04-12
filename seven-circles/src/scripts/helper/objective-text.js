@@ -109,21 +109,22 @@ function ObjectiveText(world) {
     Object.defineProperties(this,{
         text: {
             set: value => {
-                this.show([value],false);
-            },
-            enumerable: true
-        },
-        lines: {
-            set: value => {
+                if(!Array.isArray(value)) {
+                    value = [value];
+                }
                 this.show(value,false);
             },
             enumerable: true
-        }
+        },
     });
 
     this.status = null;
 
+    this.set = (text,status) => {
+        this.text = text;
+        this.status = status;
+    };
+
     Object.seal(this);
 }
 export default ObjectiveText;
-

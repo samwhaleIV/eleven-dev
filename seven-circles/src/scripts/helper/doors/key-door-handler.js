@@ -21,12 +21,7 @@ function KeyDoorHandler(world,doors) {
                 }
             }
             if(matchedAnyDoor) {
-                world.playerController.lock();
-                (async () => {
-                    world.playerController.lock();
-                    await world.showMessageInstant(`A ${type} key doesn't work here!`);
-                    world.playerController.unlock();
-                })();
+                world.message(`A ${type} key doesn't work here!`);
                 return true;
             }
             return false;

@@ -1,6 +1,19 @@
-import ZIndexBook from "../../world/z-indices.js";
+import ZIndexBook from "../../../world/z-indices.js";
+import DoorBase from "./door-base.js";
 
 const TRANSITION_TIME = 500;
+
+const frames = {
+    grayDoor: {
+        top: 12,
+        center: 11,
+        bottom: 13,
+        collision: 1,
+        topCollision: 4,
+        bottomCollision: 5
+    }
+};
+const FALLBACK_FRAME = frames.grayDoor;
 
 function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
     this.openStart = null; this.closeStart = null;
@@ -96,16 +109,21 @@ function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
 }
 
 function SpriteDoor(
-    world,x,y,normal,top,bottom,
-    topCollision,bottomCollision,startOpen,duration
+    world,x,y,frame,startOpen,duration,interactionValue
 ) {
+
+    if(typeof frame === "string") {
+        frame = frames[frame];
+    }
+    if(!frame) frame = FALLBACK_FRAME;
+
     duration = duration || TRANSITION_TIME;
 
     const doorRenderer = new DoorRenderer(
         world.tileset,x,y,world.tileSize,
-        world.getTextureXY(normal),
-        world.getTextureXY(top),
-        world.getTextureXY(bottom),
+        world.getTextureXY(frame.center),
+        world.getTextureXY(frame.top),
+        world.getTextureXY(frame.bottom),
         duration
     );
 
@@ -118,20 +136,27 @@ function SpriteDoor(
     };
 
     const setOpenCollision = () => {
-        world.setCollisionTile(x,y,topCollision);
+        world.setCollisionTile(x,y,frame.topCollision);
         world.setCollisionTile(x,y+1,0);
-        world.setCollisionTile(x,y+2,bottomCollision);
+        world.setCollisionTile(x,y+2,frame.bottomCollision);
     };
 
     let locked = false;
+    const canChange = () => {
+        return !locked && doorRenderer.closeStart === null && doorRenderer.openStart === null;
+    };
 
     const open = instant => {
+        if(!canChange()) return false;
+
         if(instant) {
             setOpenCollision();
         }
 
         doorRenderer.open = true;
         doorRenderer.openStart = performance.now();
+
+        this.deferCollisionUpdate();
 
         if(!instant) (async () => {
             locked = true;
@@ -140,42 +165,46 @@ function SpriteDoor(
             world.pushCollisionChanges();
             locked = false;
         })();
+
+        return true;
     };
     const close = () => {
-        world.setCollisionTile(x,y,1);
-        world.setCollisionTile(x,y+1,1);
-        world.setCollisionTile(x,y+2,1);
+        if(!canChange()) return false;
+
+        world.setCollisionTile(x,y,frame.collision);
+        world.setCollisionTile(x,y+1,frame.collision);
+        world.setCollisionTile(x,y+2,frame.collision);
         doorRenderer.open = false;
         doorRenderer.closeStart = performance.now();
-    };
-    let opened = startOpen;
 
-    const canChange = () => {
-        return !locked && doorRenderer.closeStart === null && doorRenderer.openStart === null;
+        return true;
     };
 
-    this.open = () => {
-        if(opened || !canChange()) return;
-        open();
-        opened = true;
-    };
-    this.close = () => {
-        if(!opened || !canChange()) return;
-        close();
-        world.pushCollisionChanges();
-        opened = false;
-    };
-    this.toggle = () => {
-        if(opened) {
-            this.close();
-        } else {
-            this.open();
-        }
-    };
-
-    if(startOpen) open(true); else close();
+    DoorBase.call(this,world,open,close,startOpen);
 
     doorRenderer.openStart = null;
     doorRenderer.closeStart = null;
+
+    Object.defineProperty(this,"interactionValue",{
+        value: typeof interactionValue === "number" ? interactionValue : null,
+        writable: false,
+        enumerable: true,
+        configurable: false
+    });
+
+    if(this.interactionValue !== null) {
+        interactionValue = this.interactionValue;
+        this.tryInteract = ({value},callback) => {
+            if(value === interactionValue) {
+                callback(this);
+                return true;
+            } else {
+                return false;
+            }
+        };
+        world.setInteractionTile(x,y,interactionValue);
+        world.setInteractionTile(x,y+1,interactionValue);
+        world.setInteractionTile(x,y+2,interactionValue);
+    }
 }
 export default SpriteDoor;
