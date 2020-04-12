@@ -739,7 +739,7 @@ World.prototype.setTriggerHandlers = function(triggerSet) {
 
     const sendTrigger = ID => {
         const triggerData = worldTriggerSet[ID];
-        if(triggerData.fireOnce && triggerData.fired) return;
+        if(!triggerData || (triggerData.fireOnce && triggerData.fired)) return;
         triggerData.handler(!triggerData.fired);
         triggerData.fired = true;
     };

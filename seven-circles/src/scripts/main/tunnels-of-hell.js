@@ -41,7 +41,6 @@ function TunnelsOfHell(world) {
             objectiveText.close();
             objectiveText.status = null;
         }
-        console.log("Door opened:",door);
     };
 
     player.watchWeaponChange(weapon=>{
