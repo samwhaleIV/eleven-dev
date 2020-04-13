@@ -20,7 +20,7 @@ const TEXT_LINES = [
     "Oh. Yeah. They're cool, I guess."
 ];
 
-const TARGET_SCRIPT = "TunnelsOfHell";
+const TARGET_SCRIPT = "ChocolateHell";
 
 function Title() {
     this.text = TITLE_TEXT;

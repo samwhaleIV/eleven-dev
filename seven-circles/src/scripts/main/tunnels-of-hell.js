@@ -4,7 +4,7 @@ import AddColorBackground from "../helper/color-background.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import ObjectiveText from "../helper/objective-text.js";
 import KeyWeapon from "../../weapons/key-weapon.js";
-import AddFixedMilkBackground from "../helper/backgrounds/fixed-milk-background.js";
+import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import FadeTransition from "../helper/fade-transition.js";
 
 function TunnelsOfHell(world) {
@@ -40,20 +40,19 @@ function TunnelsOfHell(world) {
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",true,2000,48);
     const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,300,49);
 
-    const objectiveText = new ObjectiveText(world);
+    const objective = new ObjectiveText(world);
 
     this.keyDoorOpened = door => {
-        if(objectiveText.status === "open-red-door" && door.color === "red") {
-            objectiveText.close();
-            objectiveText.status = null;
+        if(objective.status === "open-red-door" && door.color === "red") {
+            objective.close();
         }
     };
 
     player.watchWeaponChange(weapon=>{
-        if(weapon && objectiveText.status === "equip-red-key" &&
+        if(weapon && objective.status === "equip-red-key" &&
            weapon.name === KeyWeapon.name && weapon.color === "red"
         ) {
-            objectiveText.set("Open the red door!","open-red-door");
+            objective.set("Open the red door!","open-red-door");
         }
     });
 
@@ -65,8 +64,8 @@ function TunnelsOfHell(world) {
     this.interact = data => {
         const pickedUpItem = pickupField.tryPickup(data);
         if(pickedUpItem) {
-            if(pickedUpItem === "red-key" && objectiveText.status === "get-red-key") {
-                objectiveText.set(["Access your items","and get your key!"],"equip-red-key");
+            if(pickedUpItem === "red-key" && objective.status === "get-red-key") {
+                objective.set(["Access your items","and get your key!"],"equip-red-key");
             }
             return;
         }
@@ -81,7 +80,7 @@ function TunnelsOfHell(world) {
     };
 
     this.postFadeStart = () => {
-        objectiveText.set("Find the red key!","get-red-key");
+        objective.set("Find the red key!","get-red-key");
     };
 
     world.setTriggerHandlers([

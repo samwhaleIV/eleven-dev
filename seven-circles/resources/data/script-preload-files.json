@@ -3,7 +3,8 @@
         "player-gun.png",
         "enemy-gun.png",
         "other.png",
-        "player-keys.png"
+        "player-keys.png",
+        "player-rock.png"
     ],
     "Audio": [
         "grow.mp3",

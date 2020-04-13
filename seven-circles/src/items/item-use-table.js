@@ -17,6 +17,7 @@ const ItemUseTable = Object.freeze({
     "yellow-key": new Key("yellow"),
     "green-key": new Key("green"),
     "pink-key": new Key("pink"),
+    "chocolate-key": new Key("chocolate")
 });
 
 export default ItemUseTable;

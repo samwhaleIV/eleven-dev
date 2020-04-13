@@ -15,9 +15,8 @@ function Blaster() {
         }
 
         const image = Eleven.ResourceManager.getImage(IMAGE_NAME);
-        player.setWeapon(GenericBlaster,image);
 
-        return true;
+        return player.setWeapon(GenericBlaster,image);
     };
 }
 export default Blaster;

@@ -7,11 +7,14 @@ function PickupField(world,items) {
     const itemLookup = {};
     let idStart = INTERACTION_ID_START;
     for(let i = 0;i<items.length;i++) {
-        const [x,y,item] = items[i];
+        const [x,y,item,amount,isSuperForeground,clearCollision] = items[i];
 
         const ID = idStart; idStart++;
 
-        const staticPickup = new StaticPickup(world,x,y,item);
+        const staticPickup = new StaticPickup(
+            world,x,y,item,amount,isSuperForeground,clearCollision
+        );
+
         itemLookup[ID] = staticPickup;
 
         world.setInteractionTile(x,y,ID);

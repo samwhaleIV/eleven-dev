@@ -1,5 +1,5 @@
 function WeaponHandler() {
-    let weapon = null, weaponUpdateID, weaponRenderID;
+    let weapon = null, weaponUpdateID, weaponRenderID, weaponLocked = false;
 
     let weaponChangeWatchers = new Array();
 
@@ -14,6 +14,7 @@ function WeaponHandler() {
     }
 
     this.setWeapon = (newWeapon,...parameters) => {
+        if(weaponLocked) return false;
         if(weapon !== null) {
             this.clearWeapon();
         }
@@ -41,8 +42,11 @@ function WeaponHandler() {
         weapon = newWeapon;
 
         sendWeaponChange();
+        return true;
     };
     this.clearWeapon = () => {
+        if(weaponLocked) return;
+
         if(weapon === null) return;
 
         this.removeUpdate(weaponUpdateID);
@@ -67,6 +71,17 @@ function WeaponHandler() {
 
     this.getWeapon = () => {
         return weapon;
+    };
+
+    this.lockWeapon = () => {
+        weaponLocked = true;
+    };
+    this.unlockWeapon = () => {
+        weaponLocked = false;
+    };
+
+    this.weaponLocked = () => {
+        return weaponLocked;
     };
 }
 

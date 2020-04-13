@@ -770,8 +770,9 @@ World.prototype.sendPlayerBasedAction = function(target) {
     return target({script:this.script,world:this,player:this.player});
 }
 World.prototype.itemHandler = function(safeID) {
+    if(!(safeID in ItemUseTable)) return false;
     const summonData = ItemUseTable[safeID];
-    if(summonData === undefined) return false;
+    if(!summonData) return false;
 
     const {
         tileID, action, spriteData, retain, verifyPlacement

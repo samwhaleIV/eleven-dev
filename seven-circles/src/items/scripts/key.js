@@ -13,9 +13,7 @@ function Key(type) {
             }
         }
 
-        player.setWeapon(KeyWeapon,type,script);
-
-        return true;
+        return player.setWeapon(KeyWeapon,type,script);
     };
 }
 export default Key;

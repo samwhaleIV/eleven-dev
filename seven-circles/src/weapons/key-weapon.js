@@ -1,11 +1,12 @@
 const NAME = "key-weapon";
 
 const colorTable = {
-    "red": 0,
-    "blue": 16,
-    "yellow": 32,
-    "green": 48,
-    "pink": 64
+    red: 0,
+    blue: 16,
+    yellow: 32,
+    green: 48,
+    pink: 64,
+    chocolate: 80
 };
 
 function KeyWeapon(type,script) {

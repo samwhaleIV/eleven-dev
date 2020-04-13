@@ -104,6 +104,7 @@ function ObjectiveText(world) {
         world.dispatchRenderer.removeFinalize(activeID);
         closeStart = null;
         activeID = null;
+        this.status = null;
     };
 
     Object.defineProperties(this,{
