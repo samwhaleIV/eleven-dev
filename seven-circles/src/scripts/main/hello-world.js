@@ -79,7 +79,7 @@ function Title() {
     }
 }
 
-function HelloWorld(world) {
+function HelloWorld({world}) {
     world.setMap("empty");
     const {dispatchRenderer} = world;
 
@@ -92,8 +92,7 @@ function HelloWorld(world) {
     this.load = () => {
         (async () => {
             if(DEV) {
-                world.runScript(TARGET_SCRIPT);
-                return;
+                world.runScript(TARGET_SCRIPT,{devLoad:true},true); return;
             }
             await world.fadeFromBlack(FADE_IN_TIME);
             world.popFader();

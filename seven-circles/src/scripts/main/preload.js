@@ -5,7 +5,7 @@ const PRELOAD_FILES = Constants.WorldPreloadFile;
 
 const {ResourceManager} = Eleven;
 
-function Preload(world) {
+function Preload({world}) {
     this.load = async () => {
         ResourceManager.queueText(PRELOAD_FILES + ".json");
         await ResourceManager.load();

@@ -519,7 +519,10 @@ World.prototype.runScript = async function(script,data,runStartScript) {
 
         this.pendingScriptData = new Object();
 
-        script = new script(this,data,SVCC.Runtime);
+        data.inventory = SVCC.Runtime.Inventory;
+        data.world = this;
+
+        script = new script(data);
 
         this.script = script;
 

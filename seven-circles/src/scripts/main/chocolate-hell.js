@@ -17,7 +17,7 @@ const SKELE_ID = 16;
 
 const END_DOOR = [39,27];
 
-function ChocolateHell(world,{source},{Inventory}) {
+function ChocolateHell({world,source,inventory}){
 
     world.setMap("chocolate-hell");
 
@@ -82,8 +82,8 @@ function ChocolateHell(world,{source},{Inventory}) {
     this.useKey = doors.useKey;
 
     this.unload = () => {
-        Inventory.clearItem("chocolate-key");
-        Inventory.clearItem("chocolate-milk");
+        inventory.clearItem("chocolate-key");
+        inventory.clearItem("chocolate-milk");
     };
     this.unload();
 
@@ -129,10 +129,10 @@ function ChocolateHell(world,{source},{Inventory}) {
             world.playerController.lock();
             (async () => {
                 if(foregroundValue === NO_MILK_SKELE) {
-                    if(Inventory.hasItem("chocolate-milk")) {
+                    if(inventory.hasItem("chocolate-milk")) {
                         await world.sayUnlocked("I waited a long time for this moment.");
                         await frameDelay(500);
-                        Inventory.removeItem("chocolate-milk");
+                        inventory.removeItem("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
                         milkGaveCount++;
                         await frameDelay(500);

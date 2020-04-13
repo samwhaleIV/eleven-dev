@@ -7,7 +7,7 @@ import KeyWeapon from "../../weapons/key-weapon.js";
 import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import FadeTransition from "../helper/fade-transition.js";
 
-function TunnelsOfHell(world,{source},{Inventory}) {
+function TunnelsOfHell({world,source,inventory}) {
 
     const fromChocolateHell = source === "ChocolateHell";
 
@@ -29,11 +29,11 @@ function TunnelsOfHell(world,{source},{Inventory}) {
     }
 
     this.unload = () => {
-        Inventory.clearItem("red-key");
-        Inventory.clearItem("green-key");
-        Inventory.clearItem("pink-key");
-        Inventory.clearItem("blue-key");
-        Inventory.clearItem("yellow-key");
+        inventory.clearItem("red-key");
+        inventory.clearItem("green-key");
+        inventory.clearItem("pink-key");
+        inventory.clearItem("blue-key");
+        inventory.clearItem("yellow-key");
     };
     this.unload();
 
