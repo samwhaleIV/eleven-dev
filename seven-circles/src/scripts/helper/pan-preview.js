@@ -16,7 +16,7 @@ async function PanPreview({world,x,y,tilesPerSecond,delay,middleEvent}) {
 
     await camera.moveTo(target[0],target[1],travelTime);
     if(middleEvent) middleEvent();
-    await Eleven.FrameTimeout(delay);
+    await frameDelay(delay);
 
     await camera.moveTo(start[0],start[1],travelTime);
 

@@ -108,7 +108,7 @@ function Inventory() {
         SaveState.set(CONTAINER_KEY,container);
     };
 
-    this.clearType = safeID => {
+    this.clearItem = safeID => {
         validateSafeID(safeID);
 
         const itemContainer = getItemContainer();

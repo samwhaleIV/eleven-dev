@@ -15,8 +15,10 @@ function Preload(world) {
         );
         await ResourceManager.load();
     
-        const {script,parameters} = Lifetime.getStartScript();
-        await world.runScript(script,...parameters);
+        const {script,data} = Lifetime.getStartScript();
+        data.fromPreload = true;
+
+        await world.runScript(script,data,true);
     };
 }
 export default Preload;

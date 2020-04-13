@@ -29,14 +29,14 @@ function Runtime() {
         await CanvasManager.setFrame(frame,parameters);
     };
     
-    this.LoadWorld = async (script,...parameters) => {
+    this.LoadWorld = async script => {
         if(!CanvasManager.paused) {
             CanvasManager.paused = true;
             CanvasManager.markLoading();
         }
 
         await setFrame(World,[async world=>{
-            if(script) await world.runScript(script,...parameters);
+            if(script) await world.runScript(script);
         }]);
 
         if(CanvasManager.paused) {
@@ -46,10 +46,6 @@ function Runtime() {
     };
 
     //use world.unloadScript when the runtime switches away from the world
-
-    this.RunWorldScript = async (script,...parameters) => {
-        await Eleven.CanvasManager.frame.runScript(script,...parameters);
-    };
 
     this.InputServer = inputServer;
     const inputWatchID = inputServer.addChangeListener(()=>{

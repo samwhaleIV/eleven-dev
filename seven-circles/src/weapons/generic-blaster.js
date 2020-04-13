@@ -1,9 +1,7 @@
 import GenericProjectile from "./generic-projectile.js";
 
-const FIRE_TIMEOUT = 60;
+const FIRE_TIMEOUT = 100;
 const NAME = "generic-blaster";
-
-const {FrameTimeout} = Eleven;
 
 const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
@@ -20,7 +18,7 @@ function GenericBlaster(image) {
 
     this.name = NAME;
 
-    let fireStart = null;
+    let firing = false;
 
     this.render = (context,x,y,width,height) => {
         const {directionMatrix, direction} = this.owner;
@@ -60,23 +58,13 @@ function GenericBlaster(image) {
         );
     };
 
-    const asyncFire = () => {
-        const delay = performance.now();
-        requestAnimationFrame(()=>{
-            fireStart = performance.now() - delay;
-            shoot();
-            (async () => {
-                await FrameTimeout(FIRE_TIMEOUT);
-                fireStart = null;
-            })();
-        });
-    };
-
     this.attack = () => {
-        if(fireStart !== null) return;
-        asyncFire();
+        if(firing) return;
+        firing = true; shoot();
+        setTimeout(()=>{
+            firing = false;
+        },FIRE_TIMEOUT);
     };
-
 }
 
 Object.defineProperty(GenericBlaster,"name",{value:NAME,enumerable:true});

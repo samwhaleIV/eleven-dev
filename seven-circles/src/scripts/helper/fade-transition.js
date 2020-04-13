@@ -10,29 +10,30 @@ const tryLock = world => {
         world.playerController.lock();
     }
 };
-const tryPostFadeStart = world => {
-    if(world.script.postIntroStart) {
-        world.script.postIntroStart();
-    }
+const tryScriptStart = world => {
+    const {script} = world;
+    if(script.start) script.start();
 };
 
-async function FadeTransition(world,script,fadeTime,...parameters) {
+async function FadeTransition(world,script,data,fadeTime) {
+    if(!data) data = new Object();
+
     if(isNaN(fadeTime)) {
         fadeTime = DEFAULT_FADE_TIME;
     }
     tryLock(world);
 
-    await world.fadeToBlack(fadeTime);
-    world.runScript(script,...parameters);
+    data.fromFade = true;
+
+    await world.fadeToBlack(fadeTime).then(world.popFader);
+    world.runScript(script,data,false);
 
     tryLock(world);
 
-    world.popFader();
-    await world.fadeFromBlack(fadeTime);
-    world.popFader();
+    await world.fadeFromBlack(fadeTime).then(world.popFader);
 
     tryUnlock(world);
 
-    tryPostFadeStart(world);
+    tryScriptStart(world);
 }
 export default FadeTransition;

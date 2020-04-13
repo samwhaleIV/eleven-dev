@@ -166,7 +166,7 @@ function SpriteDoor(
 
         if(!instant) (async () => {
             locked = true;
-            await Eleven.FrameTimeout(duration);
+            await frameDelay(duration);
             setOpenCollision();
             world.pushCollisionChanges();
             locked = false;

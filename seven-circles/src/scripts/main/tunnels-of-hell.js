@@ -7,7 +7,10 @@ import KeyWeapon from "../../weapons/key-weapon.js";
 import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import FadeTransition from "../helper/fade-transition.js";
 
-function TunnelsOfHell(world) {
+function TunnelsOfHell(world,{source},{Inventory}) {
+
+    const fromChocolateHell = source === "ChocolateHell";
+
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,`rgb(20,0,0)`);
 
@@ -15,8 +18,24 @@ function TunnelsOfHell(world) {
         width: 1,height: 1,y: 10.5,x: 83
     });
 
-    const player = world.addPlayer(4,3.5);
-    player.direction = "down";
+    const player = world.addPlayer();
+
+    if(fromChocolateHell) {
+        player.setPosition(83,6);
+        player.direction = "up";
+    } else {
+        player.setPosition(4,3.5);
+        player.direction = "down";
+    }
+
+    this.unload = () => {
+        Inventory.clearItem("red-key");
+        Inventory.clearItem("green-key");
+        Inventory.clearItem("pink-key");
+        Inventory.clearItem("blue-key");
+        Inventory.clearItem("yellow-key");
+    };
+    this.unload();
 
     const doors = KeyDoor.getDoors(world,[
         [8,14,"verticalRed"],
@@ -37,8 +56,11 @@ function TunnelsOfHell(world) {
         [49,13,"yellow-key"]
     ]);
 
-    const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",true,2000,48);
-    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,300,49);
+    const endWallLeftStartOpen = fromChocolateHell ? false : true;
+    const endWallRightStartOpen = fromChocolateHell ? true : false;
+
+    const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",endWallLeftStartOpen,2000,48);
+    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",endWallRightStartOpen,300,49);
 
     const objective = new ObjectiveText(world);
 
@@ -79,13 +101,14 @@ function TunnelsOfHell(world) {
         if(data.value === 16) endWallRight.toggle();
     };
 
-    this.postFadeStart = () => {
+    this.start = () => {
+        if(fromChocolateHell) return;
         objective.set("Find the red key!","get-red-key");
     };
 
     world.setTriggerHandlers([
         [1,()=>endWallLeft.close(),true],
-        [3,()=>{FadeTransition(world,"chocolate-hell")},true]
+        [2,()=>{FadeTransition(world,"ChocolateHell")},true]
     ]);
 }
 export default TunnelsOfHell;

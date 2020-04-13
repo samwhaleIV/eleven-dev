@@ -34,15 +34,17 @@ const getWorldScript = (player,serializeContainer) => {
 
 const getStartScript = () => {
     let script = GAME_START_SCRIPT;
-    let parameters = [];
+    const data = new Object();
 
     const {scriptID,serializeData} = getPositionContainer();
     if(scriptID in Scripts) {
         script = scriptID;
-        if(serializeData) parameters.push(serializeData);
+        if(serializeData) {
+            data.serializeData = serializeData;
+        }
     }
 
-    return {script:Scripts[script],parameters};
+    return {script:Scripts[script],data};
 };
 
 const serialize = (player,scriptID) => {

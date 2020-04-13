@@ -20,7 +20,7 @@ const TEXT_LINES = [
     "Oh. Yeah. They're cool, I guess."
 ];
 
-const TARGET_SCRIPT = "ChocolateHell";
+const TARGET_SCRIPT = "TunnelsOfHell";
 
 function Title() {
     this.text = TITLE_TEXT;
@@ -93,9 +93,6 @@ function HelloWorld(world) {
         (async () => {
             if(DEV) {
                 world.runScript(TARGET_SCRIPT);
-                if(world.script.postFadeStart) {
-                    world.script.postFadeStart();
-                }
                 return;
             }
             await world.fadeFromBlack(FADE_IN_TIME);
@@ -103,12 +100,11 @@ function HelloWorld(world) {
             for(let i = 0;i<TEXT_LINES.length;i++) {
                 title.text = TEXT_LINES[i];
                 await title.fadeIn();
-                await Eleven.FrameTimeout(TEXT_TIME);
+                await frameDelay(TEXT_TIME);
                 await title.fadeOut();
                 title.text = "";
-                await Eleven.FrameTimeout(TEXT_DELAY);
+                await frameDelay(TEXT_DELAY);
             }
-
             FadeTransition(world,TARGET_SCRIPT,FADE_OUT_TIME);
         })();
     };

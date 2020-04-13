@@ -4,6 +4,7 @@ import PickupRock from "../../weapons/pickup-rock.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import PanPreview from "../helper/pan-preview.js";
+import FadeTransition from "../helper/fade-transition.js";
 
 const WATER_ROCK_SPOT_ID = 32;
 const PICKUP_ROCK_ID = 48;
@@ -14,9 +15,9 @@ const MILK_SKELE = 847;
 
 const SKELE_ID = 16;
 
-const END_DOOR = [38,27];
+const END_DOOR = [39,27];
 
-function ChocolateHell(world) {
+function ChocolateHell(world,{source},{Inventory}) {
 
     world.setMap("chocolate-hell");
 
@@ -24,10 +25,19 @@ function ChocolateHell(world) {
     AddMilkBackground(world);
 
     const {tileRenderer} = world;
-    const {Inventory} = SVCC.Runtime;
 
-    const player = world.addPlayer(19,4);
-    player.direction = "down";
+    const player = world.addPlayer();
+
+    switch(source) {
+        default:
+            player.setPosition(20,4);
+            player.direction = "down";
+            break;
+        case "TBD":
+            player.setPosition(20,4);
+            player.direction = "down";
+            break;
+    }
 
     const waterPlacements = {};
     const pickupRockLocations = {};
@@ -67,16 +77,22 @@ function ChocolateHell(world) {
     this.endDoor = new SpriteDoor(world,END_DOOR[0],END_DOOR[1],"grayDoor",false,1000,39);
 
     const doors = KeyDoor.getDoors(world,[
-        [34,8,"horizontalChocolate"]
+        [35,8,"horizontalChocolate"]
     ]);
     this.useKey = doors.useKey;
 
+    this.unload = () => {
+        Inventory.clearItem("chocolate-key");
+        Inventory.clearItem("chocolate-milk");
+    };
+    this.unload();
+
     const pickupField = new PickupField(world,[
-        [13,15,"chocolate-key"],
-        [32,4,"chocolate-milk",1,true,false],
-        [34,3,"chocolate-milk",2,true,false],
-        [35,3,"chocolate-milk",1,true,false],
-        [36,5,"chocolate-milk",1,true,false]
+        [14,15,"chocolate-key"],
+        [33,4,"chocolate-milk",1,true,false],
+        [35,3,"chocolate-milk",2,true,false],
+        [36,3,"chocolate-milk",1,true,false],
+        [37,5,"chocolate-milk",1,true,false]
     ]);
 
     let milkGaveCount = 0;
@@ -115,17 +131,17 @@ function ChocolateHell(world) {
                 if(foregroundValue === NO_MILK_SKELE) {
                     if(Inventory.hasItem("chocolate-milk")) {
                         await world.sayUnlocked("I waited a long time for this moment.");
-                        await Eleven.FrameTimeout(500);
+                        await frameDelay(500);
                         Inventory.removeItem("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
                         milkGaveCount++;
-                        await Eleven.FrameTimeout(500);
+                        await frameDelay(500);
                         await world.sayUnlocked("Chocolate.. Mmmmmm.");
-                        await Eleven.FrameTimeout(250);
+                        await frameDelay(250);
                         if(milkGaveCount === 4) await PanPreview({
-                            world,x: 38,y: 28,delay: 2500,
+                            world,x: 39,y: 28,delay: 2500,
                             middleEvent: async () => {
-                                await Eleven.FrameTimeout(500);
+                                await frameDelay(500);
                                 this.endDoor.open();
                             }
                         });
@@ -139,5 +155,9 @@ function ChocolateHell(world) {
             })();
         }
     };
+
+    world.setTriggerHandlers([
+        [1,()=>{FadeTransition(world,"TunnelsOfHell")},true]
+    ]);
 }
 export default ChocolateHell;

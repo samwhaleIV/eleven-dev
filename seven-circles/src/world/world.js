@@ -484,7 +484,19 @@ World.prototype.unloadScript = function() {
     this.script = null;
 }
 
-World.prototype.runScript = async function(script,...parameters) {
+World.prototype.runScript = async function(script,data,runStartScript) {
+    if(!data) data = new Object();
+
+    if(this.script) {
+        data.source = this.script.constructor.name;
+    } else {
+        data.source = null;
+    }
+
+    if(data.fromFade && this.playerController) {
+        this.inputCopyState = this.playerController.getInputHandler().copyState();
+    }
+
     if(typeof script === "string") {
         script = ScriptBook.Get(script);
     }
@@ -506,7 +518,8 @@ World.prototype.runScript = async function(script,...parameters) {
     if(typeof script === "function") {
 
         this.pendingScriptData = new Object();
-        script = new script(this,...parameters);
+
+        script = new script(this,data,SVCC.Runtime);
 
         this.script = script;
 
@@ -519,10 +532,19 @@ World.prototype.runScript = async function(script,...parameters) {
     if(script.load) await script.load();
     this.pushTileChanges();
 
+    this.dispatchRenderer.resize();
+
     if(processPauseSequencing) {
         CanvasManager.markLoaded();
         CanvasManager.paused = false;
     }
+
+    if(runStartScript && script.start) script.start();
+
+    if(this.inputCopyState && this.playerController) {
+        this.playerController.getInputHandler().setState(this.inputCopyState);
+    }
+    this.inputCopyState = null;
 }
 
 World.prototype.setMap = function(mapName) {
