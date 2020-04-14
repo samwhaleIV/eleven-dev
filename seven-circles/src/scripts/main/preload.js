@@ -18,7 +18,7 @@ function Preload({world}) {
         const {script,data} = Lifetime.getStartScript();
         data.fromPreload = true;
 
-        await world.runScript(script,data,true);
+        await world.runScript(script,data);
     };
 }
 export default Preload;

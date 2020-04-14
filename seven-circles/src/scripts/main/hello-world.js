@@ -92,7 +92,7 @@ function HelloWorld({world}) {
     this.load = () => {
         (async () => {
             if(DEV) {
-                world.runScript(TARGET_SCRIPT,{devLoad:true},true); return;
+                world.runScript(TARGET_SCRIPT,{devLoad:true}); return;
             }
             await world.fadeFromBlack(FADE_IN_TIME);
             world.popFader();

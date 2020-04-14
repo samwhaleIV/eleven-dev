@@ -485,7 +485,7 @@ World.prototype.unloadScript = function() {
     this.script = null;
 }
 
-World.prototype.runScript = async function(script,data,runStartScript) {
+World.prototype.runScript = async function(script,data,runStartScript=true) {
     if(!data) data = new Object();
 
     if(this.script) {
