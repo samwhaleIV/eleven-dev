@@ -501,9 +501,6 @@ World.prototype.runScript = async function(script,data,runStartScript) {
     if(typeof script === "string") {
         script = ScriptBook.Get(script);
     }
-    if(!script) {
-        this.unloadScript(); return;
-    }
 
     const processPauseSequencing = CanvasManager.frame && !CanvasManager.paused;
 
@@ -516,46 +513,48 @@ World.prototype.runScript = async function(script,data,runStartScript) {
 
     //This is so the script lifetime can figure out what script called the lifetime request
     this.script = script;
-    if(typeof script === "function") {
 
-        this.pendingScriptData = new Object();
+    this.pendingScriptData = new Object();
 
-        const {Inventory,SaveState} = SVCC.Runtime;
+    const {Inventory,SaveState} = SVCC.Runtime;
+    data.inventory = Inventory;
+    data.saveState = SaveState;
+    data.world = this;
+    data.transition = (script,data,fadeTime) => {
+        FadeTransition(this,script,data,fadeTime);
+    };
 
-        data.inventory = Inventory;
-        data.saveState = SaveState;
-        data.world = this;
+    script = new script(data); this.script = script;
+    if(this.playerController) this.playerController.lock();
 
-        data.transition = (script,data,fadeTime) => {
-            FadeTransition(this,script,data,fadeTime);
-        };
-
-        script = new script(data);
-
-        this.script = script;
-
-        if(this.pendingScriptData !== null) {
-            Object.assign(this.script,this.pendingScriptData);
-            this.pendingScriptData = null;
-        }
+    if(this.pendingScriptData !== null) {
+        Object.assign(this.script,this.pendingScriptData);
+        this.pendingScriptData = null;
     }
 
     if(script.load) await script.load();
-    this.pushTileChanges();
 
-    this.dispatchRenderer.resize();
+    this.pushTileChanges(); this.dispatchRenderer.resize();
 
     if(processPauseSequencing) {
         CanvasManager.markLoaded();
         CanvasManager.paused = false;
     }
 
-    if(runStartScript && script.start) script.start();
-
     if(this.inputCopyState && this.playerController) {
         this.playerController.getInputHandler().setState(this.inputCopyState);
     }
+    Object.values(CanvasManager.downKeys).forEach(key => {
+        const proxyEvent = Object.assign({},key); proxyEvent.repeat = false;
+        this.keyDown(proxyEvent);
+    });
+
     this.inputCopyState = null;
+
+    if(runStartScript) {
+        if(script.start) script.start();
+        if(this.playerController) this.playerController.unlock();
+    }
 }
 
 World.prototype.setMap = function(mapName) {
@@ -566,6 +565,8 @@ World.prototype.setMap = function(mapName) {
     this.refreshInput = null;
     this.managedGamepad.keyDown = null;
     this.managedGamepad.keyUp = null;
+    this.keyDown = null;
+    this.keyUp = null;
 
     this.spriteFollower.reset();
     this.textMessage = null;

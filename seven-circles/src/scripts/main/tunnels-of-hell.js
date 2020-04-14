@@ -58,10 +58,9 @@ function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
     ]);
 
     const endWallLeftStartOpen = fromChocolateHell ? false : true;
-    const endWallRightStartOpen = fromChocolateHell ? true : false;
 
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",endWallLeftStartOpen,2000,48);
-    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",endWallRightStartOpen,2000,49);
+    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,2000,49);
 
     const objective = new ObjectiveText(world);
 

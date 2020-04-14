@@ -17,23 +17,18 @@ const tryScriptStart = world => {
 
 async function FadeTransition(world,script,data,fadeTime) {
     if(!data) data = new Object();
-
     if(isNaN(fadeTime)) {
         fadeTime = DEFAULT_FADE_TIME;
     }
-    tryLock(world);
-
     data.fromFade = true;
 
-    await world.fadeToBlack(fadeTime).then(world.popFader);
-    world.runScript(script,data,false);
-
     tryLock(world);
 
+    await world.fadeToBlack(fadeTime).then(world.popFader);
+    await world.runScript(script,data,false);
     await world.fadeFromBlack(fadeTime).then(world.popFader);
 
-    tryUnlock(world);
-
     tryScriptStart(world);
+    tryUnlock(world);
 }
 export default FadeTransition;

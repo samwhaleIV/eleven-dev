@@ -107,6 +107,5 @@ function HelloWorld({world}) {
             FadeTransition(world,TARGET_SCRIPT,FADE_OUT_TIME);
         })();
     };
-    
 }
 export default HelloWorld;
