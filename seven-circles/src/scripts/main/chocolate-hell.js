@@ -105,6 +105,11 @@ function ChocolateHell({world,source,inventory}){
             world.message("The door won't open until all the skele-demons get their chocolate milk..");
         })) return;
         if(data.value === PICKUP_ROCK_ID) {
+            const playerWep = player.getWeapon();
+            if(playerWep && playerWep.name === "rock-pickup") {
+                world.message("You're weak. You can only carry one rock at a time.");
+                return;
+            }
             const {x,y} = data;
             const pos = `${x},${y}`;
             delete pickupRockLocations[pos];
