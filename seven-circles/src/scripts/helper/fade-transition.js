@@ -12,7 +12,10 @@ const tryLock = world => {
 };
 const tryScriptStart = world => {
     const {script} = world;
-    if(script.start) script.start();
+    if(script.start) {
+        return script.start();
+    }
+    return false;
 };
 
 async function FadeTransition(world,script,data,fadeTime) {
@@ -28,7 +31,9 @@ async function FadeTransition(world,script,data,fadeTime) {
     await world.runScript(script,data,false);
     await world.fadeFromBlack(fadeTime).then(world.popFader);
 
-    tryScriptStart(world);
-    tryUnlock(world);
+    const startLocked = tryScriptStart(world);
+    if(!startLocked) {
+        tryUnlock(world);
+    }
 }
 export default FadeTransition;

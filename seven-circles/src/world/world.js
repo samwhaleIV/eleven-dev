@@ -552,8 +552,13 @@ World.prototype.runScript = async function(script,data,runStartScript) {
     this.inputCopyState = null;
 
     if(runStartScript) {
-        if(script.start) script.start();
-        if(this.playerController) this.playerController.unlock();
+        let startLocked = false;
+        if(script.start) {
+            startLocked = script.start();
+        }
+        if(!startLocked && this.playerController) {
+            this.playerController.unlock();
+        }
     }
 }
 

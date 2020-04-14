@@ -123,8 +123,10 @@ function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
     };
 
     this.start = () => {
-        if(fromChocolateHell) return;
-        objective.set("Find the red key!","get-red-key");
+        if(!fromChocolateHell) {
+            objective.set("Find the red key!","get-red-key");
+        }
+        return false;
     };
 
     world.setTriggerHandlers([
