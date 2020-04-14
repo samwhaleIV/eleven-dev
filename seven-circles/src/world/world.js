@@ -9,6 +9,7 @@ import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import ParticleSprite from "./particle-sprite.js";
 import ItemUseTable from "../items/item-use-table.js";
+import FadeTransition from "../scripts/helper/fade-transition.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -488,9 +489,9 @@ World.prototype.runScript = async function(script,data,runStartScript) {
     if(!data) data = new Object();
 
     if(this.script) {
-        data.source = this.script.constructor.name;
+        data.lastScript = this.script.constructor.name;
     } else {
-        data.source = null;
+        data.lastScript = null;
     }
 
     if(data.fromFade && this.playerController) {
@@ -519,8 +520,15 @@ World.prototype.runScript = async function(script,data,runStartScript) {
 
         this.pendingScriptData = new Object();
 
-        data.inventory = SVCC.Runtime.Inventory;
+        const {Inventory,SaveState} = SVCC.Runtime;
+
+        data.inventory = Inventory;
+        data.saveState = SaveState;
         data.world = this;
+
+        data.transition = (script,data,fadeTime) => {
+            FadeTransition(this,script,data,fadeTime);
+        };
 
         script = new script(data);
 

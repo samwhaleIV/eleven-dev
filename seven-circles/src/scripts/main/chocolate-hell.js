@@ -4,7 +4,6 @@ import PickupRock from "../../weapons/pickup-rock.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import PanPreview from "../helper/pan-preview.js";
-import FadeTransition from "../helper/fade-transition.js";
 
 const WATER_ROCK_SPOT_ID = 32;
 const PICKUP_ROCK_ID = 48;
@@ -17,7 +16,7 @@ const SKELE_ID = 16;
 
 const END_DOOR = [39,27];
 
-function ChocolateHell({world,source,inventory}){
+function ChocolateHell({world,lastScript,inventory,transition}){
 
     world.setMap("chocolate-hell");
 
@@ -28,7 +27,7 @@ function ChocolateHell({world,source,inventory}){
 
     const player = world.addPlayer();
 
-    switch(source) {
+    switch(lastScript) {
         default:
             player.setPosition(20,4);
             player.direction = "down";
@@ -162,7 +161,7 @@ function ChocolateHell({world,source,inventory}){
     };
 
     world.setTriggerHandlers([
-        [1,()=>{FadeTransition(world,"TunnelsOfHell")},true]
+        [1,()=>{transition("TunnelsOfHell")},true]
     ]);
 }
 export default ChocolateHell;

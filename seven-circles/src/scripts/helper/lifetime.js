@@ -98,9 +98,9 @@ const setPosition = (player,values) => {
     assignContainer(values,player);
 };
 
-const save = () => SaveState.save();
-const load = () => SaveState.load();
-const getContainer = () => SaveState.getContainer();
+const save = SaveState.save;
+const load = SaveState.load;
+const getContainer = SaveState.getContainer;
 
 const hardSerialize = (player,scriptID) => {
     serialize(player,scriptID); save();

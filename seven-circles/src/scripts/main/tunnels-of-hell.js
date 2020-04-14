@@ -5,11 +5,12 @@ import SpriteDoor from "../helper/doors/sprite-door.js";
 import ObjectiveText from "../helper/objective-text.js";
 import KeyWeapon from "../../weapons/key-weapon.js";
 import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
-import FadeTransition from "../helper/fade-transition.js";
+import MessageChain from "../helper/message-chain.js";
+import DramaZoom from "../helper/drama-zoom.js";
 
-function TunnelsOfHell({world,source,inventory}) {
+function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
 
-    const fromChocolateHell = source === "ChocolateHell";
+    const fromChocolateHell = lastScript === "ChocolateHell";
 
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,`rgb(20,0,0)`);
@@ -60,7 +61,7 @@ function TunnelsOfHell({world,source,inventory}) {
     const endWallRightStartOpen = fromChocolateHell ? true : false;
 
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",endWallLeftStartOpen,2000,48);
-    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",endWallRightStartOpen,300,49);
+    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",endWallRightStartOpen,2000,49);
 
     const objective = new ObjectiveText(world);
 
@@ -98,7 +99,28 @@ function TunnelsOfHell({world,source,inventory}) {
             return;
         }
 
-        if(data.value === 16) endWallRight.toggle();
+        if(!saveState.get("talkedToDevilGuy") && data.value === 16) {
+            saveState.set("talkedToDevilGuy",true);
+    
+            world.playerController.lock();
+            (async () => {
+                const dramaZoom = new DramaZoom(world,64,8);
+                await dramaZoom.zoomIn();
+
+                await MessageChain(world,[
+                    "Look, I don't have a lot of time so I'll make this brief. You're dead.",
+                    "You probably have a lot of questions but we don't have time for them.",
+                    "There's all this red tape and it makes my life a living hell. They don't make dying like they used to..",
+                    "So here's the short version: You have a strong soul. If you can make it through each of the Seven Circles, you get to live."
+                ]);
+
+                await dramaZoom.zoomOut();
+                await world.sayUnlocked("You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.");
+    
+                world.playerController.unlock();
+                endWallRight.open();
+            })();
+        }
     };
 
     this.start = () => {
@@ -107,8 +129,11 @@ function TunnelsOfHell({world,source,inventory}) {
     };
 
     world.setTriggerHandlers([
-        [1,()=>endWallLeft.close(),true],
-        [2,()=>{FadeTransition(world,"ChocolateHell")},true]
+        [1,()=>{
+            world.say("Hey! Get over here!");
+            endWallLeft.close();
+        },true],
+        [2,()=>{transition("ChocolateHell")},true]
     ]);
 }
 export default TunnelsOfHell;
