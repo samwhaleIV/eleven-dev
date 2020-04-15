@@ -52,54 +52,50 @@ function App() {
 
     let tilesetList = null;
 
-    const keyDown = event => {
-        if(!event.repeat) {
-            if(event.shiftKey) {
-                switch(event.code) {
-                    case "Digit1": this.sendAction("selectBackground"); break;
-                    case "Digit2": this.sendAction("selectForeground"); break;
-                    case "Digit3": this.sendAction("selectSuperForeground"); break;
-                    case "Digit4": this.sendAction("selectCollision"); break;
-                    case "Digit5": this.sendAction("selectInteraction"); break;
-                    case "Digit6": this.sendAction("selectLighting"); break;
-                }
-            } else {
-                switch(event.code) {
-                    case "Digit1": this.sendAction("toggleBackground"); break;
-                    case "Digit2": this.sendAction("toggleForeground"); break;
-                    case "Digit3": this.sendAction("toggleSuperForeground"); break;
-                    case "Digit4": this.sendAction("toggleCollision"); break;
-                    case "Digit5": this.sendAction("toggleInteraction"); break;
-                    case "Digit6": this.sendAction("toggleLighting"); break;
-                    case "KeyO": this.sendAction("allVisible"); break;
-                    case "KeyP": this.sendAction("allInvisible"); break;
-
-                    case "KeyZ": this.sendAction("zoomIn"); break;
-                    case "KeyX": this.sendAction("zoomOut"); break;
-
-                    case "KeyW": this.sendAction("panUp"); break;
-                    case "KeyA": this.sendAction("panLeft"); break;
-                    case "KeyS": this.sendAction("panDown"); break;
-                    case "KeyD": this.sendAction("panRight"); break;
-                    
-                    case "KeyG": this.sendAction("toggleGrid"); break;
-                }
-            }
-        } else {
-            switch(event.code) {
-                case "KeyW": this.sendAction("panUp"); break;
-                case "KeyA": this.sendAction("panLeft"); break;
-                case "KeyS": this.sendAction("panDown"); break;
-                case "KeyD": this.sendAction("panRight"); break;
-
-                case "KeyZ": this.sendAction("zoomIn"); break;
-                case "KeyX": this.sendAction("zoomOut"); break;
-            }
+    const actionTable = {
+        repeat: {
+            KeyW: "panUp",
+            KeyA: "panLeft",
+            KeyS: "panDown",
+            KeyD: "panRight",
+            KeyZ: "zoomIn",
+            KeyX: "zoomOut"
+        },
+        shift: {
+            Digit1: "selectBackground",
+            Digit2: "selectForeground",
+            Digit3: "selectSuperForeground",
+            Digit4: "selectCollision",
+            Digit5: "selectInteraction",
+            Digit6: "selectLighting"
+        },
+        noRepeat: {
+            Digit1: "toggleBackground",
+            Digit2: "toggleForeground",
+            Digit3: "toggleSuperForeground",
+            Digit4: "toggleCollision",
+            Digit5: "toggleInteraction",
+            Digit6: "toggleLighting",
+            KeyO: "allVisible",
+            KeyP: "allInvisible",
+            KeyG: "toggleGrid"
         }
     };
-    const keyUp = () => {
 
+    Object.assign(actionTable.noRepeat,actionTable.repeat);
+
+    const keyDown = ({repeat,code,shiftKey}) => {
+        let action = null;
+        if(shiftKey) {
+            action = actionTable.shift[code];
+        } else if(repeat) {
+            action = actionTable.repeat[code];
+        } else {
+            action = actionTable.noRepeat[code];
+        }
+        if(action) this.sendAction(action);
     };
+
     const pointerScroll = event => {
         const speed = event.shiftKey ? 0.5 : MOUSE_PAN_SPEED / world.camera.scale;
         if(event.altKey) {
@@ -126,7 +122,7 @@ function App() {
     const loadWorld = async() => {
         await CanvasManager.setFrame(FakeWorld, [tilesetList]);
         world = CanvasManager.frame;
-        world.keyDown = keyDown; world.keyUp = keyUp;
+        world.keyDown = keyDown;
         world.pointerScroll = pointerScroll;
 
         CanvasManager.paused = false;
