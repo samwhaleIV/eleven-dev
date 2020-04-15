@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untiled Map Editor</title>
+    <link rel="stylesheet" href="../eleven/engine/eleven.css">
+    <link rel="stylesheet" href="svcc.css">
+    <link rel="stylesheet" href="untiled/style.css">
+    <script src="../eleven/engine/eleven.js" type="module"></script>
+</head>
+<body>
+    <div id="top-bar">
+        <button>Open Map</button>
+        <button>Save Map</button>
+        <button>New Map</button>
+        <button>Resize</button>
+    </div>
+    <div id="canvas-container">
+
+    </div>
+    <div id="right-side">
+        <div id="layers">
+            <div><p>Background</p><button>Select</button><button>Visible</button></div>
+            <div><p>Foreground</p><button>Select</button><button>Visible</button></div>
+            <div><p>Sup-foreground</p><button>Select</button><button>Visible</button></div>
+            <div><p>Collision</p><button>Select</button><button>Visible</button></div>
+            <div><p>Interaction</p><button>Select</button><button>Visible</button></div>
+            <div><p>Lighting</p><button>Select</button><button>Visible</button></div>
+        </div>
+        <div id="tileset-picker"></div>
+    </div>
+
+    <script>
+        Object.defineProperty(globalThis,"DEV",{value:true,enumerable:true});
+        Object.defineProperty(globalThis,"EDITOR",{value:true,enumerable:true});
+    </script>
+    <script src="untiled/app.js" type="module"></script>
+</body>
+</html>

@@ -6,10 +6,11 @@ import ScriptBook from "./script-book.js";
 import ChocolateHell from "./main/chocolate-hell.js";
 import HelloWorld from "./main/hello-world.js";
 import Preload from "./main/preload.js";
+import RiverHell from "./main/river-hell.js";
 import TunnelsOfHell from "./main/tunnels-of-hell.js";
 
 const Scripts = ScriptBook.Import(
-    ChocolateHell,HelloWorld,Preload,TunnelsOfHell
+    ChocolateHell,HelloWorld,Preload,RiverHell,TunnelsOfHell
 );
 
 export default Scripts;

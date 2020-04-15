@@ -8,7 +8,7 @@ import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import MessageChain from "../helper/message-chain.js";
 import DramaZoom from "../helper/drama-zoom.js";
 
-function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
+function TunnelsOfHell({world,lastScript,inventory,transition}) {
 
     const fromChocolateHell = lastScript === "ChocolateHell";
 
@@ -38,7 +38,7 @@ function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
     };
     this.unload();
 
-    const doors = KeyDoor.getDoors(world,[
+    const doors = KeyDoor.getDoors(world,this,[
         [8,14,"verticalRed"],
         [6,8,"verticalYellow"],
         [25,13,"verticalBlue"],
@@ -98,10 +98,16 @@ function TunnelsOfHell({world,lastScript,inventory,saveState,transition}) {
             return;
         }
 
-        if(!saveState.get("talkedToDevilGuy") && data.value === 16) {
-            saveState.set("talkedToDevilGuy",true);
-    
+        let talkedToDevilGuy = false;
+
+        if(data.value === 16) {
+            if(talkedToDevilGuy) {
+                world.say("You can go now. I don't need the company.");
+                return;
+            }
+
             world.playerController.lock();
+            talkedToDevilGuy = true;
             (async () => {
                 const dramaZoom = new DramaZoom(world,64,8);
                 await dramaZoom.zoomIn();

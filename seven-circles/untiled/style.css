@@ -1,0 +1,69 @@
+body {
+    background-color: #7F7F7F
+}
+#top-bar {
+    background-color: #000000b8;
+    top: 0;
+    left: 0;
+    position: relative;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    user-select: none;
+    z-index: 1;
+}
+#top-bar button {
+    color: white;
+    background-color: #000;
+    margin: 0px;
+    color: #fff;
+    border: none;
+    padding: 0 32px;
+    margin: 4px;
+    margin-right: 2px;
+}
+#top-bar h1 {color: #fff;font-family: sans-serif;margin: 0;padding: 0;font-size: 24px;line-height: 48px;margin: 0px 8px;font-weight: normal;text-align: left;margin: 0px 24px;}
+#canvas-container {width: calc(100% - 494px);height: 100%;position: absolute;top: 0;left: 0;}
+#canvas-container canvas {
+
+}
+#right-side {height: 100%;width: 494px;background-color: #282828;top: 0;right: 0;position: absolute;box-sizing: border-box;user-select: none;z-index: 2;}
+#layers {
+    height: 288px;
+    width: 100%;
+    overflow: hidden;
+}
+#tileset-picker {
+    width: 100%;
+    background-color: #202020;
+    height: calc(100% - 288px);
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+}
+#layers div:nth-child(2n) {
+    background-color: #000;
+}
+#layers div {width: 100%;background-color: #202020;margin: 0;padding: 0;font-family: sans-serif;padding: 4px;display: flex;padding-left: 14px;color: white;}
+#layers div p {
+    padding: 0;
+    margin: 0;
+    width: 120px;
+    text-align: left;
+    line-height: 40px;
+}
+#layers div button {
+    width: 170px;
+    margin: 0px 4px;
+    border: none;
+    background-color: #ffffff;
+    color: #000;
+    font-weight: bold;
+}
+button:hover {
+    background-color: #d24141 !important;
+    color: white !important;
+}
+button:focus {
+    outline: none;
+}

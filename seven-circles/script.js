@@ -17,8 +17,11 @@ const SVCC = Namespace.create({
 
 Namespace.makeGlobal(SVCC);
 
-if(DEV) {
-    SVCC.Runtime.DevStart();
-} else {
-    SVCC.Runtime.Start();
+if(!EDITOR) {
+    if(DEV) {
+        SVCC.Runtime.DevStart();
+    } else {
+        SVCC.Runtime.Start();
+    }
 }
+

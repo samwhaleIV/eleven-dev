@@ -1,29 +1,20 @@
 import KeyDoor from "../helper/doors/key-door.js";
 import PickupField from "../helper/pickup-field.js";
-import PickupRock from "../../weapons/pickup-rock.js";
 import SpriteDoor from "../helper/doors/sprite-door.js";
 import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import PanPreview from "../helper/pan-preview.js";
-
-const WATER_ROCK_SPOT_ID = 32;
-const PICKUP_ROCK_ID = 48;
-const ROCK_FOREGROUND_ID = 533;
+import RiverRocks from "../helper/river-rocks.js";
 
 const NO_MILK_SKELE = 783;
 const MILK_SKELE = 847;
-
 const SKELE_ID = 16;
-
 const END_DOOR = [39,27];
 
 function ChocolateHell({world,lastScript,inventory,transition}){
 
     world.setMap("chocolate-hell");
-
     world.camera.enablePadding();
     AddMilkBackground(world);
-
-    const {tileRenderer} = world;
 
     const player = world.addPlayer();
 
@@ -32,53 +23,21 @@ function ChocolateHell({world,lastScript,inventory,transition}){
             player.setPosition(20,4);
             player.direction = "down";
             break;
-        case "TBD":
+        case "RiverHell":
             player.setPosition(20,4);
             player.direction = "down";
             break;
     }
 
-    const waterPlacements = {};
-    const pickupRockLocations = {};
+    const riverRocks = new RiverRocks(world,this);
 
-    tileRenderer.readLayer(4).forEach((value,idx)=>{
-        if(value === WATER_ROCK_SPOT_ID) {
-            const [x,y] = tileRenderer.getXY(idx);
-            waterPlacements[`${x},${y}`] = true;
-            world.setCollisionTile(x,y,1);
-        } else if(value === PICKUP_ROCK_ID) {
-            const [x,y] = tileRenderer.getXY(idx);
-            pickupRockLocations[`${x},${y}`] = true;
-            world.setCollisionTile(x,y,1);
-        }
-    });
+    this.endDoor = new SpriteDoor(
+        world,END_DOOR[0],END_DOOR[1],"grayDoor",false,1000,39
+    );
 
-    const badRock = () => {
-        world.message("A rock can't go here!");
-    };
-
-    this.placeRock = () => {
-        const result = world.playerImpulse.impulse({tileHandler:data=>{
-            const {x,y,value} = data;
-            if(value === WATER_ROCK_SPOT_ID) {
-                player.unlockWeapon(); player.clearWeapon();
-                world.setCollisionTile(x,y,0);
-                world.setForegroundTile(x,y,ROCK_FOREGROUND_ID);
-                world.setInteractionTile(x,y,0);
-                world.pushTileChanges();
-                return true;    
-            }
-            return false;
-        }});
-        if(!result) badRock();
-    };
-
-    this.endDoor = new SpriteDoor(world,END_DOOR[0],END_DOOR[1],"grayDoor",false,1000,39);
-
-    const doors = KeyDoor.getDoors(world,[
+    const doors = KeyDoor.getDoors(world,this,[
         [35,8,"horizontalChocolate"]
     ]);
-    this.useKey = doors.useKey;
 
     this.unload = () => {
         inventory.clearItem("chocolate-key");
@@ -101,33 +60,17 @@ function ChocolateHell({world,lastScript,inventory,transition}){
         if(pickupField.tryPickup(data)) return;
         if(this.endDoor.tryInteract(data,door => {
             if(door.opened) return;
-            world.message("The door won't open until all the skele-demons get their chocolate milk..");
+            world.message("The door won't open until all the skele-demons get their chocolate milk.");
         })) return;
-        if(data.value === PICKUP_ROCK_ID) {
+
+        if(riverRocks.tryPickup(data)) return;
+        
+        if(data.value === SKELE_ID) {
             const playerWep = player.getWeapon();
             if(playerWep && playerWep.name === "rock-pickup") {
-                world.message("You're weak. You can only carry one rock at a time.");
+                world.say("That isn't chocolate milk. That's a rock.");
                 return;
             }
-            const {x,y} = data;
-            const pos = `${x},${y}`;
-            delete pickupRockLocations[pos];
-
-            world.setForegroundTile(x,y,0);
-            world.setCollisionTile(x,y,0);
-            world.setInteractionTile(x,y,0);
-            world.pushTileChanges();
-
-            player.setWeapon(PickupRock,this);
-            player.lockWeapon();
-            return;
-        } else if(data.value === SKELE_ID) {
-            const playerWep = player.getWeapon();
-            if(playerWep && playerWep.name === "rock-pickup") {
-                world.say("That isn't chocolate milk.. That's a rock.");
-                return;
-            }
-
             const {x,y} = data;
             const foregroundValue = world.getForegroundTile(x,y);
             world.playerController.lock();
@@ -161,7 +104,8 @@ function ChocolateHell({world,lastScript,inventory,transition}){
     };
 
     world.setTriggerHandlers([
-        [1,()=>{transition("TunnelsOfHell")},true]
+        [1,()=>{transition("TunnelsOfHell")},true],
+        [2,()=>{transition("RiverHell")},true]
     ]);
 }
 export default ChocolateHell;

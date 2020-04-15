@@ -183,7 +183,7 @@ function KeyDoor(world,x,y,frame,startOpen,interactionValue) {
     DoorBase.call(this,world,openTarget,closeTarget,startOpen);
 }
 
-function getDoors(world,doors,IDStart) {
+function getDoors(world,script,doors,IDStart) {
     if(isNaN(IDStart)) IDStart = INTERACTION_ID_START;
 
     const keyDoors = new Array(doors.length);
@@ -216,8 +216,9 @@ function getDoors(world,doors,IDStart) {
 
     const get = index => keyDoors[index];
     const count = keyDoors.length;
+    script.useKey = keyHandler;
 
-    return Object.freeze({get,useKey:keyHandler,tryInteract,count});
+    return Object.freeze({get,tryInteract,count});
 }
 
 Object.defineProperty(KeyDoor,"getDoors",{
