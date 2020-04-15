@@ -11,6 +11,7 @@
 </head>
 <body>
     <div id="top-bar">
+        <h1>tunnels-of-hell</h1>
         <button>Open Map</button>
         <button>Save Map</button>
         <button>New Map</button>
@@ -31,10 +32,7 @@
         <div id="tileset-picker"></div>
     </div>
 
-    <script>
-        Object.defineProperty(globalThis,"DEV",{value:true,enumerable:true});
-        Object.defineProperty(globalThis,"EDITOR",{value:true,enumerable:true});
-    </script>
+    <script>Object.defineProperties(globalThis,{DEV:{value:true},EDITOR:{value:true}});</script>
     <script src="untiled/app.js" type="module"></script>
 </body>
 </html>
