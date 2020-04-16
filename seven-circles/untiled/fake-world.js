@@ -57,6 +57,8 @@ function FakeWorld(tilesets) {
     this.camera = camera;
     this.grid = grid;
 
+    this.cachePaused = false;
+
     grid.bindToFrame(this);
     this.resize = data => {
         data.context.imageSmoothingEnabled = false;
@@ -67,11 +69,22 @@ function FakeWorld(tilesets) {
 FakeWorld.prototype.set = function(x,y,value,layer) {
     this.tileRenderer.setTile(x,y,value,layer);
     this.grid.renderer = this.tileRenderer;
-    this.grid.cache(x,y,1,1);
+    if(!this.cachePaused) {
+        this.grid.cache(x,y,1,1);
+    }
     this.grid.renderer = this.dispatchRenderer;
 }
 FakeWorld.prototype.get = function(x,y,layer) {
     return this.tileRenderer.getTile(x,y,layer);
+}
+FakeWorld.prototype.pauseCache = function() {
+    this.cachePaused = true;
+}
+FakeWorld.prototype.resumeCache = function() {
+    this.cachePaused = false;
+    this.grid.renderer = this.tileRenderer;
+    this.grid.cache();
+    this.grid.renderer = this.dispatchRenderer;
 }
 
 export default FakeWorld;
