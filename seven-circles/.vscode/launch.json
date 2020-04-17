@@ -7,15 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Compile Map Data",
-            "cwd": "${workspaceFolder}\\map-builder",
-            "program": "${workspaceFolder}\\map-builder\\index.js",
-            "console": "integratedTerminal"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Link Scripts (ScriptBook)",
+            "name": "Link Map Scripts (ScriptBook)",
             "cwd": "${workspaceFolder}\\script-link",
             "program": "${workspaceFolder}\\script-link\\index.js",
             "console": "integratedTerminal"
@@ -24,8 +16,8 @@
             "type": "node",
             "request": "launch",
             "name": "Web App",
-            "cwd": "${workspaceFolder}\\web-app",
-            "program": "${workspaceFolder}\\web-app\\app.js",
+            "cwd": "${workspaceFolder}\\local-host",
+            "program": "${workspaceFolder}\\local-host\\app.js",
             "console": "externalTerminal"
         }
     ]

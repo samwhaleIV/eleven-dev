@@ -1,5 +1,5 @@
 {
-  "name": "eleven-web-app",
+  "name": "web-app",
   "productName": "Eleven Engine Web App",
   "version": "1.0.0",
   "description": "Host the contents of the eleven engine folder",
@@ -10,6 +10,11 @@
   "author": "mistopportunity",
   "license": "CC-BY-NC-4.0",
   "devDependencies": {
-    "express": "^4.16.4"
-  }
+    "express": "^4.17.1"
+  },
+  "dependencies": {
+    "connect-busboy": "0.0.2",
+    "express-fileupload": "^1.1.7-alpha.3"
+  },
+  "keywords": []
 }

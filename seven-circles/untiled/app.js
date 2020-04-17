@@ -432,16 +432,18 @@ function App() {
     };
 
     const exportMaps = () => {
-        /* https://gist.github.com/liabru/11263260 */
-
         const text = JSON.stringify(maps);
         const blob = new Blob([text],{type:"application/json"});
-        const anchor = document.createElement("a");
-    
-        anchor.download = "maps.json";
-        anchor.href = window.URL.createObjectURL(blob);
-        anchor.dataset.downloadurl = ["application/json",anchor.download,anchor.href].join(":");
-        anchor.click();
+
+        const formData = new FormData();
+        formData.append("mapData",blob);
+
+        fetch("/upload-map-data",{
+            method: "POST",
+            body: formData
+        });
+
+        alert("Exported!");
     };
 
     let loaded = false;

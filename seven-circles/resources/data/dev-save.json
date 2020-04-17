@@ -1,8 +1,16 @@
 {
     "CleanSlate": true,
-    "Container": "PillTest",
+    "Container": "RiverHell",
 
     "Containers": {
+
+        "RiverHell": {
+            "PlayerPosition": {
+                "_deserialize": true,
+                "x": 0, "y": 0, "scriptID": "RiverHell",
+                "direction": 0
+            }
+        },
 
         "PillTest": {
             "Inventory": {

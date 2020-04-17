@@ -3,8 +3,9 @@ import KeyDoor from "../helper/doors/key-door.js";
 import PickupField from "../helper/pickup-field.js";
 import RiverRocks from "../helper/river-rocks.js";
 
-function RiverHell({world,lastScript}) {
+function RiverHell({world,lastScript,inventory}) {
     world.setMap("river-hell");
+    world.camera.padding = true;
     AddMilkBackground(world);
 
     const player = world.addPlayer();
@@ -16,7 +17,7 @@ function RiverHell({world,lastScript}) {
         player.direction = "down";
     }
 
-    const doors = KeyDoor.getDoors(world,this[
+    const doors = KeyDoor.getDoors(world,this,[
         [24,5,"verticalRed"]
     ]);
 

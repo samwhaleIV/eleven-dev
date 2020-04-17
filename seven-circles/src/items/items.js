@@ -12,7 +12,8 @@ const ITEM_DATA = [
     ["Yellow Key","yellow-key"],
     ["Pink Key","pink-key"],
     ["Chocolate Key","chocolate-key"],
-    ["Chocolate Milk","chocolate-milk"]
+    ["Chocolate Milk","chocolate-milk"],
+    ["Bomb","bomb"]
 ];
 
 const ItemLookup = new Object();
