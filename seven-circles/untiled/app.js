@@ -193,7 +193,7 @@ function App() {
                 } else {
                     tileValue = brush.value[y][x];
                 }
-                if(tileValue === 0) {
+                if(!erasing && tileValue === 0) {
                     return;
                 }
                 historyBuffer.push({
@@ -240,8 +240,6 @@ function App() {
 
         lastPaint.x = selection.x;
         lastPaint.y = selection.y;
-
-        console.log("Paint!");
     };
 
     const setSelection = (x,y) => {
@@ -798,8 +796,6 @@ function App() {
                 const tileY = Math.floor(i / columns) + yOffset;
 
                 if(tileX >= width || tileY >= height) continue;
-
-                console.log(tileX,tileY);
 
                 world.set(tileX,tileY,background[i],0);
                 world.set(tileX,tileY,foreground[i],1);

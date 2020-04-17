@@ -47,7 +47,6 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
         [37,5,"horizontalYellow"],
         [52,8,"verticalPink"]
     ]);
-    this.useKey = doors.useKey;
 
     const pickupField = new PickupField(world,[
         [4,15,"red-key"],

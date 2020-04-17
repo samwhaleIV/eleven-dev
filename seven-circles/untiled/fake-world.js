@@ -26,12 +26,12 @@ function FakeWorld(tilesets) {
             if(map.encoded === false) {
                 return new DevLayerRenderer(16,{
                     tilesets, width: map.width, height: map.height,
-                    uvtcDecoding: false,
+                    uvtcDecoding: false, fillEmpty: true,
                     layerCount: map.layerCount
                 });
             } else {
                 return new DevLayerRenderer(16,{
-                    tilesets, map, uvtcDecoding: true
+                    tilesets, map, uvtcDecoding: true, fillEmpty: true
                 });
             }
         })();
