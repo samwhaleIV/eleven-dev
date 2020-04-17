@@ -8,9 +8,7 @@ const port = 80;
 app.use(express.static("../../"));
 
 app.use(fileUpload({
-    limits: { 
-        fileSize: 1000 * 1024 * 1024 * 1024 //2MB max file(s) size
-    },
+    limits: {fileSize: 100 * 1024 * 1024 * 1024}, //100 MB max file size
 }));
 
 app.post("/upload-map-data",async req => {

@@ -31,6 +31,11 @@ function TilePicker(app) {
         });
     };
 
+    
+    const camera = {
+        x: 0,y: 0, scale: 4
+    };
+
     this.setTileset = tileset => {
         const {width,height} = tileset;
         tileColumns = width / 16;
@@ -38,14 +43,16 @@ function TilePicker(app) {
 
         if(tileset !== activeTileset) {
             updateBrush();
+            if(activeTileset !== null && tileset !== null) {
+                if(activeTileset.width !== tileset.width || activeTileset.height !== activeTileset.height) {
+                    camera.x = 0;
+                    camera.y = 0;
+                }
+            }
         }
 
         activeTileset = tileset;
         this.update();
-    };
-
-    const camera = {
-        x: 0,y: 0,scale: 4
     };
 
     const render = () => {
