@@ -82,11 +82,14 @@ function TilePicker(app) {
         }
 
         context.fillStyle = "rgba(0,128,255,0.5)";
+        
+        const selectionX = (selection.x - camera.x) * (tileSize+1);
+        const selectionY = (selection.y - camera.y) * (tileSize+1);
+
         context.fillRect(
-            (selection.x - camera.x) * tileSize,
-            (selection.y - camera.y) * tileSize,
-            tileSize * selection.width,
-            tileSize * selection.height
+            1 + selectionX, selectionY,
+            (tileSize+1) * selection.width,
+            (tileSize+1) * selection.height
         );
     };
 
@@ -166,6 +169,7 @@ function TilePicker(app) {
         setSelectionEnd(event.layerX,event.layerY);
     });
     canvas.addEventListener("mouseup",function(event){
+        if(!selecting) return;
         setSelectionEnd(event.layerX,event.layerY);
         selecting = false;
         updateBrush();

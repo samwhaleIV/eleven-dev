@@ -1,15 +1,43 @@
+import EncodeMap from "./encode-map.js";
+
 const {ParseGrid2DMap} = Eleven;
 
 function DevLayerRenderer(textureSize,data) {
-    const tilesets = data.tilesets.slice().map(image => [image,image.width/textureSize]);
-    delete data.tilesets;
+    const tilesets = data.tilesets;
 
     data = ParseGrid2DMap(data);
     const {
-        columns, rows,
-        layerCount, layerSize,
-        renderData, skipZero
+        layerCount, columns, rows, layerSize, renderData
     } = data;
+    const skipZero = true;
+
+    Object.seal(renderData);
+
+    this.rawExport = () => {
+        return {layerSize,columns,rows,renderData:renderData.slice(0)};
+    };
+
+    this.exportLayer = (encode=true) => {
+        const layers = new Array(layerCount);
+        for(let i = 0;i<layers.length;i++) {
+            const start = i*layerSize;
+            const end = start + layerSize;
+            layers[i] = renderData.slice(start,end);
+        }
+
+        const map = {columns,rows};
+    
+        map.background = layers[0];
+        map.foreground = layers[1];
+        map.superForeground = layers[2];
+        map.collision = layers[3];
+        map.interaction = layers[4];
+        map.lighting = layers[5];
+
+        if(encode) EncodeMap(map);
+
+        return map;
+    };
 
     const getIdx = (x,y) => {
         return x + y * columns;
@@ -45,7 +73,8 @@ function DevLayerRenderer(textureSize,data) {
     };
 
     const renderTexture = (layer,tileIndex,renderX,renderY) => {
-        const [image,columns] = tilesets[layer];
+        const image = tilesets[layer];
+        const columns = image.width / textureSize;
 
         const textureX = tileIndex % columns * textureSize;
         const textureY = Math.floor(tileIndex / columns) * textureSize;
@@ -112,4 +141,4 @@ function DevLayerRenderer(textureSize,data) {
     });
 }
 
-export default DevLayerRenderer
+export default DevLayerRenderer;

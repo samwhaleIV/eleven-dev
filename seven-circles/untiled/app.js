@@ -105,7 +105,7 @@ function App() {
         window.addEventListener("resize", setSize);
     };
 
-    let tilesetList = null;
+    const tilesetList = [];
 
     const actionTable = {
         repeat: {
@@ -118,7 +118,8 @@ function App() {
         },
         ctrl: {
             KeyZ: "undo",
-            KeyY: "redo"
+            KeyY: "redo",
+            KeyR: "reloadTilesets"
         },
         shift: {
             Digit1: "toggleBackground",
@@ -192,6 +193,9 @@ function App() {
                 } else {
                     tileValue = brush.value[y][x];
                 }
+                if(tileValue === 0) {
+                    return;
+                }
                 historyBuffer.push({
                     x:tileX,y:tileY,layer:activeLayer,value:tileValue,oldValue:world.get(tileX,tileY,activeLayer)
                 });
@@ -250,6 +254,7 @@ function App() {
         }
     };
     const clickDown = () => {
+        if(!loaded) return;
         if(!world.getVisibleLayers()[activeLayer]) {
             return;
         }
@@ -257,6 +262,7 @@ function App() {
         paint();
     };
     const clickUp = () => {
+        if(!loaded) return;
         painting = false;
         lastPaint = null;
         const buffer = historyBuffer.splice(0);
@@ -264,6 +270,7 @@ function App() {
         eventStack.push(buffer);
     };
     const pointerMove = ({x,y}) => {
+        if(!loaded) return;
         const tileLocation = world.grid.getTileLocation(x,y);
         setSelection(
             Math.floor(tileLocation.x),
@@ -316,8 +323,17 @@ function App() {
         return [index % columns * 16,Math.floor(index / columns) * 16];
     };
 
+    const setTitle = title => {
+        document.getElementById("title").textContent = title;
+    };
+
+    this.mapName = null;
+
     const setMap = mapName => {
-        world.setMap(mapName);
+        world.setMap(maps[mapName]);
+        setTitle(mapName);
+        this.mapName = mapName;
+
         eventStack.splice(); redoStack.splice();
 
         AddColorBackground(world,"#7F7F7F");
@@ -382,33 +398,68 @@ function App() {
         });
     };
 
+    let loadingTileset = false;
+    const loadTilesetImages = async () => {
+        if(loadingTileset) return;
+        const startedPaused = CanvasManager.paused;
+        if(!startedPaused) {
+            CanvasManager.paused = true;
+        }
+        loadingTileset = true;
+        await ResourceManager.queueImage([
+            COLLISION_TILESET, INTERACTION_TILESET,
+            LIGHT_TILESET, WORLD_TILESET
+        ]).load(true);
+
+        tilesets.world = ResourceManager.getImage(WORLD_TILESET);
+        tilesets.light = ResourceManager.getImage(LIGHT_TILESET);
+        tilesets.interaction = ResourceManager.getImage(INTERACTION_TILESET);
+        tilesets.collision = ResourceManager.getImage(COLLISION_TILESET);
+
+        tilesetList[0] = tilesets.world;
+        tilesetList[1] = tilesets.world;
+        tilesetList[2] = tilesets.world;
+        tilesetList[3] = tilesets.collision;
+        tilesetList[4] = tilesets.interaction;
+        tilesetList[5] = tilesets.light;
+        loadingTileset = false;
+        if(!startedPaused) {
+            CanvasManager.paused = false;
+        }
+    };
+
+    const importMaps = async () => {
+        await ResourceManager.queueJSON(MAP_DATA).load();
+        maps = ResourceManager.getJSON(MAP_DATA);
+    };
+
+    const exportMaps = () => {
+        /* https://gist.github.com/liabru/11263260 */
+
+        const text = JSON.stringify(maps);
+        const blob = new Blob([text],{type:"application/json"});
+        const anchor = document.createElement("a");
+    
+        anchor.download = "maps.json";
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.dataset.downloadurl = ["application/json",anchor.download,anchor.href].join(":");
+        anchor.click();
+    };
+
     let loaded = false;
     this.load = () => {
-        if (!loaded)(async() => {
-            await ResourceManager.queueImage([
-                COLLISION_TILESET, INTERACTION_TILESET,
-                LIGHT_TILESET, WORLD_TILESET
-            ]).queueJSON(MAP_DATA).load();
-            tilesets.world = ResourceManager.getImage(WORLD_TILESET);
-            tilesets.light = ResourceManager.getImage(LIGHT_TILESET);
-            tilesets.interaction = ResourceManager.getImage(INTERACTION_TILESET);
-            tilesets.collision = ResourceManager.getImage(COLLISION_TILESET);
-            tilesetList = [
-                tilesets.world, tilesets.world, tilesets.world,
-                tilesets.collision, tilesets.interaction, tilesets.light
-            ];
-            maps = ResourceManager.getJSON(MAP_DATA);
+        if(!loaded)(async() => {
+            await loadTilesetImages();
+            await importMaps();
             await loadWorld();
+
             loadTilePicker();
-
-            setMap(maps["tunnels-of-hell"]);
-
             loaded = true;
         })();
     };
 
-    const actionProcessor = (action, parameters) => {
-        if (loaded) action.apply(this, parameters);
+    const actionProcessor = (action,parameters) => {
+        if(loaded) action.apply(this,parameters);
     };
 
     const selectButtons = document.body.querySelectorAll("button.select");
@@ -447,12 +498,6 @@ function App() {
         selectButtons[lastSelection].classList.remove("active");
         selectButtons[activeLayer].classList.add("active");
     };
-    const selectLayer = layer => {
-        lastSelection = activeLayer;
-        activeLayer = layer;
-        tilePicker.setTileset(tilesetList[layer]);
-        styleActiveLayer();
-    };
     styleActiveLayer();
 
     const getLayerSelect = layer => () => selectLayer(layer);
@@ -469,6 +514,30 @@ function App() {
             }
         }
         world.setVisibleLayers(...(new Array(6)).fill(visible));
+    };
+
+    const selectLayer = layer => {
+        const visibleLayers = world.getVisibleLayers();
+        const visCount = visibleLayers.reduce((total,layer,index)=>{
+            if(layer) {
+                return total + 1;
+            } else {
+                visibleLayers[index] = false;
+                return total;
+            }
+        },0);
+
+        if(visCount <= 1) {
+            world.pauseCache();
+            setAllVisible(false);
+            setLayerVisible(layer,true);
+            world.resumeCache();
+        }
+
+        lastSelection = activeLayer;
+        activeLayer = layer;
+        tilePicker.setTileset(tilesetList[layer]);
+        styleActiveLayer();
     };
 
     let netGrid = null;
@@ -601,6 +670,16 @@ function App() {
 
     const getSetAllVisible = visible => () => setAllVisible(visible);
 
+    const reloadTilesets = async () => {
+        await loadTilesetImages();
+        tilePicker.setTileset(tilesetList[activeLayer]);
+        world.resumeCache();
+    };
+
+    const getNewMap = (width=100,height=100) => {
+        return {width, height, layerCount: 6,encoded: false};
+    };
+
     const actions = {
         selectBackground: getLayerSelect(0),
         selectForeground: getLayerSelect(1),
@@ -647,6 +726,92 @@ function App() {
         setLayerOnlyVisible: () => {
             setAllVisible(false);
             setLayerVisible(activeLayer,true);
+        },
+
+        reloadTilesets: reloadTilesets,
+
+        openMap: () => {
+            const mapName = prompt("Map name");
+            if(!mapName) return;
+
+            if(!(mapName in maps)) {
+                let i = 1, testName = mapName;
+                while((!testName in maps)) {
+                    testName = `Untitled Map ${i}`;
+                    i++;
+                }
+                maps[testName] = getNewMap();
+                setMap(testName);
+            } else {
+                setMap(mapName);
+            }
+        },
+
+        saveMap: () => {
+            if(!this.mapName) return;
+            const newMap = world.tileRenderer.exportLayer(true);
+            const mapName = this.mapName;
+            maps[mapName] = newMap;
+            alert("Saved map!");
+        },
+
+        exportMaps: exportMaps,
+
+        resizeMap: () => {
+            const mapName = this.mapName;
+            if(!mapName) return;
+
+            const result = prompt(
+                "width, height, x offset, y offset",`${world.grid.width},${world.grid.height},${0},${0}`
+            ).split(",");
+            if(!result) return;
+
+            let [width,height,xOffset,yOffset] = result;
+            
+            width = Number(width);
+            height = Number(height);
+            xOffset = Number(xOffset);
+            yOffset = Number(yOffset);
+            
+            const startData = maps[mapName];
+
+            const layerData = world.tileRenderer.exportLayer(false);
+            
+            const {
+                background,
+                foreground,
+                superForeground,
+                collision,
+                interaction,
+                lighting,
+                columns,
+            } = layerData;
+
+            maps[mapName] = getNewMap(width,height);
+            setMap(mapName);
+
+            world.pauseCache();
+
+            const layerSize = background.length;
+            for(let i = 0;i<layerSize;i++) {
+                const tileX = i % columns + xOffset;
+                const tileY = Math.floor(i / columns) + yOffset;
+
+                if(tileX >= width || tileY >= height) continue;
+
+                console.log(tileX,tileY);
+
+                world.set(tileX,tileY,background[i],0);
+                world.set(tileX,tileY,foreground[i],1);
+                world.set(tileX,tileY,superForeground[2],2);
+
+                world.set(tileX,tileY,collision[i],3);
+                world.set(tileX,tileY,interaction[i],4);
+                world.set(tileX,tileY,lighting[i],5);
+            }
+
+            maps[mapName] = startData;
+            world.resumeCache();
         }
     };
 
@@ -669,6 +834,19 @@ function App() {
             });
         })(i)
     }
+
+    document.getElementById("open-button").onclick = ({button}) => {
+        if(button !== 0) return; sendAction("openMap");
+    };
+    document.getElementById("save-button").onclick = ({button}) => {
+        if(button !== 0) return; sendAction("saveMap");
+    };
+    document.getElementById("resize-button").onclick = ({button}) => {
+        if(button !== 0) return; sendAction("resizeMap");
+    };
+    document.getElementById("export-button").onclick = ({button}) => {
+        if(button !== 0) return; sendAction("exportMaps");
+    };
 }
 const app = new App();
 globalThis.Untiled = app;

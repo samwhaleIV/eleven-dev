@@ -20,11 +20,21 @@ function FakeWorld(tilesets) {
 
     this.setMap = map => {
         dispatchRenderer.clear();
+        grid.decache();
 
-        const renderer = new DevLayerRenderer(16,{
-            tilesets, map, uvtcDecoding: true
-        });
-        renderer.setVisibleLayers(visibleLayers);
+        const renderer = (()=>{
+            if(map.encoded === false) {
+                return new DevLayerRenderer(16,{
+                    tilesets, width: map.width, height: map.height,
+                    uvtcDecoding: false,
+                    layerCount: map.layerCount
+                });
+            } else {
+                return new DevLayerRenderer(16,{
+                    tilesets, map, uvtcDecoding: true
+                });
+            }
+        })();
 
         grid.setSize(renderer.columns,renderer.rows);
         this.tileRenderer = renderer;
@@ -67,6 +77,8 @@ function FakeWorld(tilesets) {
 };
 
 FakeWorld.prototype.set = function(x,y,value,layer) {
+    if(x < 0 || y < 0 || x >= this.grid.width || y >= this.grid.height) return;
+
     this.tileRenderer.setTile(x,y,value,layer);
     this.grid.renderer = this.tileRenderer;
     if(!this.cachePaused) {
@@ -75,6 +87,7 @@ FakeWorld.prototype.set = function(x,y,value,layer) {
     this.grid.renderer = this.dispatchRenderer;
 }
 FakeWorld.prototype.get = function(x,y,layer) {
+    if(x < 0 || y < 0 || x >= this.grid.width || y >= this.grid.height) return null;
     return this.tileRenderer.getTile(x,y,layer);
 }
 FakeWorld.prototype.pauseCache = function() {
