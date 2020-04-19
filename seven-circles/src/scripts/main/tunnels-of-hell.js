@@ -13,7 +13,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
     const fromChocolateHell = lastScript === "ChocolateHell";
 
     world.setMap("tunnels-of-hell");
-    AddColorBackground(world,`rgb(20,0,0)`);
+    AddColorBackground(world,"black");
 
     AddFixedMilkBackground(world,81,7,5,5,{
         width: 1,height: 1,y: 10.5,x: 83

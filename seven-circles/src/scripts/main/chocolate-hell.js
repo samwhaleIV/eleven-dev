@@ -24,8 +24,8 @@ function ChocolateHell({world,lastScript,inventory,transition}){
             player.direction = "down";
             break;
         case "RiverHell":
-            player.setPosition(20,4);
-            player.direction = "down";
+            player.setPosition(45,29);
+            player.direction = "up";
             break;
     }
 

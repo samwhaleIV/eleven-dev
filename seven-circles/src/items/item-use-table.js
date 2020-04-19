@@ -3,6 +3,7 @@ import Present from "./scripts/present.js";
 import {BigPill,SmallPill} from "./scripts/alice-pills.js";
 import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
+import Bomb from "./scripts/bomb.js";
 
 const ItemUseTable = Object.freeze({
     "elf-rock": new Pickup(27,"elf-rock"),
@@ -17,7 +18,8 @@ const ItemUseTable = Object.freeze({
     "yellow-key": new Key("yellow"),
     "green-key": new Key("green"),
     "pink-key": new Key("pink"),
-    "chocolate-key": new Key("chocolate")
+    "chocolate-key": new Key("chocolate"),
+    "bomb": new Bomb()
 });
 
 export default ItemUseTable;
