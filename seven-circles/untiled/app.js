@@ -693,7 +693,7 @@ function App() {
     const reloadTilesets = async () => {
         await loadTilesetImages();
         tilePicker.setTileset(tilesetList[activeLayer]);
-        world.resumeCache();
+        if(this.mapName) world.resumeCache();
     };
 
     const getNewMap = (width=100,height=100) => {

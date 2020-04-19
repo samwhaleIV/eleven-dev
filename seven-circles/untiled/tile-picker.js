@@ -40,16 +40,18 @@ function TilePicker(app) {
 
     this.setTileset = tileset => {
         const {width,height} = tileset;
+
+        const oldColumns = tileColumns;
+        const oldRows = tileRows;
+
         tileColumns = width / 16;
         tileRows = height / 16;
 
         if(tileset !== activeTileset) {
             updateBrush();
-            if(activeTileset !== null && tileset !== null) {
-                if(activeTileset.width !== tileset.width || activeTileset.height !== activeTileset.height) {
-                    camera.x = 0;
-                    camera.y = 0;
-                }
+            if(oldRows !== tileRows || oldColumns !== tileColumns) {
+                camera.x = 0;
+                camera.y = 0;
             }
         }
 
