@@ -7,6 +7,8 @@ function TilePicker(app) {
     let activeTileset = null, tileRows = 0, tileColumns = 0;
 
     let selection = {
+        anchorX: 0,
+        anchorY: 0,
         x: 1,
         y: 0,
         width: 1,
@@ -143,26 +145,32 @@ function TilePicker(app) {
         ];
     };
 
+    const rotationalSelectCalculation = (value,anchorTarget,boundTarget,valueTarget) => {
+        const anchor = selection[anchorTarget];
+        if(value < anchor) {
+            selection[valueTarget] = value;
+            selection[boundTarget] = anchor - value + 1;
+        } else {
+            selection[valueTarget] = anchor;
+            selection[boundTarget] = value - anchor + 1;
+        }
+    };
+
+    const updateSelection = (x,y) => {
+        rotationalSelectCalculation(x,"anchorX","width","x");
+        rotationalSelectCalculation(y,"anchorY","height","y");
+    };
+
     const setSelectionStart = (mouseX,mouseY) => {
         const [x,y] = getXY(mouseX,mouseY);
-        selection.x = x; selection.y = y;
-        selection.width = 1;
-        selection.height = 1;
+        selection.anchorX = x;
+        selection.anchorY = y;
+        updateSelection(x,y);
         render();
     };
     const setSelectionEnd = (mouseX,mouseY) => {
-        let [x,y] = getXY(mouseX,mouseY);
-
-        if(x < selection.x) {
-            selection.x = x;
-        }
-        if(y < selection.y) {
-            selection.y = y;
-        }
-
-        selection.width = Math.max(x-selection.x+1,1);
-        selection.height = Math.max(y-selection.y+1,1);
-        
+        const [x,y] = getXY(mouseX,mouseY);
+        updateSelection(x,y);
         render();
     };
 

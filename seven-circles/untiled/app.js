@@ -1,4 +1,3 @@
-import "../script.js";
 import AddColorBackground from "../src/scripts/helper/color-background.js";
 import TilePicker from "./tile-picker.js";
 import FakeWorld from "./fake-world.js";
@@ -193,7 +192,7 @@ function App() {
                 } else {
                     tileValue = brush.value[y][x];
                 }
-                if(!erasing && tileValue === 0) {
+                if(tileValue === null || (!erasing && tileValue === 0)) {
                     return;
                 }
                 historyBuffer.push({
@@ -561,7 +560,7 @@ function App() {
 
                 let width = bottomRight.x - topLeft.x;
                 let height = bottomRight.y - topLeft.y;
-
+                context.setLineDash([1,3]);
                 for(let x = topLeft.x;x<bottomRight.x;x += size) {
                     context.beginPath();
                     context.moveTo(x,topLeft.y);
@@ -575,6 +574,7 @@ function App() {
                     context.lineTo(topLeft.x+width,y);
                     context.stroke();
                 }
+                context.setLineDash([]);
             },-1);
         }
     };
@@ -818,33 +818,22 @@ function App() {
     };
     this.sendAction = sendAction;
 
-    for(let i = 0; i < toggleButtons.length; i++) {
-        (index => {
-            toggleButtons[index].addEventListener("click", event => {
-                if(event.button === 0) toggleLayerVisible(index);
-            });
-        })(i)
-    }
-    for(let i = 0; i < selectButtons.length; i++) {
-        (index => {
-            selectButtons[index].addEventListener("click", event => {
-                if(event.button === 0) selectLayer(index);
-            });
-        })(i)
-    }
+    for(let i = 0;i<6;i++) {(index => {
+        toggleButtons[index].addEventListener(
+            "click", event => event.button === 0 ? toggleLayerVisible(index) : undefined
+        );
+        selectButtons[index].addEventListener(
+            "click", event => event.button === 0 ? selectLayer(index) : undefined
+        );
+    })(i)}
 
-    document.getElementById("open-button").onclick = ({button}) => {
-        if(button !== 0) return; sendAction("openMap");
-    };
-    document.getElementById("save-button").onclick = ({button}) => {
-        if(button !== 0) return; sendAction("saveMap");
-    };
-    document.getElementById("resize-button").onclick = ({button}) => {
-        if(button !== 0) return; sendAction("resizeMap");
-    };
-    document.getElementById("export-button").onclick = ({button}) => {
-        if(button !== 0) return; sendAction("exportMaps");
-    };
+    (buttons => buttons.forEach(([ID,action])=>{
+        document.getElementById(`${ID}-button`).onclick = event => 
+        event.button === 0 ? sendAction(action) : undefined;
+    }))([
+        ["open","openMap"],["save","saveMap"],
+        ["resize","resizeMap"],["export","exportMaps"]
+    ]);
 }
 const app = new App();
 globalThis.Untiled = app;
