@@ -38,8 +38,28 @@ function App() {
         value: null
     };
 
+    const tileIDDisplay = document.getElementById("tile-ID-display");
+
+    const setTileIDDisplay = value => {
+        if(value !== null) {
+            tileIDDisplay.style.display = "block";
+            tileIDDisplay.textContent = `Tile ID: ${value}`;
+        } else {
+            tileIDDisplay.style.display = "none";
+        }
+    };
+
+    const updateTileIDDisplay = () => {
+        if(brush.width === 1 && brush.height === 1 && Array.isArray(brush.value)) {
+            setTileIDDisplay(brush.value[0][0]);
+        } else {
+            setTileIDDisplay(null);
+        }
+    };
+
     this.updateBrush = newBrush => {
         brush = newBrush;
+        updateTileIDDisplay();
     };
 
     const undo = () => {

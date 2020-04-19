@@ -127,3 +127,16 @@ button:focus {
 #status-box p#position {
     font-size: 16px;
 }
+
+#tile-ID-display {
+    position: fixed;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    right: 494px;
+    margin: 0;
+    padding: 14px;
+    top: calc(100% - 44px);
+    color: black;
+    background-color: white;
+}
