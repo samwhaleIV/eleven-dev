@@ -1,10 +1,18 @@
 {
     "CleanSlate": true,
-    "Container": "RiverHell",
+    "Container": "BombTest",
 
     "Containers": {
 
-        "RiverHell": {
+        "BombTest": {
+            "PlayerPosition": {
+                "_deserialize": true,
+                "x": 0, "y": 0, "scriptID": "BombTest",
+                "direction": 0
+            } 
+        },
+
+        "NamedScript": {
             "PlayerPosition": {
                 "_deserialize": true,
                 "x": 0, "y": 0, "scriptID": "RiverHell",
@@ -20,12 +28,12 @@
             }
         },
 
-        "SerializeTest": {
+        "SerializeExample": {
             "PlayerPosition": {
                 "_deserialize": true,
                 "x": 0, "y": 0, "scriptID": "HelloWorld",
                 "serializeData": {
-                    "DevData": "l33t haxors"
+                    "DevData": "Yeeeeeeeeeeeeeeeeeee"
                 },
                 "direction": 0
             }

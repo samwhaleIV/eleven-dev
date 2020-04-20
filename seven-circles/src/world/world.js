@@ -10,6 +10,7 @@ import ZIndexBook from "./z-indices.js";
 import ParticleSprite from "./particle-sprite.js";
 import ItemUseTable from "../items/item-use-table.js";
 import FadeTransition from "../scripts/helper/fade-transition.js";
+import ItemNotification from "./item-notification.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -699,6 +700,7 @@ World.prototype.addTextSprite = function(data) {
         if(!isNaN(data.x)) data.x += 0.5;
         if(!isNaN(data.y)) data.y += 0.5;
     }
+    data.grid = this.grid;
     const textSprite = new TextSprite(data);
     this.highSpriteLayer.add(textSprite,ZIndexBook.TextSprite);
     return textSprite;
@@ -847,6 +849,10 @@ World.prototype.itemHandler = function(safeID) {
     } else {
         return this.useItem(safeID,false,BAD_ITEM_PLACMEMENT);
     }
+}
+World.prototype.itemNotification = function(itemName,amount) {
+    if(this.script.dontNotifyItems) return;
+    ItemNotification(this,itemName,amount);
 }
 InstallSpatialSound(World.prototype);
 

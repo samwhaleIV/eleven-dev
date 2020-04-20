@@ -2,7 +2,7 @@ import {Items, ItemLookup} from "./items.js";
 import SaveState from "../storage/save-state.js";
 import InventoryMenu from "../user-interface/inventory-menu.js";
 
-const {DOMInterface,ResourceManager} = Eleven;
+const {DOMInterface,ResourceManager,CanvasManager} = Eleven;
 const CONTAINER_KEY = "Inventory";
 const ITEM_FILE = "items";
 const ITEM_TEXTURE_SIZE = 16;
@@ -88,6 +88,8 @@ function Inventory() {
 
         if(isNaN(amount)) amount = 1;
 
+        if(amount < 1) return;
+
         const itemContainer = getItemContainer();
 
         let newCount = itemContainer[safeID] - amount;
@@ -98,6 +100,12 @@ function Inventory() {
         validateSafeID(safeID);
 
         if(isNaN(amount)) amount = 1;
+
+        if(amount < 1) return;
+
+        if(CanvasManager.frame && CanvasManager.frame.itemNotification) {
+            CanvasManager.frame.itemNotification(ItemLookup[safeID].name,amount);
+        }
 
         const itemContainer = getItemContainer();
         itemContainer[safeID] += amount;

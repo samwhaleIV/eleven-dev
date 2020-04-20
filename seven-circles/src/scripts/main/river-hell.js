@@ -2,6 +2,7 @@ import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import KeyDoor from "../helper/doors/key-door.js";
 import PickupField from "../helper/pickup-field.js";
 import RiverRocks from "../helper/river-rocks.js";
+import InstallBombAreas from "../helper/bomb-areas.js";
 
 function RiverHell({world,lastScript,inventory,transition}) {
     world.setMap("river-hell");
@@ -32,6 +33,8 @@ function RiverHell({world,lastScript,inventory,transition}) {
         [4,64,"red-key"],
         [26,6,"yellow-key"]
     ]);
+
+    InstallBombAreas(world,this);
 
     this.unload = () => {
         inventory.clearItem("bomb");
