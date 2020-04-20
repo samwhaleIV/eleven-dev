@@ -17,7 +17,6 @@ const AUTO_SCROLL_SETTINGS = {
     behavior: "smooth", block: "center", inline: "center"
 };
 
-
 function getNamedDiv(name) {
     const div = document.createElement("div");
     div.className = name;
@@ -25,7 +24,7 @@ function getNamedDiv(name) {
 }
 
 function InstallInventoryItems(
-    uiExit,managedGamepad,proxyFrame,menu
+    uiExit,managedGamepad,proxyFrame,menu,keyDownBase,keyUpBase
 ) {
     let itemsList = this.getDisplayItems();
     const itemCount = itemsList.length;
@@ -148,15 +147,30 @@ function InstallInventoryItems(
         [InputCodes.Right]: uiRight,
         [InputCodes.Click]: uiAccept
     };
+
     const keyDown = key => {
-        if(key.repeat) return;
-        const action = actionTable[key.impulse];
+        let action = null;
+        if(!key.repeat) {
+            action = actionTable[key.impulse];
+        }
         if(action) action();
+        if(action !== uiExit) {
+            console.log("Key down base");
+            keyDownBase(key);
+        }
     };
 
-    proxyFrame.keyDown = SVCC.Runtime.InputServer.keyBind.impulse(keyDown);
+    const keyUp = keyUpBase;
+
+    const {keyBind} = SVCC.Runtime.InputServer;
+
+    proxyFrame.keyDown = keyBind.impulse(keyDown);
+    proxyFrame.keyUp = keyBind.impulse(keyUp);
+
     proxyFrame.inputGamepad = managedGamepad.poll;
+
     managedGamepad.keyDown = keyDown;
+    managedGamepad.keyUp = keyUp;
 
     if(!itemCount) {
         const noItems = document.createElement("p");
@@ -199,16 +213,16 @@ function InstallInventoryItems(
     if(itemCount >= 2) trySetSelection();
 }
 
-function InventoryMenu({terminate,proxyFrame}) {
+function InventoryMenu({terminate,proxyFrame},keyDown,keyUp,callback) {
 
     const {InputServer} = SVCC.Runtime;
     const managedGamepad = InputServer.managedGamepad;
     managedGamepad.save();
 
     const uiExit = () => {
-        managedGamepad.restore(); terminate();
+        managedGamepad.restore(); terminate(); callback();
     };
-    
+
     const menu = getNamedDiv(MENU_CLASS);
     
     const title = document.createElement("h1");
@@ -217,7 +231,7 @@ function InventoryMenu({terminate,proxyFrame}) {
     menu.appendChild(title);
 
     InstallInventoryItems.call(
-        this,uiExit,managedGamepad,proxyFrame,menu
+        this,uiExit,managedGamepad,proxyFrame,menu,keyDown,keyUp
     );
 
     const closeButton = getNamedDiv(CLOSE_BUTTON_CLASS);

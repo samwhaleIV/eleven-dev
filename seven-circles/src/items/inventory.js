@@ -123,7 +123,7 @@ function Inventory() {
         itemContainer[safeID] = 0;
     };
 
-    this.show = menu.show.bind(null,imageList);
+    this.show = menu.show;
     this.close = menu.close;
 }
 export default Inventory;

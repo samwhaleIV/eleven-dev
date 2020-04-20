@@ -118,7 +118,12 @@ function InstallPlayer(world,sprite) {
                 if(!world.canAdvanceMessage()) return;
                 world.advanceMessage();
             } else {
-                Inventory.show();
+                playerController.locked = true;
+                world.refreshInput = null;
+                Inventory.show(keyDown,keyUp,()=>{
+                    playerController.locked = false;
+                    world.refreshInput = input.refresh;
+                });
             }
         } else if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
