@@ -6,8 +6,6 @@ const MENU_CLASS = "inventory center";
 const CLOSE_BUTTON_CLASS = "close-button";
 const ITEM_CLASS = "item";
 
-const USE_AUTO_FIRST_SELECTION = false;
-
 const TITLE_CLASS = "title";
 const TITLE = "Items";
 const NO_ITEMS_TEXT = "You don't have any items.";
@@ -133,10 +131,14 @@ function InstallInventoryItems(
 
     const uiAccept = () => {
         if(itemCount && !selected) {
-            trySetSelection(); return;
+            trySetSelection(); return false;
         }
-        if(!itemAction) return;
-        if(itemAction()) uiExit();
+        if(!itemAction) return false;
+        if(itemAction()) {
+            uiExit();
+            return true;
+        }
+        return false;
     };
     const actionTable = {
         [InputCodes.Inventory]: uiExit,
@@ -153,9 +155,13 @@ function InstallInventoryItems(
         if(!key.repeat) {
             action = actionTable[key.impulse];
         }
-        if(action) action();
-        if(action !== uiExit) {
-            console.log("Key down base");
+        let actionResult = null;
+        if(action) actionResult = action();
+        if(action === uiAccept) {
+            if(actionResult !== true) {
+                keyDownBase(key);
+            }
+        } else if(action !== uiExit) {
             keyDownBase(key);
         }
     };
@@ -209,8 +215,7 @@ function InstallInventoryItems(
         return hoverData;
     });
 
-    if(!USE_AUTO_FIRST_SELECTION) return;
-    if(itemCount >= 2) trySetSelection();
+    trySetSelection();
 }
 
 function InventoryMenu({terminate,proxyFrame},keyDown,keyUp,callback) {

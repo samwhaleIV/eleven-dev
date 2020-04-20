@@ -157,8 +157,7 @@ function InstallBombAreas(world,script) {
                     return true;
                 }
             }
-            badBomb();
-            return true;
+            return false;
         }});
         if(!result) badBomb();
     };
