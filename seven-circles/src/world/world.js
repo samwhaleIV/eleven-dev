@@ -11,6 +11,7 @@ import ParticleSprite from "./particle-sprite.js";
 import ItemUseTable from "../items/item-use-table.js";
 import FadeTransition from "../scripts/helper/fade-transition.js";
 import ItemNotification from "./item-notification.js";
+import WorldPrompt from "./world-prompt.js";
 
 const BASE_TILE_SIZE = 16;
 const DEFAULT_CAMERA_SCALE = Constants.DefaultCameraScale;
@@ -127,6 +128,9 @@ function InstallPlayer(world,sprite) {
             }
         } else if(event.impulse === InputCodes.Click) {
             if(event.repeat) return;
+            if(world.directionalMessage) {
+                world.directionalMessage.accept();
+            }
             if(world.canAdvanceMessage()) {
                 world.advanceMessage();
             } else if(!playerController.locked) {
@@ -136,6 +140,9 @@ function InstallPlayer(world,sprite) {
                 playerImpulse.impulse();
             }
         } else {
+            if(world.directionalMessage) {
+                world.directionalMessage.move(event);
+            }
             input.keyDown(event);
         }
     };
@@ -182,13 +189,10 @@ function FaderList(dispatchRenderer) {
     };
 }
 
-let messageLock = false;
-const resolveStack = new Array();
-
 function World(callback) {
 
-    messageLock = false;
-    resolveStack.splice(0);
+    this.messageLock = false;
+    this.messageResolveStack = new Array();
 
     this.tilesetColumns = 0;
     this.tileSize = BASE_TILE_SIZE;
@@ -242,6 +246,7 @@ function World(callback) {
     this.popFader = faderList.pop;
 
     this.tileRenderer = null;
+    this.directionalMessage = null;
 
     this.lightingLayer = null;
     this.tileCollision = null;
@@ -272,9 +277,9 @@ function World(callback) {
 }
 
 function showMessage(message,instant,lock) {
-    const canLock = !messageLock && this.playerController && lock;
+    const canLock = !this.messageLock && this.playerController && lock;
     if(canLock) {
-        messageLock = true;
+        this.messageLock = true;
         this.playerController.lock();
     }
     if(this.canAdvanceMessage()) {
@@ -283,8 +288,14 @@ function showMessage(message,instant,lock) {
         this.textMessage = new WorldMessage(this.dispatchRenderer,message,instant);
     }
     return new Promise(resolve => {
-        resolveStack.push(resolve);
+        this.messageResolveStack.push(resolve);
     });
+}
+World.prototype.sayNamed = async function(message,name,colorCode) {
+    const lines = message.split(" ");
+    lines.unshift(`&%${colorCode}${name}:`);
+    lines[1] = `%b` + lines[1];
+    return showMessage.call(this,lines,false,true);
 }
 World.prototype.say = async function(message) {
     return showMessage.call(this,message,false,true);
@@ -310,12 +321,12 @@ World.prototype.advanceMessage = function() {
                 const newMessage = this.textMessageStack.shift();
                 showMessage.apply(this,newMessage);
             } else {
-                resolveStack.forEach(resolve=>resolve());
-                resolveStack.splice(0);
-                if(messageLock && this.playerController) {
+                this.messageResolveStack.forEach(resolve=>resolve());
+                this.messageResolveStack.splice(0);
+                if(this.messageLock && this.playerController) {
                     this.playerController.unlock();
                 }
-                messageLock = false;
+                this.messageLock = false;
             }
         } else {
             this.textMessage.advance();
@@ -582,6 +593,7 @@ World.prototype.setMap = function(mapName) {
     this.spriteFollower.reset();
     this.textMessage = null;
     this.textMessageStack.splice(0);
+    this.directionalMessage = null;
 
     this.grid.decache();
     this.grid.decacheTop();
@@ -858,6 +870,25 @@ World.prototype.itemHandler = function(safeID) {
 World.prototype.itemNotification = function(itemName,amount) {
     if(this.script.dontNotifyItems) return;
     ItemNotification(this,itemName,amount);
+}
+World.prototype.prompt = async function(question,options) {
+    let shouldUnlockPlayer = false;
+    if(this.playerController && !this.playerController.locked) {
+        shouldUnlockPlayer = true;
+    }
+    if(shouldUnlockPlayer) {
+        this.playerController.locked = true;
+    }
+    const optionIndex = await new Promise(resolve => {
+        this.directionalMessage = new WorldPrompt(
+            this.dispatchRenderer,question,options,resolve
+        );
+    });
+    this.directionalMessage = null;
+    if(shouldUnlockPlayer) {
+        this.playerController.locked = false;
+    }
+    return optionIndex;
 }
 InstallSpatialSound(World.prototype);
 

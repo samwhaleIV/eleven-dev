@@ -1,4 +1,4 @@
-const TIMEOUT = 750;
+const TIMEOUT = 500;
 
 function ItemNotification(world,itemName,amount) {
 

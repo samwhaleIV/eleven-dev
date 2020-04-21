@@ -33,8 +33,6 @@ const PARTICLE_BASE = ParticleSystem.getType("Base",{
     yv: 800
 });
 
-console.log(PARTICLE_BASE);
-
 function endOfExplosion(world,tileSprite,callback) {
     world.spriteLayer.remove(tileSprite.ID);
 
