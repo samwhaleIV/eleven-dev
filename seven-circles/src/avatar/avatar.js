@@ -16,8 +16,8 @@ function Avatar(isPlayer,...parameters) {
     this.isPlayer = isPlayer;
 
     if(this.isPlayer) {
-        InstallHitBox(this,10/16,14/16);
-        this.yOffset = -(2 / 16);
+        InstallHitBox(this,10/16,15/16);
+        this.yOffset = -(1.125 / 16);
         this.alignment = Alignments.Friendly;
         this.velocity = PLAYER_VELOCITY;
         this.showHitBox = false;
