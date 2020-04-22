@@ -46,39 +46,38 @@ function sendTrackedPositionUpdate(remoteControl,target,baseVolume) {
     sendPositionUpdate.call(this,remoteControl,target.x,target.y,baseVolume);
 }
 
-function InstallSpatialSound(target) {
-    target.playSound = async function({
-        buffer, volume, detune, x, y, loop, playbackRate, target
-    }) {
-        if(isNaN(volume)) volume = 1;
+async function playSound({
+    buffer, volume, detune, x, y, loop, playbackRate, target
+}) {
+    if(isNaN(volume)) volume = 1;
 
-        const useTarget = Boolean(target);
+    const useTarget = Boolean(target);
 
-        if(useTarget) {
-            if(isNaN(x)) x = target.x;
-            if(isNaN(y)) y = target.y;
-        }
+    if(useTarget) {
+        if(isNaN(x)) x = target.x;
+        if(isNaN(y)) y = target.y;
+    }
 
-        if(!x) x = this.camera.x; if(!y) y = this.camera.y;
-    
-        const remoteControl = AudioManager.playSound({
-            buffer, detune, volume, loop, playbackRate, usePanning: true
-        });
+    if(!x) x = this.camera.x; if(!y) y = this.camera.y;
 
-        let updater;
-        if(useTarget) {
-            updater = sendTrackedPositionUpdate.bind(this,remoteControl,target,volume);
-        } else {
-            updater = sendPositionUpdate.bind(this,remoteControl,x,y,volume);
-        }
-    
-        const updaterID = this.dispatchRenderer.addFinalize(updater);
-    
-        updater();
-    
-        await remoteControl.waitForEnd();
-    
-        this.dispatchRenderer.removeFinalize(updaterID);
-    };
+    const remoteControl = AudioManager.playSound({
+        buffer, detune, volume, loop, playbackRate, usePanning: true
+    });
+
+    let updater;
+    if(useTarget) {
+        updater = sendTrackedPositionUpdate.bind(this,remoteControl,target,volume);
+    } else {
+        updater = sendPositionUpdate.bind(this,remoteControl,x,y,volume);
+    }
+
+    const updaterID = this.dispatchRenderer.addFinalize(updater);
+
+    updater();
+
+    await remoteControl.waitForEnd();
+
+    this.dispatchRenderer.removeFinalize(updaterID);
 }
-export default InstallSpatialSound;
+
+export default {playSound};

@@ -5,21 +5,28 @@ import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
 
-const ItemUseTable = Object.freeze({
-    "elf-rock": new Pickup(27,"elf-rock"),
-    "rock": new Pickup(28,"rock"),
-    "sink": new Pickup(29,"sink"),
-    "present": new Present(30),
-    "big-pill": new BigPill(),
-    "small-pill": new SmallPill(),
-    "blaster": new Blaster(),
-    "red-key": new Key("red"),
-    "blue-key": new Key("blue"),
-    "yellow-key": new Key("yellow"),
-    "green-key": new Key("green"),
-    "pink-key": new Key("pink"),
-    "chocolate-key": new Key("chocolate"),
-    "bomb": new Bomb()
+const ItemUseTable = {
+    "elf-rock": [Pickup,27,"elf-rock"],
+    "rock": [Pickup,28,"rock"],
+    "sink": [Pickup,29,"sink"],
+    "present": [Present,30],
+    "big-pill": [BigPill],
+    "small-pill": [SmallPill],
+    "blaster": [Blaster],
+    "red-key": [Key,"red"],
+    "blue-key": [Key,"blue"],
+    "yellow-key": [Key,"yellow"],
+    "green-key": [Key,"green"],
+    "pink-key": [Key,"pink"],
+    "chocolate-key": [Key,"chocolate"],
+    "bomb": [Bomb]
+};
+
+Object.entries(ItemUseTable).forEach(([key,values])=>{
+    const sourceObject = values.shift();
+    ItemUseTable[key] = new sourceObject(...values);
 });
+
+Object.freeze(ItemUseTable);
 
 export default ItemUseTable;

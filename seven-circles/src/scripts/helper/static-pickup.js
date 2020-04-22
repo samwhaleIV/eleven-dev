@@ -15,6 +15,8 @@ function StaticPickup(
             world.setCollisionTile(x,y,0);
             world.pushCollisionChanges();
         }
+        world.setInteractionTile(x,y,0);
+        world.pushInteractionChanges();
         SVCC.Runtime.Inventory.addItem(this.item,amount);
         return this.item;
     };
