@@ -1,3 +1,5 @@
+import ZIndexBook from "./z-indices.js";
+
 function FaderList(dispatchRenderer) {
     const faders = new Object();
     this.add = fader => {
