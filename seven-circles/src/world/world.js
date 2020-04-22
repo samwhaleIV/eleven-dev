@@ -14,6 +14,7 @@ import Particles from "./extensions/particles.js";
 import SpatialSound from "./extensions/spatial-sound.js";
 import Sprites from "./extensions/sprites.js";
 import TileEditor from "./extensions/tile-editor.js";
+import TriggerHandler from "./extensions/trigger-handler.js";
 
 const WORLD_EXTENSIONS = [
     FadeMe,
@@ -22,7 +23,8 @@ const WORLD_EXTENSIONS = [
     Particles,
     SpatialSound,
     Sprites,
-    TileEditor
+    TileEditor,
+    TriggerHandler
 ];
 
 const {
@@ -355,6 +357,16 @@ World.prototype.setMap = function(mapName) {
 World.prototype.validateParseOnlyMethod = function() {
     if(this.pendingScriptData !== null) return;
     throw Error("This method is only for use during the initial script sequencing!");
+}
+
+World.prototype.getTextureXY = function(tileID,premultiply=true) {
+    let textureColumn = tileID % this.tilesetColumns;
+    let textureRow = Math.floor(tileID / this.tilesetColumns);
+    if(premultiply) {
+        textureColumn *= this.tileSize;
+        textureRow *= this.tileSize;
+    }
+    return [textureColumn,textureRow];
 }
 
 const installExtension = function(extension) {

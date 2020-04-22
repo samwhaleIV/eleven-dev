@@ -44,19 +44,9 @@ function summonSprite(sprite) {
 
     return !collides;
 }
-
-const getTextureXY = (world,tileID,premultiply=true) => {
-    let textureColumn = tileID % world.tilesetColumns;
-    let textureRow = Math.floor(tileID / world.tilesetColumns);
-    if(premultiply) {
-        textureColumn *= world.tileSize;
-        textureRow *= world.tileSize;
-    }
-    return [textureColumn,textureRow];
-};
 function addTileSprite(x,y,tileID,collides) {
     const tileSize = this.grid.baseTileSize;
-    const [textureColumn,textureRow] = getTextureXY(this,tileID,false);
+    const [textureColumn,textureRow] = this.getTextureXY(tileID,false);
 
     const tileSprite = new TileSprite(
         x,y,this.tileset,textureColumn,textureRow,tileSize

@@ -1,6 +1,8 @@
 {
+    "DEV_FILE": "This is the file you're looking for!",
+
     "CleanSlate": true,
-    "Container": "BombTest",
+    "Container": null,
 
     "Containers": {
 

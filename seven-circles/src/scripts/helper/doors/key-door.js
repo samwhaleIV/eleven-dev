@@ -6,6 +6,12 @@ const INTERACTION_ID_START = GetInteractionStart();
 const VERTICAL_COLLISION_VALUE = 1;
 const HORIZONTAL_COLLISION_VALUE = 1;
 
+const betterVerticalDoorCollision = {
+    top: 25,
+    bottom: 26,
+    middle: 0
+};
+
 const frames = {
     grayDoor: {
         vertical: true,
@@ -28,7 +34,8 @@ const frames = {
         middle: 841,
         bottom: 905,
         topOpen: 649,
-        bottomOpen: 713
+        bottomOpen: 713,
+        collisionOpen: betterVerticalDoorCollision
     },
     verticalBlue: {
         vertical: true,
@@ -37,7 +44,8 @@ const frames = {
         middle: 839,
         bottom: 903,
         topOpen: 647,
-        bottomOpen: 711
+        bottomOpen: 711,
+        collisionOpen: betterVerticalDoorCollision
     },
     horizontalYellow: {
         vertical: false,
@@ -64,7 +72,8 @@ const frames = {
         middle: 838,
         bottom: 902,
         topOpen: 646,
-        bottomOpen: 710
+        bottomOpen: 710,
+        collisionOpen: betterVerticalDoorCollision
     },
     verticalYellow: {
         vertical: true,
@@ -73,7 +82,8 @@ const frames = {
         middle: 837,
         bottom: 901,
         topOpen: 645,
-        bottomOpen: 709
+        bottomOpen: 709,
+        collisionOpen: betterVerticalDoorCollision
     },
 
     horizontalChocolate: {
