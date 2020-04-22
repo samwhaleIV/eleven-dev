@@ -1,6 +1,7 @@
 import ZIndexBook from "../../world/z-indices.js";
+import Constants from "../../constants.js";
 
-const TOP_DISTANCE = 8;
+const TOP_DISTANCE = Constants.WorldUIScreenMargin;
 const TEXT_SCALE = 4;
 const TEXT_COLOR = "white";
 const TEXT_BACKGROUND = "black";

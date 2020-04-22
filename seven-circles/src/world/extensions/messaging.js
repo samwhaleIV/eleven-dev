@@ -37,13 +37,22 @@ function showMessage(message,instant,lock) {
     });
 }
 
-async function sayNamed(message,name,colorCode) {
+function sayNamed(message,name,colorCode,locked) {
+    if(locked === undefined) {
+        locked = true;
+    } else {
+        locked = Boolean(locked);
+    }
     const lines = message.split(" ");
     lines.unshift(`&%${colorCode}${name}:`);
     lines[1] = `%b` + lines[1];
-    return showMessage.call(this,lines,false,true);
+    return showMessage.call(this,lines,false,locked);
 }
-async function say(message) {
+function sayNamedUnlocked(message,name,colorCode) {
+    return sayNamed(message,name,colorCode,false);
+}
+
+function say(message) {
     return showMessage.call(this,message,false,true);
 }
 function sayUnlocked(message) {
@@ -98,6 +107,7 @@ function clearMessages() {
 export default {
     prompt,
     sayNamed,
+    sayNamedUnlocked,
     say,
     sayUnlocked,
     advanceMessage,

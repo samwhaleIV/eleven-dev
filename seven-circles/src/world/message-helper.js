@@ -1,10 +1,12 @@
 import ZIndexBook from "./z-indices.js";
+import Constants from "../constants.js";
 
 const {TextLayer} = Eleven;
 
+const BOTTOM_MARGIN = Constants.WorldUIScreenMargin;
+
 const WIDTH = 800;
 const HEIGHT = 300;
-const BOTTOM_MARGIN = 5;
 const TEXT_SCALE = 4;
 const ROW_SPACING = 0.5;
 const BOX_PADDING = 4;
@@ -30,6 +32,7 @@ function GetTextLayer(data) {
     }
     return new TextLayer(dataContainer);
 }
+
 
 function GetRenderer(container,target="textLayer") {
     return (context,{halfWidth,height}) => {
