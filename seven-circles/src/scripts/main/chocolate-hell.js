@@ -4,13 +4,19 @@ import SpriteDoor from "../helper/doors/sprite-door.js";
 import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import PanPreview from "../helper/pan-preview.js";
 import RiverRocks from "../helper/river-rocks.js";
+import ObjectiveText from "../helper/objective-text.js";
 
 const NO_MILK_SKELE = 783;
 const MILK_SKELE = 847;
 const SKELE_ID = 16;
 const END_DOOR = [39,27];
 
+const previousMap = "TunnelsOfHell";
+const nextMap = "RiverHell";
+
 function ChocolateHell({world,lastScript,inventory,transition}){
+
+    const fromNextMap = lastScript === nextMap;
 
     world.setMap("chocolate-hell");
     world.camera.enablePadding();
@@ -23,7 +29,7 @@ function ChocolateHell({world,lastScript,inventory,transition}){
             player.setPosition(20,4);
             player.direction = "down";
             break;
-        case "RiverHell":
+        case nextMap:
             player.setPosition(45,29);
             player.direction = "up";
             break;
@@ -54,13 +60,25 @@ function ChocolateHell({world,lastScript,inventory,transition}){
     ]);
 
     let milkGaveCount = 0;
+    const objective = new ObjectiveText(world);
 
     this.interact = data => {
         if(doors.tryInteract(data)) return;
-        if(pickupField.tryPickup(data)) return;
+
+        const pickedUpItem = pickupField.tryPickup(data);
+        if(pickedUpItem) {
+            if(objective.status === "collect-milk" && pickedUpItem === "chocolate-milk") {
+                objective.set("Deliver milk to skeledemons!","delivery");
+            }
+        }
+
         if(this.endDoor.tryInteract(data,door => {
             if(door.opened) return;
-            world.message("The door won't open until all the skele-demons get their chocolate milk.");
+            if(!fromNextMap) {
+                world.message("The door won't open until all the skele-demons get their chocolate milk.");
+            } else {
+                world.message("The door is taking a nap.");
+            }
         })) return;
 
         if(riverRocks.tryPickup(data)) return;
@@ -85,13 +103,18 @@ function ChocolateHell({world,lastScript,inventory,transition}){
                         await frameDelay(500);
                         await world.sayUnlocked("Chocolate.. Mmmmmm.");
                         await frameDelay(250);
-                        if(milkGaveCount === 4) await PanPreview({
-                            world,x: 39,y: 28,delay: 2500,
-                            middleEvent: async () => {
-                                await frameDelay(500);
-                                this.endDoor.open();
+                        if(milkGaveCount === 4) {
+                            if(objective.status === "delivery") {
+                                objective.close();
                             }
-                        });
+                            await PanPreview({
+                                world,x: 39,y: 28,delay: 2500,
+                                middleEvent: async () => {
+                                    await frameDelay(500);
+                                    this.endDoor.open();
+                                }
+                            });
+                        }
                     } else {
                         await world.sayUnlocked("Need. Chocolate. Milk.");
                     }
@@ -104,8 +127,20 @@ function ChocolateHell({world,lastScript,inventory,transition}){
     };
 
     world.setTriggerHandlers([
-        [1,()=>{transition("TunnelsOfHell")},true],
-        [2,()=>{transition("RiverHell")},true]
+        [1,()=>{transition(previousMap)},true],
+        [2,()=>{transition(nextMap)},true]
     ]);
+
+    this.keyDoorOpened = door => {
+        if(objective.status === "find-stash" && door.color === "chocolate") {
+            objective.set("Collect chocolate milk!","collect-milk");
+        }
+    };
+    this.start = () => {
+        if(!fromNextMap) {
+            objective.set("Locate chocolate milk stash!","find-stash");
+        }
+        return false;
+    };
 }
 export default ChocolateHell;

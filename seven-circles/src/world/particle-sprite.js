@@ -2,7 +2,7 @@ const RENDER_BOX_SIZE = 2;
 const EMITTER_BASE_SCALE = 7;
 
 function ParticleSprite(x,y,emitter,target,world,size) {
-    if(isNaN(size)) size = RENDER_BOX_SIZE;
+    if(isNaN(size) && size !== null) size = RENDER_BOX_SIZE;
 
     const halfSize = size / 2;
 

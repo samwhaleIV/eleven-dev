@@ -4,6 +4,7 @@ import {BigPill,SmallPill} from "./scripts/alice-pills.js";
 import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
+import SpeedPill from "./scripts/speed-pill.js";
 
 const ItemUseTable = {
     "elf-rock": [Pickup,27,"elf-rock"],
@@ -19,7 +20,8 @@ const ItemUseTable = {
     "green-key": [Key,"green"],
     "pink-key": [Key,"pink"],
     "chocolate-key": [Key,"chocolate"],
-    "bomb": [Bomb]
+    "bomb": [Bomb],
+    "speed-pill": [SpeedPill]
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

@@ -5,7 +5,8 @@
         "other.png",
         "player-keys.png",
         "player-rock.png",
-        "player-bomb.png"
+        "player-bomb.png",
+        "player-fast.png"
     ],
     "Audio": [
         "grow.mp3",

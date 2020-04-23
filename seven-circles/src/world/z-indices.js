@@ -1,5 +1,6 @@
 const ZIndexBook = Object.freeze({
     /* Sprite layer */
+    ParticleSpriteLow: 4,
     Player: 10,
     NPC: 5,
     TileSprite: 3,

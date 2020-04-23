@@ -1,24 +1,10 @@
-const {ResourceManager, AudioManager, ParticleSystem} = Eleven;
+import PillParticles from "./pill-particles.js";
+const GROW_EFFECT = PillParticles.Grow;
+const SHRINK_EFFECT = PillParticles.Shrink;
+
+const {ResourceManager, AudioManager} = Eleven;
+
 const ANIMATION_DURATION = 250;
-const PARTICLE_DURATION = 500;
-const PARTICLE_COUNT = 10;
-
-const PARTICLE_SIZE = 9;
-const PARTICLE_VELOCITY = 80;
-
-const PARTICLE_BASE = ParticleSystem.getType("Base",{
-    duration: PARTICLE_DURATION,
-    size: PARTICLE_SIZE,
-    count: PARTICLE_COUNT,
-    xv: PARTICLE_VELOCITY,
-    yv: PARTICLE_VELOCITY
-});
-
-const GROW_EFFECT = Object.assign({},PARTICLE_BASE);
-GROW_EFFECT.color = "#3AFFFF";
-
-const SHRINK_EFFECT = Object.assign({},PARTICLE_BASE);
-SHRINK_EFFECT.color = "#FFA03A";
 
 const playSound = async grow => {
     const sound = ResourceManager.getAudio(
@@ -28,22 +14,7 @@ const playSound = async grow => {
 };
 
 const particleEffect = async ({world,player},grow) => {
-    const effect = grow ? GROW_EFFECT : SHRINK_EFFECT;
-
-    const effectScale = player.scale || 1;
-    effect.size = PARTICLE_SIZE * effectScale;
-
-    const emitter = ParticleSystem.getEmitter(effect);
-
-    const particleID = world.addParticles(
-        player.x + player.width / 2,
-        player.y + player.height / 2,
-        emitter
-    );
-
-    emitter.fire(()=>{
-        world.removeParticles(particleID);
-    });
+    PillParticles.Emit(world,player,grow ? GROW_EFFECT : SHRINK_EFFECT);
 };
 
 const scale = (player,scale) => {

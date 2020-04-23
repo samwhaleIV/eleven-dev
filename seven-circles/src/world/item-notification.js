@@ -1,4 +1,4 @@
-const TIMEOUT = 500;
+const TIMEOUT = 1000;
 
 function ItemNotification(world,itemName,amount) {
 
@@ -31,7 +31,7 @@ function ItemNotification(world,itemName,amount) {
         text: `+${world.notificationState.count} ${itemName}`,
         color: "white",
         target: world.player,
-        y: -3 / 5
+        y: -3.125 / 5
     });
 
     const callback = noDeletion => {

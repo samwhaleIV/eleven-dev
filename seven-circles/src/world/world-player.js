@@ -64,7 +64,9 @@ function GetInteractivePlayerController(world,sprite) {
                 playerController.locked = true;
                 world.refreshInput = null;
                 Inventory.show(keyDown,keyUp,()=>{
-                    playerController.locked = false;
+                    if(!world.canAdvanceMessage() && !world.directionalMessage) {
+                        playerController.locked = false;
+                    }
                     world.refreshInput = input.refresh;
                 });
             }

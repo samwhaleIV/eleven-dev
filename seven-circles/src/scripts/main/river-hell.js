@@ -3,6 +3,10 @@ import KeyDoor from "../helper/doors/key-door.js";
 import PickupField from "../helper/pickup-field.js";
 import RiverRocks from "../helper/river-rocks.js";
 import InstallBombAreas from "../helper/bomb-areas.js";
+import MessageChain from "../helper/message-chain.js";
+
+const previousMap = "ChocolateHell";
+const nextMap = "TBD";
 
 function RiverHell({world,lastScript,inventory,transition}) {
     world.setMap("river-hell");
@@ -10,7 +14,7 @@ function RiverHell({world,lastScript,inventory,transition}) {
     AddMilkBackground(world);
 
     const player = world.addPlayer();
-    if(lastScript === "TDB") {
+    if(lastScript === nextMap) {
         player.setPosition(6,80);
         player.direction = "up";
     } else {
@@ -31,7 +35,8 @@ function RiverHell({world,lastScript,inventory,transition}) {
         [7,52,"bomb"],
         [9,54,"bomb"],
         [4,64,"red-key"],
-        [26,6,"yellow-key"]
+        [26,6,"yellow-key"],
+        [30,4,"speed-pill"]
     ]);
 
     InstallBombAreas(world,this);
@@ -49,15 +54,21 @@ function RiverHell({world,lastScript,inventory,transition}) {
         if(riverRocks.tryPickup(data)) return;
 
         if(data.value === 16) {
-            world.say("Can you save my friends?");
+            world.say("Can you save my friends? They got trapped on the other side of the river!");
         } else if(data.value === 17) {
-            world.say("Freedom! Thank you kind soul!");
+            (async ()=>{
+                await MessageChain(world,[
+                    "Freedom! Thank you kind soul!",
+                    "Take this, it might be useful to you if you know how to use it."
+                ],true);
+                inventory.addItem("bomb",1);
+            })();
         }
     };
 
     world.setTriggerHandlers([
-        [1,()=>{transition("ChocolateHell")},true],
-        [2,()=>{transition("TBD")},true]
+        [1,()=>{transition(previousMap)},true],
+        [2,()=>{transition(nextMap)},true]
     ]);
 }
 export default RiverHell;
