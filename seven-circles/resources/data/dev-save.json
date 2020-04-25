@@ -19,6 +19,14 @@
                 "_deserialize": true,
                 "x": 0, "y": 0, "scriptID": "RiverHell",
                 "direction": 0
+            },
+            "Inventory": {
+                "blaster": 1,
+                "big-pill": 20,
+                "small-pill": 20,
+                "speed-pill": 20,
+                "present": 20,
+                "elf-rock": 20
             }
         },
 

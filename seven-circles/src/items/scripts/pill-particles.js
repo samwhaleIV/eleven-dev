@@ -24,17 +24,16 @@ const growEffect = getEffect("#3AFFFF");
 const shrinkEffect = getEffect("#FFA03A");
 const speedEffect = getEffect("#FF1E1E");
 
-const emit = (world,player,effect,belowSprite,scale,yOffset=0.5) => {
-    const effectScale = scale ? scale : player.scale || 1;
+const emit = (world,player,effect) => {
+    const effectScale = player.scale || 1;
     effect.size = PARTICLE_SIZE * effectScale;
 
     const emitter = ParticleSystem.getEmitter(effect);
 
-    const particleSprite = world.addParticles(
-        player.x + player.width / 2,
-        player.y + player.height * yOffset,
-        emitter,null,belowSprite
-    );
+    const x = player.x + player.width / 2;
+    const y = player.y + player.height / 2;
+
+    const particleSprite = world.addParticles(x,y,emitter);
 
     emitter.fire(()=>{
         world.removeParticles(particleSprite);

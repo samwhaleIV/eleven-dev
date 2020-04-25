@@ -16,14 +16,14 @@ function Avatar(isPlayer,...parameters) {
     this.isPlayer = isPlayer;
 
     if(this.isPlayer) {
-        InstallHitBox(this,10/16,15/16);
-        this.yOffset = -(1.125 / 16);
+        InstallHitBox(this,5/8,7/8);
+        this.yOffset = -(1 / 8);
         this.alignment = Alignments.Friendly;
         this.velocity = PLAYER_VELOCITY;
         this.showHitBox = false;
     } else {
         NPCController.call(this);
-        InstallHitBox(this,12/16,14/16);
+        InstallHitBox(this,6/8,7/8);
         this.yOffset = 0;
         this.alignment = Alignments.Neutral;
         this.velocity = NPC_VELOCITY;

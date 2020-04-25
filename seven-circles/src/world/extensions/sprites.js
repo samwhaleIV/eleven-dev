@@ -6,7 +6,9 @@ import ZIndexBook from "../z-indices.js";
 
 const {CollisionTypes, TextSprite, TileSprite} = Eleven;
 
-const safeSummonPosition = value => Math.round(value * 16) / 16;
+const summonSafetyBase = 16;
+
+const safeSummonPosition = value => Math.round(value * summonSafetyBase) / summonSafetyBase;
 
 function summonSprite(sprite) {
     const {direction, hitBox} = this.player;

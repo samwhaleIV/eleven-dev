@@ -1,6 +1,6 @@
 const Constants = Object.freeze({
     Namespace: "SVCC",
-    PlayerSpeed: 2.5,
+    PlayerSpeed: 3,
     NPCSpeed: 3,
     DefaultCameraScale: 7,
     WorldUIScreenMargin: 8,
