@@ -4,6 +4,7 @@ import PickupField from "../helper/pickup-field.js";
 import RiverRocks from "../helper/river-rocks.js";
 import InstallBombAreas from "../helper/bomb-areas.js";
 import MessageChain from "../helper/message-chain.js";
+import ObjectiveText from "../helper/objective-text.js";
 
 const previousMap = "ChocolateHell";
 const nextMap = "TBD";
@@ -12,6 +13,8 @@ function RiverHell({world,lastScript,inventory,transition}) {
     world.setMap("river-hell");
     world.camera.padding = true;
     AddMilkBackground(world);
+
+    const objective = new ObjectiveText(world);
 
     const player = world.addPlayer();
     if(lastScript === nextMap) {
@@ -61,9 +64,17 @@ function RiverHell({world,lastScript,inventory,transition}) {
                     "Freedom! Thank you kind soul!",
                     "Take this, it might be useful to you if you know how to use it."
                 ],true);
+                if(objective.status === "freedom") objective.close();
                 inventory.addItem("bomb",1);
             })();
         }
+    };
+
+    this.start = () => {
+        if(lastScript === previousMap) {
+            objective.set("Free the trapped skeledemons!","freedom");
+        }
+        return false;
     };
 
     world.setTriggerHandlers([
