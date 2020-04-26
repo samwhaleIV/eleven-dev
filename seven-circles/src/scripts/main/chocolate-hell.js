@@ -11,6 +11,8 @@ const MILK_SKELE = 847;
 const SKELE_ID = 16;
 const END_DOOR = [39,27];
 
+const DELIVERY_COUNT = 4;
+
 const previousMap = "TunnelsOfHell";
 const nextMap = "RiverHell";
 
@@ -62,20 +64,24 @@ function ChocolateHell({world,lastScript,inventory,transition}){
     let milkGaveCount = 0;
     const objective = new ObjectiveText(world);
 
+    const getDeliveryStatusMessage = () => {
+        return `Deliver milk to skeledemons!|(${milkGaveCount}/${DELIVERY_COUNT})`;
+    };
+
     this.interact = data => {
         if(doors.tryInteract(data)) return;
 
         const pickedUpItem = pickupField.tryPickup(data);
         if(pickedUpItem) {
             if(objective.status === "collect-milk" && pickedUpItem === "chocolate-milk") {
-                objective.set("Deliver milk to skeledemons!","delivery");
+                objective.set(getDeliveryStatusMessage(),"delivery");
             }
         }
 
         if(this.endDoor.tryInteract(data,door => {
             if(door.opened) return;
             if(!fromNextMap) {
-                world.message("The door won't open until all the skele-demons get their chocolate milk.");
+                world.message("The door won't open until all the skeledemons get their chocolate milk.");
             } else {
                 world.message("The door is taking a nap.");
             }
@@ -100,6 +106,7 @@ function ChocolateHell({world,lastScript,inventory,transition}){
                         inventory.removeItem("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
                         milkGaveCount++;
+                        objective.set(getDeliveryStatusMessage());
                         await frameDelay(500);
                         await world.sayUnlocked("Chocolate.. Mmmmmm.");
                         await frameDelay(250);

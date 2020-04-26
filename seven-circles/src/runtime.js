@@ -39,6 +39,10 @@ function Runtime() {
             if(script) await world.runScript(script);
         }]);
 
+        if(DEV) {
+            globalThis.world = CanvasManager.frame;
+        }
+
         if(CanvasManager.paused) {
             CanvasManager.paused = false;
             CanvasManager.markLoaded();

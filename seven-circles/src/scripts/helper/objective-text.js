@@ -124,7 +124,7 @@ function ObjectiveText(world) {
 
     this.set = (text,status) => {
         this.text = text;
-        this.status = status;
+        if(status) this.status = status;
     };
 
     Object.seal(this);
