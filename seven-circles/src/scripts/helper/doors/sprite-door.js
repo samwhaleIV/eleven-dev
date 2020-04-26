@@ -16,10 +16,10 @@ const frames = {
 const FALLBACK_FRAME = frames.grayDoor;
 
 function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
-    this.openStart = null; this.closeStart = null;
+    this.openStart = null, this.closeStart = null;
 
-    this.x = x; this.y = y;
-    this.width = 1; this.height = 3;
+    this.x = x, this.y = y;
+    this.width = 1, this.height = 3;
 
     this.open = false;
 
@@ -88,7 +88,7 @@ function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
     this.render = (context,x,y,width,_,time) => {
         if(this.openStart !== null) {
             let t = (time.now-this.openStart) / duration;
-            if(t < 0) {
+            if(isNaN(t) || t <= 0) {
                 renderStatic(context,x,y,width,false);
                 return;
             } else if(t > 1) {
@@ -99,7 +99,7 @@ function DoorRenderer(image,x,y,tileSize,normal,top,bottom,duration) {
             renderMoving(context,x,y,width,t);
         } else if(this.closeStart !== null) {
             let t = (time.now-this.closeStart) / duration;
-            if(t < 0) {
+            if(isNaN(t)|| t <= 0) {
                 renderStatic(context,x,y,width,true);
                 return;
             } else if(t > 1) {
@@ -166,7 +166,7 @@ function SpriteDoor(
 
         if(!instant) (async () => {
             locked = true;
-            await frameDelay(duration);
+            await delay(duration);
             setOpenCollision();
             world.pushCollisionChanges();
             locked = false;

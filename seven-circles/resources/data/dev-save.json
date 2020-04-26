@@ -17,7 +17,7 @@
         "NamedScript": {
             "PlayerPosition": {
                 "_deserialize": true,
-                "x": 0, "y": 0, "scriptID": "RiverHell",
+                "x": 0, "y": 0, "scriptID": "ChocolateHell",
                 "direction": 0
             },
             "Inventory": {
