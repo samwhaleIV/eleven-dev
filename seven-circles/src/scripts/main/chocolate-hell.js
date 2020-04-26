@@ -94,7 +94,7 @@ function ChocolateHell({world,lastScript,inventory,transition}){
             world.playerController.lock();
             (async () => {
                 if(foregroundValue === NO_MILK_SKELE) {
-                    if(true || inventory.hasItem("chocolate-milk")) {
+                    if(inventory.hasItem("chocolate-milk")) {
                         await world.sayUnlocked("I waited a long time for this moment.");
                         await frameDelay(500);
                         inventory.removeItem("chocolate-milk");
@@ -103,7 +103,7 @@ function ChocolateHell({world,lastScript,inventory,transition}){
                         await frameDelay(500);
                         await world.sayUnlocked("Chocolate.. Mmmmmm.");
                         await frameDelay(250);
-                        if(true || milkGaveCount === 4) {
+                        if(milkGaveCount === 4) {
                             if(objective.status === "delivery") {
                                 objective.close();
                             }
