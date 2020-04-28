@@ -1,5 +1,4 @@
 import StarField from "../helper/star-field.js";
-import FadeTransition from "../helper/fade-transition.js";
 
 const TITLE_TEXT = "";
 const TITLE_FONT = "22px sans-serif";
@@ -14,10 +13,10 @@ const FADE_IN_TIME = 8000;
 const FADE_OUT_TIME = 3000;
 
 const TEXT_LINES = [
-    "Stars. That's cool.",
-    "What makes you so sure they're stars?",
-    "That wasn't my point, okay? I'm just saying they're cool.",
-    "Oh. Yeah. They're cool, I guess."
+    "What one person sees, another may not.",
+    "Another's sanity, one's insanity.",
+    "Another's saint, another's devil.",
+    "What makes you so sure they're stars?"
 ];
 
 const TARGET_SCRIPT = "TunnelsOfHell";
@@ -79,7 +78,7 @@ function Title() {
     }
 }
 
-function HelloWorld({world}) {
+function HelloWorld({world,transition}) {
     world.setMap("empty");
     const {dispatchRenderer} = world;
 
@@ -104,7 +103,7 @@ function HelloWorld({world}) {
                 title.text = "";
                 await frameDelay(TEXT_DELAY);
             }
-            FadeTransition(world,TARGET_SCRIPT,FADE_OUT_TIME);
+            transition(TARGET_SCRIPT,null,FADE_OUT_TIME);
         })();
     };
 }
