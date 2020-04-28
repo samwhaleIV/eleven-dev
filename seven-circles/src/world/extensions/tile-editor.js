@@ -5,6 +5,8 @@ const COLLISION_LAYER = 3;
 const INTERACTION_LAYER = 4;
 const LIGHTING_LAYER = 5;
 
+const LOG_CHANGES = false;
+
 const batchedLayers = {
     [LIGHTING_LAYER]: true,
     [COLLISION_LAYER]: true,
@@ -46,21 +48,21 @@ function pushCollisionChanges() {
 
     this.tileCollision.reset();
     this.collisionChangePending = false;
-    if(DEV) console.log("World performance: Tile collision layer reset!");
+    if(LOG_CHANGES && DEV) console.log("World performance: Tile collision layer reset!");
 }
 function pushInteractionChanges() {
     if(!this.interactionChangePending) return;
 
     this.interactionLayer.reset();
     this.interactionChangePending = false;
-    if(DEV) console.log("World performance: Tile interaction layer reset!");
+    if(LOG_CHANGES && DEV) console.log("World performance: Tile interaction layer reset!");
 }
 function pushLightingChanges() {
     if(!this.lightingChangePending) return;
 
     this.lightingLayer.refresh();
     this.lightingChangePending = false;
-    if(DEV) console.log("World performance: Tile lighting layer refreshed!");
+    if(LOG_CHANGES && DEV) console.log("World performance: Tile lighting layer refreshed!");
 }
 function pushTileChanges() {
     this.pushCollisionChanges();

@@ -38,6 +38,7 @@ function FakeWorld(tilesets) {
 
         grid.setSize(renderer.columns,renderer.rows);
         this.tileRenderer = renderer;
+        renderer.setVisibleLayers(visibleLayers);
 
         grid.renderer = renderer;
         grid.cache();
@@ -58,6 +59,7 @@ function FakeWorld(tilesets) {
         visibleLayers[5] = lighting;
 
         this.tileRenderer.setVisibleLayers(visibleLayers);
+
         grid.renderer = this.tileRenderer;
         grid.cache();
         grid.renderer = dispatchRenderer;

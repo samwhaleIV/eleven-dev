@@ -3,6 +3,7 @@
 import ScriptBook from "./script-book.js";
 
 /* Note that these import aliases might not reflect the real script identifier/function names. */
+import SwitchHell from "./main/switch-hell.js";
 import BombTest from "./main/bomb-test.js";
 import ChocolateHell from "./main/chocolate-hell.js";
 import HelloWorld from "./main/hello-world.js";
@@ -11,7 +12,7 @@ import RiverHell from "./main/river-hell.js";
 import TunnelsOfHell from "./main/tunnels-of-hell.js";
 
 const Scripts = ScriptBook.Import(
-    BombTest,ChocolateHell,HelloWorld,Preload,RiverHell,TunnelsOfHell
+    SwitchHell,BombTest,ChocolateHell,HelloWorld,Preload,RiverHell,TunnelsOfHell
 );
 
 export default Scripts;
