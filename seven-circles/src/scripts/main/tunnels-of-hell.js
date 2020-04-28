@@ -8,9 +8,11 @@ import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import MessageChain from "../helper/message-chain.js";
 import DramaZoom from "../helper/drama-zoom.js";
 
+const nextMap = "ChocolateHell";
+
 function TunnelsOfHell({world,lastScript,inventory,transition}) {
 
-    const fromChocolateHell = lastScript === "ChocolateHell";
+    const fromNextMap = lastScript === nextMap;
 
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,"black");
@@ -21,7 +23,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
 
     const player = world.addPlayer();
 
-    if(fromChocolateHell) {
+    if(fromNextMap) {
         player.setPosition(83,6);
         player.direction = "up";
     } else {
@@ -56,7 +58,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
         [49,13,"yellow-key"]
     ]);
 
-    const endWallLeftStartOpen = fromChocolateHell ? false : true;
+    const endWallLeftStartOpen = fromNextMap ? false : true;
 
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",endWallLeftStartOpen,2000,48);
     const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,2000,49);
@@ -128,7 +130,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
     };
 
     this.start = () => {
-        if(!fromChocolateHell) {
+        if(!fromNextMap) {
             objective.set("Find the red key!","get-red-key");
         }
         return false;
@@ -139,7 +141,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
             world.say("Hey! Get over here!");
             endWallLeft.close();
         },true],
-        [2,()=>{transition("ChocolateHell")},true]
+        [2,()=>{transition(nextMap)},true]
     ]);
 }
 export default TunnelsOfHell;

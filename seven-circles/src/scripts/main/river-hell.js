@@ -6,7 +6,7 @@ import InstallBombAreas from "../helper/bomb-areas.js";
 import MessageChain from "../helper/message-chain.js";
 import ObjectiveText from "../helper/objective-text.js";
 
-const previousMap = "ChocolateHell";
+const previousMap = "HatHell";
 const nextMap = "TBD";
 
 function RiverHell({world,lastScript,inventory,transition}) {

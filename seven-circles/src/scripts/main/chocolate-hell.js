@@ -14,7 +14,7 @@ const END_DOOR = [39,27];
 const DELIVERY_COUNT = 4;
 
 const previousMap = "TunnelsOfHell";
-const nextMap = "RiverHell";
+const nextMap = "HatHell";
 
 function ChocolateHell({world,lastScript,inventory,transition}){
 
