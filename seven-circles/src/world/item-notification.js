@@ -1,4 +1,5 @@
 const TIMEOUT = 1000;
+const LABEL_OFFSET = -10.25 / 16;
 
 function ItemNotification(world,itemName,amount) {
 
@@ -31,7 +32,7 @@ function ItemNotification(world,itemName,amount) {
         text: `+${world.notificationState.count} ${itemName}`,
         color: "white",
         target: world.player,
-        y: -3.125 / 5
+        y: LABEL_OFFSET
     });
 
     const callback = noDeletion => {
