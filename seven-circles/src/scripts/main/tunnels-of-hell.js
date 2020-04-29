@@ -7,6 +7,7 @@ import KeyWeapon from "../../weapons/key-weapon.js";
 import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
 import MessageChain from "../helper/message-chain.js";
 import DramaZoom from "../helper/drama-zoom.js";
+import GetTransitionTrigger from "../helper/transition-trigger.js";
 
 const nextMap = "ChocolateHell";
 
@@ -136,12 +137,12 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
         return false;
     };
 
-    world.setTriggerHandlers([
+    world.setTriggers([
         [1,()=>{
             world.say("Hey! Get over here!");
             endWallLeft.close();
         },true],
-        [2,()=>{transition(nextMap)},true]
+        GetTransitionTrigger(world,2,nextMap)
     ]);
 }
 export default TunnelsOfHell;

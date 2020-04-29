@@ -1,5 +1,7 @@
 import MessageChain from "../helper/message-chain.js";
 import DramaZoom from "../helper/drama-zoom.js";
+import AddColorBackground from "../helper/color-background.js";
+import GetTransitionTrigger from "../helper/transition-trigger.js";
 
 const storeMap = "HatStore";
 const previousMap = "ChocolateHell";
@@ -9,7 +11,8 @@ const talkedKey = "talkedToDemonGuyInHallway";
 
 function HatHell({world,lastScript,saveState,transition}) {
     world.setMap("hat-hell");
-    world.camera.padding = true;
+    world.camera.horizontalPadding = true;
+    AddColorBackground(world,"black");
 
     if(lastScript === nextMap) {
         const player = world.addPlayer(18,5);
@@ -72,10 +75,10 @@ function HatHell({world,lastScript,saveState,transition}) {
         }
     };
 
-    world.setTriggerHandlers([
-        [1,()=>{if(world.player.direction===3) transition(previousMap)},false],
-        [2,()=>{if(world.player.direction===1) transition(nextMap)},false],
-        [3,dontKnowWhyYouSayGoodbyeISayHello,false]
+    world.setTriggers([
+        GetTransitionTrigger(world,1,previousMap,"left"),
+        GetTransitionTrigger(world,2,nextMap,"right"),
+        [3,dontKnowWhyYouSayGoodbyeISayHello]
     ]);
 }
 export default HatHell;

@@ -49,7 +49,7 @@ function SwitchHell({world,inventory,transition}) {
         if(switchDoors.tryInteract(data)) return;
     };
 
-    world.setTriggerHandlers([
+    world.setTriggers([
         [1,()=>{transition(previousMap)},true],
         [2,async ()=>{
             if(await world.prompt(
@@ -58,7 +58,7 @@ function SwitchHell({world,inventory,transition}) {
             ) === 0) {
                 transition("SwitchHell",null,2000);
             }
-        },false]
+        }]
     ]);
 }
 export default SwitchHell;

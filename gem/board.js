@@ -227,7 +227,8 @@ function Board() {
         Here lies the the old code that caused so much pain and damage. 1/29/2020 - 1/29/2020
         Leave an F to pay respects.
 
-        F
+        F,
+        F (4/29/2020)
 */
 
         const start = BOARD_ROWS - 2;

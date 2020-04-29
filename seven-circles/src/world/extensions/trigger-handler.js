@@ -1,4 +1,6 @@
-function setTriggerHandlers(triggerSet) {
+const REPEAT_CODE = "repeat";
+
+function setTriggers(triggerSet) {
     this.validateParseOnlyMethod();
 
     const worldTriggerSet = new Object();
@@ -14,13 +16,14 @@ function setTriggerHandlers(triggerSet) {
     const sendTrigger = ID => {
         const triggerData = worldTriggerSet[ID];
         if(!triggerData || (triggerData.fireOnce && triggerData.fired)) return;
-        triggerData.handler(!triggerData.fired);
+        const result = triggerData.handler(!triggerData.fired);
         triggerData.fired = true;
+        return result !== REPEAT_CODE;
     };
 
     const trigger = ID => {
         if(activeTrigger === null || activeTrigger !== ID) {
-            sendTrigger(ID); activeTrigger = ID;
+            if(sendTrigger(ID)) activeTrigger = ID;
         }
     };
     const noTrigger = () => {
@@ -29,4 +32,4 @@ function setTriggerHandlers(triggerSet) {
 
     Object.assign(this.pendingScriptData,{trigger,noTrigger});
 }
-export default {setTriggerHandlers};
+export default {setTriggers};

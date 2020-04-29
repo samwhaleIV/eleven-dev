@@ -5,6 +5,7 @@ import AddMilkBackground from "../helper/backgrounds/milk-background.js";
 import PanPreview from "../helper/pan-preview.js";
 import RiverRocks from "../helper/river-rocks.js";
 import ObjectiveText from "../helper/objective-text.js";
+import GetTransitionTrigger from "../helper/transition-trigger.js";
 
 const NO_MILK_SKELE = 783;
 const MILK_SKELE = 847;
@@ -16,7 +17,7 @@ const DELIVERY_COUNT = 4;
 const previousMap = "TunnelsOfHell";
 const nextMap = "HatHell";
 
-function ChocolateHell({world,lastScript,inventory,transition}){
+function ChocolateHell({world,lastScript,inventory}){
 
     const fromNextMap = lastScript === nextMap;
 
@@ -133,9 +134,9 @@ function ChocolateHell({world,lastScript,inventory,transition}){
         }
     };
 
-    world.setTriggerHandlers([
-        [1,()=>{transition(previousMap)},true],
-        [2,()=>{transition(nextMap)},true]
+    world.setTriggers([
+        GetTransitionTrigger(world,1,previousMap),
+        GetTransitionTrigger(nextMap,2,nextMap)
     ]);
 
     this.keyDoorOpened = door => {

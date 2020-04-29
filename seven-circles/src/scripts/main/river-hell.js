@@ -5,11 +5,12 @@ import RiverRocks from "../helper/river-rocks.js";
 import InstallBombAreas from "../helper/bomb-areas.js";
 import MessageChain from "../helper/message-chain.js";
 import ObjectiveText from "../helper/objective-text.js";
+import GetTransitionTrigger from "../helper/transition-trigger.js";
 
 const previousMap = "HatHell";
-const nextMap = "TBD";
+const nextMap = "VoidHell";
 
-function RiverHell({world,lastScript,inventory,transition}) {
+function RiverHell({world,lastScript,inventory}) {
     world.setMap("river-hell");
     world.camera.padding = true;
     AddMilkBackground(world);
@@ -77,9 +78,9 @@ function RiverHell({world,lastScript,inventory,transition}) {
         return false;
     };
 
-    world.setTriggerHandlers([
-        [1,()=>{transition(previousMap)},true],
-        [2,()=>{transition(nextMap)},true]
+    world.setTriggers([
+        GetTransitionTrigger(world,1,previousMap),
+        GetTransitionTrigger(world,2,nextMap)
     ]);
 }
 export default RiverHell;

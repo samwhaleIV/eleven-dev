@@ -35,13 +35,15 @@ function GetInteractivePlayerController(world,sprite) {
 
     const playerImpulse = new WorldImpulse(sprite,collisionLayer,interactionLayer);
     playerImpulse.layerHandler = sprite => {
-        if(sprite.impulse) {
+        if(sprite.isHitBox) sprite = sprite.target;
+        const hasImpulse = sprite.interact;
+        if(hasImpulse) {
             const impulseData = {
                 source: playerImpulse.source,
                 world,script: world.script,
                 self: sprite, inventory: Inventory
             };
-            sprite.impulse(impulseData);
+            sprite.interact(impulseData);
         }
     };
     playerImpulse.tileHandler = tile => {

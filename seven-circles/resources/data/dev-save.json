@@ -1,10 +1,18 @@
 {
-    "DEV_FILE": "This is the file you're looking for!",
+    "devfile": "This is the file you're looking for!",
 
     "CleanSlate": true,
-    "Container": null,
+    "Container": "NamedScript",
 
     "Containers": {
+
+        "NamedScript": {
+            "PlayerPosition": {
+                "x": 0, "y": 0, "scriptID": "VoidHell",
+                "direction": 0,
+                "_deserialize": true
+            }
+        },
 
         "BombTest": {
             "PlayerPosition": {
@@ -14,19 +22,12 @@
             } 
         },
 
-        "NamedScript": {
-            "PlayerPosition": {
-                "_deserialize": true,
-                "x": 0, "y": 0, "scriptID": "TunnelsOfHell",
-                "direction": 0
-            }
-        },
 
         "PillTest": {
             "Inventory": {
-                "blaster": 1,
                 "big-pill": 20,
-                "small-pill": 20
+                "small-pill": 20,
+                "speed-pill": 20
             }
         },
 
