@@ -13,10 +13,12 @@ const FADE_IN_TIME = 8000;
 const FADE_OUT_TIME = 3000;
 
 const TEXT_LINES = [
-    "What one person sees, another may not.",
-    "Another's sanity, one's insanity.",
-    "Another's saint, another's devil.",
-    "What makes you so sure they're stars?"
+    "What one may see, another may not.",
+    "A saint, a devil.",
+    "A sacrifice, a martyr.",
+    "Another's sanity is one's insanity.",
+    "Are you so sure of stars?",
+    "What must a star think of you?",
 ];
 
 const TARGET_SCRIPT = "TunnelsOfHell";
@@ -90,9 +92,6 @@ function HelloWorld({world,transition}) {
 
     this.load = () => {
         (async () => {
-            if(DEV) {
-                world.runScript(TARGET_SCRIPT,{devLoad:true}); return;
-            }
             await world.fadeFromBlack(FADE_IN_TIME);
             world.popFader();
             for(let i = 0;i<TEXT_LINES.length;i++) {

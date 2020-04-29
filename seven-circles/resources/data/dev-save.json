@@ -2,7 +2,7 @@
     "devfile": "This is the file you're looking for!",
 
     "CleanSlate": true,
-    "Container": "NamedScript",
+    "Container": null,
 
     "Containers": {
 
