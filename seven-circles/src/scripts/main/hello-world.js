@@ -14,11 +14,9 @@ const FADE_OUT_TIME = 3000;
 
 const TEXT_LINES = [
     "What one may see, another may not.",
-    "A saint, a devil.",
-    "A sacrifice, a martyr.",
-    "Another's sanity is one's insanity.",
+    "A saint, a devil. A martyr, a traitor.",
     "Are you so sure of stars?",
-    "What must a star think of you?",
+    "What must stars think of you?",
 ];
 
 const TARGET_SCRIPT = "TunnelsOfHell";

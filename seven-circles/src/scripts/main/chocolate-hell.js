@@ -136,7 +136,7 @@ function ChocolateHell({world,lastScript,inventory}){
 
     world.setTriggers([
         GetTransitionTrigger(world,1,previousMap),
-        GetTransitionTrigger(nextMap,2,nextMap)
+        GetTransitionTrigger(world,2,nextMap)
     ]);
 
     this.keyDoorOpened = door => {
