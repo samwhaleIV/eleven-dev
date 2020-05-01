@@ -1,6 +1,8 @@
-import GetSwitchDoors from "../helper/doors/switch-doors.js";
-import PickupField from "../helper/pickup-field.js";
-import InstallBombAreas from "../helper/bomb-areas.js";
+import {
+    GetSwitchDoors,
+    PickupField,
+    InstallBombAreas
+} from "../helper.js";
 
 const previousMap = null;
 

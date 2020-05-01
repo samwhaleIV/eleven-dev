@@ -8,7 +8,7 @@
 
         "NamedScript": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "ChocolateHell",
+                "x": 0, "y": 0, "scriptID": "HelloWorld",
                 "direction": 0,
                 "_deserialize": true
             }

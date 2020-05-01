@@ -1,4 +1,8 @@
-import {GetTransitionTrigger,MessageChain,GetSwitchDoors} from "../helper.js";
+import {
+    GetTransitionTrigger,
+    MessageChain,
+    GetSwitchDoors
+} from "../helper.js";
 
 const previousMap = "RiverHell";
 const nextMap = "BombHell";
