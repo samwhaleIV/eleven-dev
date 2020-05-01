@@ -135,6 +135,7 @@ function TunnelsOfHell({world,lastScript,inventory}) {
         if(!fromNextMap) {
             objective.set("Find the red key!","get-red-key");
         }
+        if(DEMO) SVCC.Debug.ConfigKeyBinds();
         return false;
     };
 
