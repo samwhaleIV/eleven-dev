@@ -1,3 +1,5 @@
+import Constants from "../../constants.js";
+
 const BACKGROUND_LAYER = 0;
 const FOREGROUND_LAYER = 1;
 const SUPER_FOREGROUND_LAYER = 2;
@@ -5,7 +7,7 @@ const COLLISION_LAYER = 3;
 const INTERACTION_LAYER = 4;
 const LIGHTING_LAYER = 5;
 
-const LOG_CHANGES = false;
+const LOG_CHANGES = Constants.LogTileUpdates;
 
 const batchedLayers = {
     [LIGHTING_LAYER]: true,
@@ -48,21 +50,21 @@ function pushCollisionChanges() {
 
     this.tileCollision.reset();
     this.collisionChangePending = false;
-    if(LOG_CHANGES && DEV) console.log("World performance: Tile collision layer reset!");
+    if(LOG_CHANGES) console.log("World performance: Tile collision layer reset!");
 }
 function pushInteractionChanges() {
     if(!this.interactionChangePending) return;
 
     this.interactionLayer.reset();
     this.interactionChangePending = false;
-    if(LOG_CHANGES && DEV) console.log("World performance: Tile interaction layer reset!");
+    if(LOG_CHANGES) console.log("World performance: Tile interaction layer reset!");
 }
 function pushLightingChanges() {
     if(!this.lightingChangePending) return;
 
     this.lightingLayer.refresh();
     this.lightingChangePending = false;
-    if(LOG_CHANGES && DEV) console.log("World performance: Tile lighting layer refreshed!");
+    if(LOG_CHANGES) console.log("World performance: Tile lighting layer refreshed!");
 }
 function pushTileChanges() {
     this.pushCollisionChanges();

@@ -4,6 +4,7 @@ import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
 import Inventory from "./items/inventory.js";
+import saveState from "./storage/save-state.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
@@ -91,10 +92,11 @@ function Runtime() {
 
         if(devSave) {
 
-            if(devSave[CLEAN_SLATE]) localStorage.clear();
+            if(DEMO || devSave[CLEAN_SLATE]) saveState.hardReset();
 
-            const container = devSave[CONTAINER];
+            const container = DEMO ? "Demo" : devSave[CONTAINER];
             const containers = devSave[CONTAINERS];
+
             if(container && containers) {
                 localStorage.setItem(SAVE_STATE_ADDRESS,JSON.stringify(
                     containers[container]

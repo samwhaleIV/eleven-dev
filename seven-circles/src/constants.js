@@ -13,6 +13,7 @@ const Constants = Object.freeze({
     PlayerSprite: "player",
     GameStartScript: "HelloWorld",
     GamePreloadScript: "Preload",
+    LogTileUpdates: false,
     RetroResolution: {
         Width: 900,
         Height: 700

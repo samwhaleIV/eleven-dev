@@ -214,6 +214,8 @@ function InstallInventoryItems(
 
         return hoverData;
     });
+
+    trySetSelection();
 }
 
 function InventoryMenu({terminate,proxyFrame},keyDown,keyUp,callback) {

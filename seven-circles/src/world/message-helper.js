@@ -8,7 +8,7 @@ const BOTTOM_MARGIN = Constants.WorldUIScreenMargin;
 const WIDTH = 800;
 const HEIGHT = 300;
 const TEXT_SCALE = 4;
-const ROW_SPACING = 0.5;
+const ROW_SPACING = 1;
 const BOX_PADDING = 4;
 const TEXT_SPACING = 0.5;
 

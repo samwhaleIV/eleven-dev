@@ -1,7 +1,7 @@
 import {GetTransitionTrigger,MessageChain,GetSwitchDoors} from "../helper.js";
 
 const previousMap = "RiverHell";
-const nextMap = "TDB";
+const nextMap = "BombHell";
 
 const {ResourceManager,UVTCReflection} = Eleven;
 
@@ -36,8 +36,6 @@ function VoidHell({world,lastScript}) {
 
     antiPlayer.xOffset = world.player.xOffset || 0;
     antiPlayer.yOffset = world.player.yOffset || 0;
-
-    if(DEV) globalThis.antiPlayer = antiPlayer;
 
     camera.horizontalPadding = true;
 

@@ -2,7 +2,7 @@
     "devfile": "This is the file you're looking for!",
 
     "CleanSlate": true,
-    "Container": "DemoContainer",
+    "Container": "NamedScript",
 
     "Containers": {
 
@@ -22,7 +22,7 @@
             } 
         },
 
-        "DemoContainer": {
+        "Demo": {
             "PlayerPosition": {
                 "_deserialize": true,
                 "scriptID": "HelloWorld"
