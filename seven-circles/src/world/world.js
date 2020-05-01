@@ -130,7 +130,8 @@ function World(callback) {
     this.playerController = null;
     this.player = null;
     this.playerImpulse = null;
-    this.keyDown = null; this.keyUp = null;
+    this.keyDown = null;
+    this.keyUp = null;
 
     this.textMessage = null;
     this.textMessageStack = new Array();
@@ -286,7 +287,7 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
     }
     Object.values(CanvasManager.downKeys).forEach(key => {
         const proxyEvent = Object.assign({},key); proxyEvent.repeat = false;
-        this.keyDown(proxyEvent);
+        if(this.keyDown) this.keyDown(proxyEvent);
     });
 
     this.inputCopyState = null;
