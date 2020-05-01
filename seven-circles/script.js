@@ -2,7 +2,7 @@ import Runtime from "./src/runtime.js";
 import Debug from "./src/debug.js";
 import Constants from "./src/constants.js";
 
-const autoSingleton = module => {
+const AutoSingleton = module => {
     return Singleton({
         module: module,
         autoInstantiation: true,
@@ -12,16 +12,9 @@ const autoSingleton = module => {
 
 const SVCC = Namespace.create({
     name: Constants.Namespace,
-    modules: [autoSingleton(Runtime),autoSingleton(Debug)]
+    modules: [AutoSingleton(Runtime),AutoSingleton(Debug)]
 });
 
 Namespace.makeGlobal(SVCC);
 
-if(!EDITOR) {
-    if(DEV) {
-        SVCC.Runtime.DevStart();
-    } else {
-        SVCC.Runtime.Start();
-    }
-}
-
+DEV ? SVCC.Runtime.DevStart() : SVCC.Runtime.Start();

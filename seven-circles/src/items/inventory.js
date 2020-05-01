@@ -78,12 +78,11 @@ function Inventory() {
         return itemContainer[safeID];
     };
 
-    this.hasItem = safeID => {
-        return countItem(safeID) >= 1;
-    };
+    this.has = safeID => countItem(safeID) >= 1;
+
     this.countItem = countItem;
 
-    this.removeItem = (safeID,amount) => {
+    this.take = (safeID,amount) => {
         validateSafeID(safeID);
 
         if(isNaN(amount)) amount = 1;
@@ -96,7 +95,7 @@ function Inventory() {
         if(newCount < 0) newCount = 0;
         itemContainer[safeID] = newCount;
     };
-    this.addItem = (safeID,amount) => {
+    this.give = (safeID,amount) => {
         validateSafeID(safeID);
 
         if(isNaN(amount)) amount = 1;
@@ -116,7 +115,7 @@ function Inventory() {
         SaveState.set(CONTAINER_KEY,container);
     };
 
-    this.clearItem = safeID => {
+    this.clear = safeID => {
         validateSafeID(safeID);
 
         const itemContainer = getItemContainer();

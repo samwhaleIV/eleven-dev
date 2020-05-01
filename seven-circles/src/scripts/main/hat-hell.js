@@ -1,7 +1,9 @@
-import MessageChain from "../helper/message-chain.js";
-import DramaZoom from "../helper/drama-zoom.js";
-import AddColorBackground from "../helper/color-background.js";
-import GetTransitionTrigger from "../helper/transition-trigger.js";
+import {
+    MessageChain,
+    DramaZoom,
+    AddColorBackground,
+    GetTransitionTrigger
+} from "../helper.js";
 
 const storeMap = "HatStore";
 const previousMap = "ChocolateHell";

@@ -41,6 +41,7 @@ function Runtime() {
 
         if(DEV) {
             globalThis.world = CanvasManager.frame;
+            globalThis.inventory = this.Inventory;
         }
 
         if(CanvasManager.paused) {

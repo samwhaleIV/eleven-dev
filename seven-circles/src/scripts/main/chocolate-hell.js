@@ -1,11 +1,13 @@
-import KeyDoor from "../helper/doors/key-door.js";
-import PickupField from "../helper/pickup-field.js";
-import SpriteDoor from "../helper/doors/sprite-door.js";
-import AddMilkBackground from "../helper/backgrounds/milk-background.js";
-import PanPreview from "../helper/pan-preview.js";
-import RiverRocks from "../helper/river-rocks.js";
-import ObjectiveText from "../helper/objective-text.js";
-import GetTransitionTrigger from "../helper/transition-trigger.js";
+import {
+    KeyDoor,
+    PickupField,
+    SpriteDoor,
+    AddMilkBackground,
+    PanPreview,
+    RiverRocks,
+    ObjectiveText,
+    GetTransitionTrigger
+} from "../helper.js";
 
 const NO_MILK_SKELE = 783;
 const MILK_SKELE = 847;
@@ -49,8 +51,8 @@ function ChocolateHell({world,lastScript,inventory}){
     ]);
 
     this.unload = () => {
-        inventory.clearItem("chocolate-key");
-        inventory.clearItem("chocolate-milk");
+        inventory.clear("chocolate-key");
+        inventory.clear("chocolate-milk");
     };
     this.unload();
 
@@ -101,10 +103,10 @@ function ChocolateHell({world,lastScript,inventory}){
             world.playerController.lock();
             (async () => {
                 if(foregroundValue === NO_MILK_SKELE) {
-                    if(inventory.hasItem("chocolate-milk")) {
+                    if(inventory.has("chocolate-milk")) {
                         await world.sayUnlocked("I waited a long time for this moment.");
                         await frameDelay(500);
-                        inventory.removeItem("chocolate-milk");
+                        inventory.take("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
                         milkGaveCount++;
                         objective.set(getDeliveryStatusMessage());

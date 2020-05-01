@@ -1,5 +1,8 @@
 function StaticPickup(
-    world,x,y,item,amount=1,isSuperForeground=false,clearCollision=true
+    world,inventory,x,y,item,
+    amount=1,
+    isSuperForeground=false,
+    clearCollision=true
 ) {
     let grabbed = false;
     this.item = item; item = null;
@@ -17,7 +20,8 @@ function StaticPickup(
         }
         world.setInteractionTile(x,y,0);
         world.pushInteractionChanges();
-        SVCC.Runtime.Inventory.addItem(this.item,amount);
+
+        inventory.give(this.item,amount);
         return this.item;
     };
 }

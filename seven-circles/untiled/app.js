@@ -1,4 +1,4 @@
-import AddColorBackground from "../src/scripts/helper/color-background.js";
+import AddColorBackground from "../src/scripts/helper/backgrounds/color-background.js";
 import TilePicker from "./tile-picker.js";
 import FakeWorld from "./fake-world.js";
 

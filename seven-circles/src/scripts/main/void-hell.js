@@ -1,6 +1,4 @@
-import GetTransitionTrigger from "../helper/transition-trigger.js";
-import MessageChain from "../helper/message-chain.js";
-import GetSwitchDoors from "../helper/doors/switch-doors.js";
+import {GetTransitionTrigger,MessageChain,GetSwitchDoors} from "../helper.js";
 
 const previousMap = "RiverHell";
 const nextMap = "TDB";

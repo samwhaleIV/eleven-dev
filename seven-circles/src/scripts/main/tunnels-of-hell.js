@@ -1,17 +1,18 @@
-import KeyDoor from "../helper/doors/key-door.js";
-import PickupField from "../helper/pickup-field.js";
-import AddColorBackground from "../helper/color-background.js";
-import SpriteDoor from "../helper/doors/sprite-door.js";
-import ObjectiveText from "../helper/objective-text.js";
-import KeyWeapon from "../../weapons/key-weapon.js";
-import {AddFixedMilkBackground} from "../helper/backgrounds/milk-background.js";
-import MessageChain from "../helper/message-chain.js";
-import DramaZoom from "../helper/drama-zoom.js";
-import GetTransitionTrigger from "../helper/transition-trigger.js";
+import {
+    KeyDoor,
+    PickupField,
+    AddColorBackground,
+    SpriteDoor,
+    ObjectiveText,
+    AddFixedMilkBackground,
+    MessageChain,
+    DramaZoom,
+    GetTransitionTrigger
+} from "../helper.js";
 
 const nextMap = "ChocolateHell";
 
-function TunnelsOfHell({world,lastScript,inventory,transition}) {
+function TunnelsOfHell({world,lastScript,inventory}) {
 
     const fromNextMap = lastScript === nextMap;
 
@@ -33,11 +34,11 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
     }
 
     this.unload = () => {
-        inventory.clearItem("red-key");
-        inventory.clearItem("green-key");
-        inventory.clearItem("pink-key");
-        inventory.clearItem("blue-key");
-        inventory.clearItem("yellow-key");
+        inventory.clear("red-key");
+        inventory.clear("green-key");
+        inventory.clear("pink-key");
+        inventory.clear("blue-key");
+        inventory.clear("yellow-key");
     };
     this.unload();
 
@@ -51,7 +52,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
         [52,8,"verticalPink"]
     ]);
 
-    const pickupField = new PickupField(world,[
+    const pickupField = new PickupField(world,inventory,[
         [4,15,"red-key"],
         [8,9,"green-key"],
         [21,1,"pink-key"],
@@ -74,7 +75,7 @@ function TunnelsOfHell({world,lastScript,inventory,transition}) {
 
     player.watchWeaponChange(weapon=>{
         if(weapon && objective.status === "equip-red-key" &&
-           weapon.name === KeyWeapon.name && weapon.color === "red"
+           weapon.name === "key-weapon" && weapon.color === "red"
         ) {
             objective.set("Open the red door!","open-red-door");
         }

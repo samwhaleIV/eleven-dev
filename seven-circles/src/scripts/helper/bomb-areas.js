@@ -145,8 +145,8 @@ function InstallBombAreas(world,script) {
                     const inventory = SVCC.Runtime.Inventory;
                     clearInteraction(destructionTiles);
 
-                    inventory.removeItem("bomb",1);
-                    if(!inventory.hasItem("bomb")) {
+                    inventory.take("bomb",1);
+                    if(!inventory.has("bomb")) {
                         world.player.clearWeapon();
                     }
 

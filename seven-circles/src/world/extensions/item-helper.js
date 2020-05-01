@@ -4,10 +4,10 @@ import ItemNotification from "../item-notification.js";
 const DID_NOTHING = "This item doesn't want to do anything right now.";
 const BAD_ITEM_PLACMEMENT = "The item doesn't want to go here!";
 
-function useItem(safeID,removeItem,message) {
+function useItem(safeID,take,message) {
     const {Inventory} = SVCC.Runtime;
 
-    if(removeItem) Inventory.removeItem(safeID);
+    if(take) Inventory.take(safeID);
 
     if(message) this.message(message);
 

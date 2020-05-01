@@ -1,4 +1,4 @@
-import AddColorBackground from "../helper/color-background.js";
+import {AddColorBackground} from "../helper.js";
 
 const parentMap = "HatHell";
 

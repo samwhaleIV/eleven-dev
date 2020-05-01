@@ -1,5 +1,4 @@
-import InstallBombAreas from "../helper/bomb-areas.js";
-import PickupField from "../helper/pickup-field.js";
+import {InstallBombAreas,PickupField} from "../helper.js";
 
 function BombTest({world}) {
     world.setMap("bomb-test");

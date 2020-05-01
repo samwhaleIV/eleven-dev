@@ -1,6 +1,6 @@
 const impulse = ({world,self,inventory}) => {
     world.spriteLayer.remove(self.ID);
-    inventory.addItem(self.pickupID);
+    inventory.give(self.pickupID);
 };
 
 function Pickup(tileID,pickupID) {

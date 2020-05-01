@@ -1,4 +1,4 @@
-import DoorBase from "./door-base";
+import DoorBase from "./door-base.js";
 
 const setArea = (world,xStart,yStart,width,height,value) => {
     const xEnd = xStart + width;

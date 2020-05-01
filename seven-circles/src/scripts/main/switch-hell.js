@@ -12,11 +12,11 @@ function SwitchHell({world,inventory,transition}) {
     world.camera.padding = true;
 
     this.unload = () => {
-        inventory.clearItem("bomb");
+        inventory.clear("bomb");
     };
     this.unload();
 
-    const pickupField = new PickupField(world,[
+    const pickupField = new PickupField(world,inventory,[
         [12,17,"bomb"]
     ]);
 

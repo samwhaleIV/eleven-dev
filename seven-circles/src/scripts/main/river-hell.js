@@ -33,7 +33,7 @@ function RiverHell({world,lastScript,inventory}) {
 
     const riverRocks = new RiverRocks(world,this);
 
-    const pickupField = new PickupField(world,[
+    const pickupField = new PickupField(world,inventory,[
         [5,2,"bomb"],
         [9,5,"bomb"],
         [7,52,"bomb"],
@@ -46,9 +46,9 @@ function RiverHell({world,lastScript,inventory}) {
     InstallBombAreas(world,this);
 
     this.unload = () => {
-        inventory.clearItem("bomb");
-        inventory.clearItem("red-key");
-        inventory.clearItem("yellow-key");
+        inventory.clear("bomb");
+        inventory.clear("red-key");
+        inventory.clear("yellow-key");
     };
     this.unload();
 
@@ -66,7 +66,7 @@ function RiverHell({world,lastScript,inventory}) {
                     "Take this, it might be useful to you if you know how to use it."
                 ],true);
                 if(objective.status === "freedom") objective.close();
-                inventory.addItem("bomb",1);
+                inventory.give("bomb",1);
             })();
         }
     };
