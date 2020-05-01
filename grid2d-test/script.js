@@ -1,6 +1,3 @@
-import "../eleven/engine/modules/uvtc/text/font-dsc.js";
-import WorldImpulse from "../eleven/engine/modules/uvtc/world-impulse.js";
-
 const {
     ResourceManager,
     CanvasManager,
@@ -18,7 +15,8 @@ const {
     InstallHitBox,
     AnimatedSprite,
     TextLayer,
-    SpeechBox
+    SpeechBox,
+    WorldImpulse
 } = Eleven;
 
 const MAP_NAME = "my_swamp";
@@ -131,7 +129,6 @@ function World() {
     this.load = async () => {
         await ResourceManager.queueManifest(`{
             "Image": ["world-tileset.png","player.png"],
-            "Audio": ["text-sound.mp3"],
             "JSON": ["uvtc-map-data.json"]
         }`).load();
 
