@@ -1,4 +1,5 @@
 import InputCodes from "./input-codes.js";
+import Constants from "../constants.js";
 
 const DOM_MAX_COLUMNS = 5;
 const SELECTED_CLASS = "selected";
@@ -10,6 +11,8 @@ const TITLE_CLASS = "title";
 const TITLE = "Items";
 const NO_ITEMS_TEXT = "You don't have any items.";
 const NO_ITEMS_CLASS = "no-items";
+
+const AUTO_SELECT = Constants.AutoSelectInventory;
 
 const AUTO_SCROLL_SETTINGS = {
     behavior: "smooth", block: "center", inline: "center"
@@ -215,7 +218,7 @@ function InstallInventoryItems(
         return hoverData;
     });
 
-    trySetSelection();
+    if(AUTO_SELECT) trySetSelection();
 }
 
 function InventoryMenu({terminate,proxyFrame},keyDown,keyUp,callback) {
