@@ -33,7 +33,7 @@ function RiverHell({world,lastScript,inventory}) {
 
     const riverRocks = new RiverRocks(world,this);
 
-    const pickupField = new PickupField(world,inventory,[
+    const pickupField = new PickupField(world,[
         [5,2,"bomb"],
         [9,5,"bomb"],
         [7,52,"bomb"],

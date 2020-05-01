@@ -1,5 +1,5 @@
 function StaticPickup(
-    world,inventory,x,y,item,
+    world,x,y,item,
     amount=1,
     isSuperForeground=false,
     clearCollision=true
@@ -21,7 +21,7 @@ function StaticPickup(
         world.setInteractionTile(x,y,0);
         world.pushInteractionChanges();
 
-        inventory.give(this.item,amount);
+        world.inventory.give(this.item,amount);
         return this.item;
     };
 }

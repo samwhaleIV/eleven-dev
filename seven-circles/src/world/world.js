@@ -57,6 +57,11 @@ let playerImage = null;
 
 function World(callback) {
 
+    const {Inventory,SaveState} = SVCC.Runtime;
+    this.inventory = Inventory;
+    this.saveState = SaveState;
+    this.lifetime = Lifetime;
+
     this.messageLock = false;
     this.messageResolveStack = new Array();
 
@@ -248,11 +253,9 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
 
     this.pendingScriptData = new Object();
 
-    const {Inventory,SaveState} = SVCC.Runtime;
-
     //So each script doesn't require their own import copies
-    data.inventory = Inventory;
-    data.saveState = SaveState;
+    data.inventory = this.inventory;
+    data.saveState = this.saveState;
     data.lifetime = Lifetime;
 
     data.world = this;

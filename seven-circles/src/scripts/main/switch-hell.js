@@ -16,7 +16,7 @@ function SwitchHell({world,inventory,transition}) {
     };
     this.unload();
 
-    const pickupField = new PickupField(world,inventory,[
+    const pickupField = new PickupField(world,[
         [12,17,"bomb"]
     ]);
 

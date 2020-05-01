@@ -3,7 +3,7 @@ import StaticPickup from "./static-pickup.js";
 
 const INTERACTION_ID_START = GetInteractionStart();
 
-function PickupField(world,inventory,items) {
+function PickupField(world,items) {
     const itemLookup = {};
     let idStart = INTERACTION_ID_START;
     for(let i = 0;i<items.length;i++) {
@@ -12,7 +12,7 @@ function PickupField(world,inventory,items) {
         const ID = idStart; idStart++;
 
         const staticPickup = new StaticPickup(
-            world,inventory,x,y,item,amount,
+            world,x,y,item,amount,
             isSuperForeground,clearCollision
         );
 

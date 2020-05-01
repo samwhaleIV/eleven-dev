@@ -52,7 +52,7 @@ function TunnelsOfHell({world,lastScript,inventory}) {
         [52,8,"verticalPink"]
     ]);
 
-    const pickupField = new PickupField(world,inventory,[
+    const pickupField = new PickupField(world,[
         [4,15,"red-key"],
         [8,9,"green-key"],
         [21,1,"pink-key"],
