@@ -183,7 +183,7 @@ function World() {
         camera.padding = true;
 
         const playerController = new PlayerController(
-            sprite,collisionLayer,tileCollision
+            grid,sprite,collisionLayer,tileCollision
         );
 
         let oldMessage = null;

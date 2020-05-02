@@ -1,4 +1,4 @@
-const impulse = ({world,self,inventory}) => {
+const interact = ({world,self,inventory}) => {
     world.spriteLayer.remove(self.ID);
     inventory.give(self.pickupID);
 };
@@ -6,7 +6,7 @@ const impulse = ({world,self,inventory}) => {
 function Pickup(tileID,pickupID) {
     this.tileID = tileID;
     this.spriteData = {
-        impulse, pickupID
+        interact, pickupID
     };
 }
 

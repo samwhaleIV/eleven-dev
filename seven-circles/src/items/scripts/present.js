@@ -33,7 +33,7 @@ const getRandomPresent = () => {
 
 const getSpriteData = () => {
     return {
-        impulse: giveGift,
+        interact: giveGift,
         gift: getRandomPresent()
     };
 };

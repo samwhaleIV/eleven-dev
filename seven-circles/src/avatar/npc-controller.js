@@ -123,9 +123,11 @@ function ControllerRC(sprite) {
 }
 
 function NPCController() {
-    const {collisionLayer, tileCollision} = this.world;
+    const {collisionLayer,tileCollision,grid} = this.world;
 
-    const baseController = new PlayerController(this,collisionLayer,tileCollision);
+    const baseController = new PlayerController(
+        grid,this,collisionLayer,tileCollision
+    );
 
     ControllerRC.call(baseController,this);
 

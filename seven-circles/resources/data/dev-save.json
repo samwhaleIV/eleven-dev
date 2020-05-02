@@ -8,9 +8,12 @@
 
         "NamedScript": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "HelloWorld",
+                "x": 0, "y": 0, "scriptID": "NPCCLTest",
                 "direction": 0,
                 "_deserialize": true
+            },
+            "Inventory": {
+                "present": 10
             }
         },
 

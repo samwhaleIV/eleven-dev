@@ -8,6 +8,7 @@ import ChocolateHell from "./main/chocolate-hell.js";
 import HatHell from "./main/hat-hell.js";
 import HatStore from "./main/hat-store.js";
 import HelloWorld from "./main/hello-world.js";
+import NpcClTest from "./main/npc-cl-test.js";
 import Preload from "./main/preload.js";
 import RiverHell from "./main/river-hell.js";
 import SwitchHell from "./main/switch-hell.js";
@@ -15,8 +16,8 @@ import TunnelsOfHell from "./main/tunnels-of-hell.js";
 import VoidHell from "./main/void-hell.js";
 
 const Scripts = ScriptBook.Import(
-    BombTest,ChocolateHell,HatHell,HatStore,HelloWorld,Preload,RiverHell,
-    SwitchHell,    TunnelsOfHell,VoidHell
+    BombTest,ChocolateHell,HatHell,HatStore,HelloWorld,NpcClTest,Preload,
+    RiverHell,    SwitchHell,TunnelsOfHell,VoidHell
 );
 
 export default Scripts;

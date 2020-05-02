@@ -6,10 +6,10 @@ const TRIGGER_TILES = Constants.TriggerTiles;
 const {PlayerController,WorldImpulse} = Eleven;
 
 function GetInteractivePlayerController(world,sprite) {
-    const {collisionLayer, tileCollision, interactionLayer} = world;
+    const {collisionLayer,tileCollision,interactionLayer,grid} = world;
 
     const playerController = new PlayerController(
-        sprite,collisionLayer,tileCollision
+        grid,sprite,collisionLayer,tileCollision
     );
     playerController.triggerHandler = sprite => {
         const {script} = world; if(!script) return;
