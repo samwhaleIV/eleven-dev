@@ -104,14 +104,14 @@ function ChocolateHell({world,lastScript,inventory}){
             (async () => {
                 if(foregroundValue === NO_MILK_SKELE) {
                     if(inventory.has("chocolate-milk")) {
-                        await world.sayUnlocked("I waited a long time for this moment.");
+                        await world.say("I waited a long time for this moment.");
                         await frameDelay(500);
                         inventory.take("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
                         milkGaveCount++;
                         objective.set(getDeliveryStatusMessage());
                         await frameDelay(500);
-                        await world.sayUnlocked("Chocolate.. Mmmmmm.");
+                        await world.say("Chocolate.. Mmmmmm.");
                         await frameDelay(250);
                         if(milkGaveCount === 4) {
                             if(objective.status === "delivery") {
@@ -126,10 +126,10 @@ function ChocolateHell({world,lastScript,inventory}){
                             });
                         }
                     } else {
-                        await world.sayUnlocked("Need. Chocolate. Milk.");
+                        await world.say("Need. Chocolate. Milk.");
                     }
                 } else if(foregroundValue === MILK_SKELE) {
-                    await world.sayUnlocked("Mmmm.. Delicious chocolate milk.");
+                    await world.say("Mmmm.. Delicious chocolate milk.");
                 }
                 world.playerController.unlock();
             })();

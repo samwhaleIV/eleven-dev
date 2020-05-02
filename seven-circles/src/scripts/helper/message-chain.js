@@ -1,14 +1,17 @@
 const DELAY = 150;
 
-async function MessageChain(world,messages,lock) {
-    if(lock) {
-        world.playerController.lock();
-    }
+async function MessageChain(world,messages) {
+
+    const {playerController} = world;
+
+    const shouldHandleLock = playerController && !playerController.locked;
+    if(shouldHandleLock) playerController.lock();
+
     for(let i = 0;i<messages.length;i++) {
         const message = messages[i];
         if(typeof message === "number") continue;
 
-        await world.sayUnlocked(messages[i]);
+        await world.say(messages[i]);
         let duration = DELAY;
 
         const nextMessage = messages[i+1];
@@ -18,9 +21,8 @@ async function MessageChain(world,messages,lock) {
 
         await delay(duration);
     }
-    if(lock) {
-        world.playerController.unlock();
-    }
+    
+    if(shouldHandleLock) playerController.unlock();
 }
 
 export default MessageChain;

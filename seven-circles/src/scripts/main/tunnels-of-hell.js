@@ -123,7 +123,7 @@ function TunnelsOfHell({world,lastScript,inventory}) {
                 ]);
 
                 await dramaZoom.zoomOut();
-                await world.sayUnlocked("You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.");
+                await world.say("You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.");
     
                 world.playerController.unlock();
                 endWallRight.open();

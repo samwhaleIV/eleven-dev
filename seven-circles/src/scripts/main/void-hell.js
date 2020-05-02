@@ -5,7 +5,7 @@ import {
 } from "../helper.js";
 
 const previousMap = "RiverHell";
-const nextMap = "BombHell";
+const nextMap = "BombTest";
 
 const {ResourceManager,UVTCReflection} = Eleven;
 

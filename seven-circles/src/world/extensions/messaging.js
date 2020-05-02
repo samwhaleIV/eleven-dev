@@ -2,27 +2,24 @@ import WorldMessage from "../world-message.js";
 import WorldPrompt from "../world-prompt.js";
 
 async function prompt(question,options) {
-    let shouldUnlockPlayer = false;
-    if(this.playerController && !this.playerController.locked) {
-        shouldUnlockPlayer = true;
-    }
-    if(shouldUnlockPlayer) {
-        this.playerController.locked = true;
-    }
+    const shouldUnlockPlayer = this.playerController && !this.playerController.locked;
+
+    if(shouldUnlockPlayer) this.playerController.lock();
+
     const optionIndex = await new Promise(resolve => {
         this.directionalMessage = new WorldPrompt(
             this.dispatchRenderer,question,options,resolve
         );
     });
     this.directionalMessage = null;
-    if(shouldUnlockPlayer) {
-        this.playerController.locked = false;
-    }
+
+    if(shouldUnlockPlayer) this.playerController.unlock();
+
     return optionIndex;
 }
 
-function showMessage(message,instant,lock) {
-    const canLock = !this.messageLock && this.playerController && lock;
+function showMessage(message,instant) {
+    const canLock = this.playerController && !this.playerController.locked;
     if(canLock) {
         this.messageLock = true;
         this.playerController.lock();
@@ -37,36 +34,22 @@ function showMessage(message,instant,lock) {
     });
 }
 
-function sayNamed(message,name,colorCode,locked) {
-    if(locked === undefined) {
-        locked = true;
-    } else {
-        locked = Boolean(locked);
-    }
+function sayNamed(message,name,colorCode) {
     const lines = message.split(" ");
     lines.unshift(`&%${colorCode}${name}:`);
     lines[1] = `%b` + lines[1];
-    return showMessage.call(this,lines,false,locked);
+    return showMessage.call(this,lines,false);
 }
-function sayNamedUnlocked(message,name,colorCode) {
-    return sayNamed(message,name,colorCode,false);
-}
-
 function say(message) {
-    return showMessage.call(this,message,false,true);
-}
-function sayUnlocked(message) {
-    return showMessage.call(this,message,false,false);
+    return showMessage.call(this,message,false);
 }
 function message(message) {
-    return showMessage.call(this,message,true,true);
-}
-function messageUnlocked(message) {
-    return showMessage.call(this,message,true,false);
+    return showMessage.call(this,message,true);
 }
 function canAdvanceMessage() {
     return Boolean(this.textMessage);
 }
+
 function advanceMessage() {
     if(this.canAdvanceMessage()) {
         if(this.textMessage.complete) {
@@ -77,7 +60,7 @@ function advanceMessage() {
                 showMessage.apply(this,newMessage);
             } else {
                 clearMessageResolveStack(this);
-                if(this.messageLock && this.playerController) {
+                if(this.playerController && this.messageLock) {
                     this.playerController.unlock();
                 }
                 this.messageLock = false;
@@ -107,12 +90,9 @@ function clearMessages() {
 export default {
     prompt,
     sayNamed,
-    sayNamedUnlocked,
     say,
-    sayUnlocked,
     advanceMessage,
     canAdvanceMessage,
     message,
-    messageUnlocked,
     clearMessages
 };

@@ -18,7 +18,7 @@ const giveGift = ({world,self,inventory}) => {
     (async () => {
         world.playerController.lock();
 
-        await world.messageUnlocked(getGiftMessage(gift));
+        await world.message(getGiftMessage(gift));
 
         world.spriteLayer.remove(self.ID);
         inventory.give(gift);
