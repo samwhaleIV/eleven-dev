@@ -1,5 +1,5 @@
 import {
-    AddMilkBackground,
+    addWaterBackground,
     KeyDoor,
     PickupField,
     RiverRocks,
@@ -15,7 +15,7 @@ const nextMap = "VoidHell";
 function RiverHell({world,lastScript,inventory}) {
     world.setMap("river-hell");
     world.camera.padding = true;
-    AddMilkBackground(world);
+    addWaterBackground(world);
 
     const objective = new ObjectiveText(world);
 

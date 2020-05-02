@@ -2,7 +2,7 @@ import {
     KeyDoor,
     PickupField,
     SpriteDoor,
-    AddMilkBackground,
+    addWaterBackground,
     PanPreview,
     RiverRocks,
     ObjectiveText,
@@ -25,7 +25,7 @@ function ChocolateHell({world,lastScript,inventory}){
 
     world.setMap("chocolate-hell");
     world.camera.enablePadding();
-    AddMilkBackground(world);
+    addWaterBackground(world);
 
     const player = world.addPlayer();
 

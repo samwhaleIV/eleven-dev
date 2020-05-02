@@ -4,7 +4,7 @@ import {
     AddColorBackground,
     SpriteDoor,
     ObjectiveText,
-    AddFixedMilkBackground,
+    addFixedWaterBackground,
     MessageChain,
     DramaZoom,
     GetTransitionTrigger
@@ -19,7 +19,7 @@ function TunnelsOfHell({world,lastScript,inventory}) {
     world.setMap("tunnels-of-hell");
     AddColorBackground(world,"black");
 
-    AddFixedMilkBackground(world,81,7,5,5,{
+    addFixedWaterBackground(world,81,7,5,5,{
         width: 1,height: 1,y: 10.5,x: 83
     });
 

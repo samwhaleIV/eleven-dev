@@ -1,7 +1,7 @@
 /* Script helpers */
 import ObjectiveText from "./helper/objective-text.js"
     /* Render helpers */
-    import {AddMilkBackground,AddFixedMilkBackground} from "./helper/backgrounds/milk-background.js";
+    import {addWaterBackground,addFixedWaterBackground} from "./helper/backgrounds/water-background.js";
     import AddColorBackground from "./helper/backgrounds/color-background.js";
 
 /* Director functions */
@@ -21,13 +21,13 @@ import RiverRocks from "./helper/river-rocks.js";
     import InvisibileWall from "./helper/doors/invisible-wall.js";
 
 export {
-    AddFixedMilkBackground,
+    addFixedWaterBackground,
+    addWaterBackground,
     InvisibileWall,
     InstallBombAreas,
     PickupField,
     KeyDoor,
     SpriteDoor,
-    AddMilkBackground,
     PanPreview,
     RiverRocks,
     ObjectiveText,

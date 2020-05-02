@@ -5,11 +5,14 @@ const DID_NOTHING = "This item doesn't want to do anything right now.";
 const BAD_ITEM_PLACMEMENT = "The item doesn't want to go here!";
 
 function useItem(safeID,take,message) {
-    const {Inventory} = SVCC.Runtime;
+    if(take) this.inventory.take(safeID);
 
-    if(take) Inventory.take(safeID);
-
-    if(message) this.message(message);
+    if(message) {
+        if(this.playerController && this.playerController.locked) {
+            this.playerController.unlock();
+        }
+        this.message(message);
+    }
 
     return true;
 }
