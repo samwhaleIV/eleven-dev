@@ -4,7 +4,7 @@ import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
 import Inventory from "./items/inventory.js";
-import saveState from "./storage/save-state.js";
+import MainMenu from "./main-menu/main-menu.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
@@ -18,32 +18,44 @@ const {CanvasManager, ResourceManager} = Eleven;
 
 const DEV_SAVE = Constants.DevSaveFile;
 
-function Runtime() {
-
-    const inputServer = new InputServer();
-
+const logScripts = () => {
     const scriptCount = Object.keys(Scripts).length;
     console.log(`%cLoaded ${scriptCount} script${scriptCount!==1?"s":""} from './scripts/manifest.js'`,"background: white; color: black",Scripts);
+};
+
+const getInputServer = () => {
+    const inputServer = new InputServer();
+    const inputWatchID = inputServer.addChangeListener(()=>{
+        const {frame} = CanvasManager;
+        if(!frame || !frame.refreshInput) return;
+        frame.refreshInput(inputServer.getBinds());
+    });
+
+    console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
+    return inputServer;
+};
+
+function Runtime() {
+
+    logScripts();
+
+    this.SaveState = SaveState;
+
+    const inputServer = getInputServer();
+    this.InputServer = inputServer;
 
     const setFrame = async (frame,parameters) => {
-        inputServer.managedGamepad.reset();
-        await CanvasManager.setFrame(frame,parameters);
-    };
-    
-    this.LoadWorld = async script => {
         if(!CanvasManager.paused) {
             CanvasManager.paused = true;
             CanvasManager.markLoading();
         }
 
-        await setFrame(World,[async world=>{
-            if(script) await world.runScript(script);
-        }]);
+        inputServer.managedGamepad.reset();
 
-        if(DEV) {
-            globalThis.world = CanvasManager.frame;
-            globalThis.inventory = this.Inventory;
-        }
+        const oldFrame = CanvasManager.frame;
+        if(oldFrame && frame.unload) frame.unload();
+
+        await CanvasManager.setFrame(frame,parameters);
 
         if(CanvasManager.paused) {
             CanvasManager.paused = false;
@@ -51,18 +63,18 @@ function Runtime() {
         }
     };
 
-    //use world.unloadScript when the runtime switches away from the world
+    this.LoadWorld = async () => {
+        await setFrame(World,[async world=>{
+            await world.runScript(PRELOAD_SCRIPT);
+        }]);
 
-    this.InputServer = inputServer;
-    const inputWatchID = inputServer.addChangeListener(()=>{
-        const {frame} = CanvasManager;
-        if(!frame || !frame.refreshInput) return;
-        frame.refreshInput(inputServer.getBinds());
-    });
+        if(DEV) {
+            globalThis.world = CanvasManager.frame;
+            globalThis.inventory = this.Inventory;
+        }
+    };
 
-    this.SaveState = SaveState;
-
-    console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
+    this.LoadMenu = () => setFrame(MainMenu);
 
     const globalPreload = async () => {
         await ResourceManager.queueText(GLOBAL_PRELOAD + ".json").load();
@@ -71,7 +83,6 @@ function Runtime() {
     };
 
     this.Start = async () => {
-        await globalPreload();
         console.log("Use 'index-dev.html', there is not a release candidate yet!");
         window.location.href += "index-dev.html"; return;
     };
@@ -92,7 +103,7 @@ function Runtime() {
 
         if(devSave) {
 
-            if(DEMO || devSave[CLEAN_SLATE]) saveState.hardReset();
+            if(DEMO || devSave[CLEAN_SLATE]) SaveState.hardReset();
 
             const container = DEMO ? "Demo" : devSave[CONTAINER];
             const containers = devSave[CONTAINERS];
@@ -108,7 +119,7 @@ function Runtime() {
 
         inventory = new Inventory();
 
-        this.LoadWorld(PRELOAD_SCRIPT);
+        this.LoadMenu();
     };
 
     Object.freeze(this);

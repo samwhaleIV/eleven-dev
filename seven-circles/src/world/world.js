@@ -209,9 +209,13 @@ const hasSuperForeground = tileRenderer => {
     return false;
 };
 const unloadScript = world => {
-    if(world.script && world.script.unload) world.script.unload();
+    const {script} = world;
+    if(script && script.unload) script.unload();
     world.script = null;
 };
+World.prototype.unload = function() {
+    unloadScript(this);
+}
 
 World.prototype.cacheBackgroundForeground = function(location) {
     cache(this,2,BACKGROUND_LAYER,false,location);
