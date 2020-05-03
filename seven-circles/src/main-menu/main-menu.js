@@ -153,10 +153,15 @@ function MainMenu() {
                 selection = 1; return;
             }
             switch(impulse) {
-                case "MoveUp": switch(selection) {case 2: case 3: selection = 1; break;} break;
-                case "MoveDown": switch(selection) {case 1: selection = 2; break;} break;
-                case "MoveLeft": switch(selection) {case 3: selection = 2; break;} break;
-                case "MoveRight": switch(selection) {case 2: selection = 3; break;} break;
+                case "MoveLeft":
+                case "MoveUp":
+                    if(--selection < 1) selection = 3;
+                    break;
+
+                case "MoveDown":
+                case "MoveRight":
+                    if(++selection > 3) selection = 1;
+                    break;
             }
         }
 
