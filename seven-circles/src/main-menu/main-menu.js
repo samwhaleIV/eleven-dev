@@ -1,3 +1,8 @@
+import GetSong from "../storage/song-getter.js";
+import Constants from "../constants.js";
+
+const MENU_SONG = Constants.MenuSong;
+
 const PLANET_OVERLAY = "planet-overlay";
 const MENU_BUTTONS = "menu-buttons";
 
@@ -41,7 +46,7 @@ for(let i = 0;i<buttonAreas.length;i++) {
     values[3] /= buttonBaseHeight;
 }
 
-const {ResourceManager} = Eleven;
+const {ResourceManager,AudioManager} = Eleven;
 
 function GetPlanetImage(size) {
     const buffer = new OffscreenCanvas(size,size);
@@ -93,6 +98,9 @@ function MainMenu() {
         overlayImage = ResourceManager.getImage(PLANET_OVERLAY);
 
         buttonsImage = ResourceManager.getImage(MENU_BUTTONS);
+
+        const song = await GetSong(MENU_SONG)
+        AudioManager.playMusicLooping(song);
     };
 
     let buttonImageArea = {x:-1,y:-1,width:0,height:0};
@@ -127,7 +135,7 @@ function MainMenu() {
     const enterSelection = () => {
         switch(selection) {
             case 1: SVCC.Runtime.LoadWorld(); break;
-            case 2: alert("Not set up yet..."); break;
+            case 2: SVCC.Runtime.ConfigAudio(); break;
             case 3: SVCC.Debug.ConfigKeyBinds(); break;
         }
     };

@@ -1,4 +1,4 @@
-div.dev-key-binds {
+div.menu-interface {
     width: 600px;
     overflow-y: auto;
     padding-bottom: 0;
@@ -6,37 +6,61 @@ div.dev-key-binds {
     color: black;
     background-color: #f4f4f4;
 }
-div.dev-key-binds div {
-    height: 64px;
+div.menu-interface div {
     width: auto;
     margin-left: auto;
     margin-right: auto;
     background-color: #fff;
     margin-bottom: 8px;
+    display: flex;
+    padding: 4px;
+    font-size: 14px;
+    line-height: 28px;
 }
-div.dev-key-binds div:nth-child(1) p {
+div.menu-interface div:nth-child(1) p {
     text-align: center;
     width: 100% !important;
-    margin: 0 !important;
 }
-div.dev-key-binds div p {
-    margin: 0;
+div.menu-interface div p {
     display: inline-block;
-    line-height: 64px;
     text-align: left;
+    /* line-height: 28px; */
 }
-div.dev-key-binds div p:nth-child(1) {
-    width: 48px;
+div.menu-interface div p:nth-child(1) {
     font-weight: bold;
-    margin: 0 16px;
-    margin-right: 38px;
+    padding-right: 12px;
+    height: 28px;
+    padding-left: 8px;
 }
-div.dev-key-binds div.editing {
+div.menu-interface div.editing {
     animation-name: edit-blink;
     animation-duration: 0.5s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in;
     color: white;
+}
+
+div.menu-interface div.volume-control {
+
+}
+div.menu-interface div.volume-control p {
+    margin: 0;
+    height: 20px;
+    display: block;
+    margin-left: 4px;
+    padding: 19px;
+    font-size: 14px;
+    padding-left: 2px;
+}
+div.menu-interface div.volume-control button {
+    width: 48px;
+    height: 52px;
+    margin: 8px 4px;
+    font-size: 21px;
+    padding: 4px;
+}
+div.volume-control button:focus {
+    outline: none;
 }
 
 @keyframes edit-blink {
@@ -85,7 +109,6 @@ div.inventory {
     font-size: 12px;
     user-select: none;
     text-align: center;
-    cursor: pointer;
 }
 .inventory .close-button::after {
     content: "X";
@@ -124,8 +147,22 @@ div.inventory {
     height: 128px;
     image-rendering: pixelated;
 }
-h1.title {width: 100%;text-align: center;padding: 0;font-size: 26px;font-family: sans-serif;font-weight: bold;margin-top: 8px;margin-bottom: 8px;margin-left: 0;margin-right: 0;}
+h1.title {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    font-size: 26px;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 0;
+    margin-right: 0;
+}
 .inventory p.no-items {
     margin: 0;
     font-size: 20px;
+}
+div.menu-interface div.button {
+    text-align: center;
 }

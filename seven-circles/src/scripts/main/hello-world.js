@@ -8,12 +8,12 @@ const TITLE_FADE_OUT_DURATION = 1000;
 const TEXT_TIME = 3000;
 const TEXT_DELAY = 3000;
 
-const FADE_IN_TIME = 8000;
+const FADE_IN_TIME = 4000;
 
 const FADE_OUT_TIME = 3000;
 
 const TEXT_LINES = [
-    "What one may see, another may not.",
+    "What one may see another may not.",
     "A saint, a devil. A martyr, a traitor.",
     "Are you so sure of stars?",
     "What must stars think of you?",

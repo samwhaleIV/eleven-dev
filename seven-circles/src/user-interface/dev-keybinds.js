@@ -1,4 +1,6 @@
 import InputCodes from "./input-codes.js";
+import GetExitButton from "./exit-button.js";
+import ManagedBase from "./managed-base.js";
 
 /*
   Don't judge me, it's code for devs!
@@ -17,7 +19,7 @@ import InputCodes from "./input-codes.js";
   I'm very sorry that this has happened but I'm sure there was a good reason for it.
 */
 
-const MENU_CLASS = "dev-key-binds";
+const MENU_CLASS = "menu-interface dev-key-binds";
 const EDITING_CLASS = "editing";
 
 const IS_FORBIDDEN_KEY = keyEvent => { //Short answer: No
@@ -35,19 +37,6 @@ const KEY_CODE_FORMAT = code => {
     const formattedCode = code.split(/(?=[A-Z])/).join(" ");
     return formattedCode;
 };
-
-
-function GetExitButton(callback) {
-    const button = document.createElement("div");
-    button.className = "button";
-    button.onclick = event => {
-        if(event.button === 0) callback();
-    };
-    const text = document.createElement("p");
-    text.appendChild(document.createTextNode("Close Menu"));
-    button.appendChild(text);
-    return button;
-}
 
 function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
     const data = {editing:false};
@@ -86,6 +75,12 @@ function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
             window.removeEventListener("keydown",listener);
             entry.classList.remove(EDITING_CLASS);
             data.editing = false;
+            if(editingFilter()) {
+                const {InputServer} = SVCC.Runtime;
+                const inverseBinds = InvertBinds(binds);
+                InputServer.setBinds(inverseBinds);
+                InputServer.saveBinds();
+            }
         };
         window.addEventListener("keydown",listener);
     }
@@ -105,7 +100,7 @@ function GetInvertBinds() {
     return InvertBinds(SVCC.Runtime.InputServer.getBinds());
 }
 
-function DevKeyBindMenu({terminate}) {
+function DevKeyBindMenu({terminate,proxyFrame}) {
 
     const menu = document.createElement("div");
     menu.className = MENU_CLASS; menu.classList.add("center");
@@ -121,17 +116,15 @@ function DevKeyBindMenu({terminate}) {
         return true;
     };
 
-    menu.appendChild(GetExitButton(()=>{
-        if(!editingFilter()) return;
 
-        const {InputServer} = SVCC.Runtime;
-
-        const inverseBinds = InvertBinds(binds);
-        InputServer.setBinds(inverseBinds);
-        InputServer.saveBinds();
-
+    const uiExit = ManagedBase(proxyFrame,()=>{
+        if(!editingFilter()) return "block";
         terminate();
-    }));
+    },({impulse})=>{
+        if(editingFilter() && impulse === "Escape") return "exit";
+    });
+
+    menu.appendChild(GetExitButton(uiExit));
 
     Object.entries(InputCodes).forEach(([displayName,inputCode])=>{
         const {entry,data} = GetKeyBindEntry(
