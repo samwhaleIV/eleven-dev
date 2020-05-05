@@ -1,6 +1,6 @@
 import ZIndexBook from "../../world/z-indices.js";
 
-const SPOT_SIZE = 256;
+const SPOT_SIZE = 32;
 const SPOT_RADIUS = SPOT_SIZE * (40 / 100);
 
 const SHADOW_COLOR = `rgba(0,0,0,${232/256})`;
@@ -8,7 +8,7 @@ const SHADOW_COLOR = `rgba(0,0,0,${232/256})`;
 const WORLD_SPOT_SIZE = 2.25;
 const WORLD_SPOT_OFFSET = WORLD_SPOT_SIZE / -2;
 
-const SPOT_BLUR_PIXELS = 15;
+const SPOT_BLUR_PIXELS = (15 / 256) * SPOT_SIZE;
 
 function getSpotTexture() {
     const buffer = new OffscreenCanvas(SPOT_SIZE,SPOT_SIZE);
