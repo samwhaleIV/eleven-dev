@@ -6,10 +6,6 @@ const ZIndexBook = Object.freeze({
     TileSprite: 3,
     SpriteDoor: 0,
 
-    /* High sprite layer */
-    TextSprite: 10,
-    ParticleSprite: 5,
-
     /* Render */
     SuperImposedBackground: 2,
 
@@ -17,7 +13,16 @@ const ZIndexBook = Object.freeze({
     Fader: 20,
     WorldMessage: 10,
     ObjectiveLabel: 9,
-    HighSpriteLayer: 5
+
+    FogShadow: 4,
+    HighSpriteLayer: 5,
+
+        /* High sprite layer */
+        TextSprite: 10,
+        ParticleSprite: 5,
+        FogHoles: 7,
+
+    FogFinalize: 6
 });
 
 export default ZIndexBook;

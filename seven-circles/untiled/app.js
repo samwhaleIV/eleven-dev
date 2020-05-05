@@ -821,7 +821,7 @@ function App() {
 
                 world.set(tileX,tileY,background[i],0);
                 world.set(tileX,tileY,foreground[i],1);
-                world.set(tileX,tileY,superForeground[2],2);
+                world.set(tileX,tileY,superForeground[i],2);
 
                 world.set(tileX,tileY,collision[i],3);
                 world.set(tileX,tileY,interaction[i],4);

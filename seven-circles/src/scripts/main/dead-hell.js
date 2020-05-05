@@ -1,4 +1,9 @@
-import {GetTransitionTrigger, AddFixedWaterBackground} from "../helper.js";
+import {
+    GetTransitionTrigger,
+    AddFixedWaterBackground,
+    DarkRoom
+} from "../helper.js";
+import Lantern from "../../weapons/lantern.js";
 
 const rooms = {
     "main": MainRoom,
@@ -47,10 +52,24 @@ function RoomTwo({world,room}) {
 }
 function RoomThree({world,room}) {
     setupMap(world,"dead-hell-3",5,2,room);
+    DarkRoom(world);
+    const {player} = world;
+    this.interact = data => {
+        if(data.value === 16) {
+            const currentWeapon = player.getWeapon();
+            if(currentWeapon && currentWeapon.name === Lantern.name) {
+                player.unlockWeapon();
+                player.clearWeapon();
+            } else {
+                player.setWeapon(Lantern);
+                player.lockWeapon();
+            }
+        }
+    };
     world.camera.verticalPadding = true;
 }
 
 function DeadHell(data) {
-    rooms[data.room||"main"](data);
+    rooms[data.room||"main"].call(this,data);
 }
 export default DeadHell;

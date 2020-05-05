@@ -3,6 +3,7 @@ import ObjectiveText from "./helper/objective-text.js"
     /* Render helpers */
     import {AddWaterBackground,AddFixedWaterBackground} from "./helper/backgrounds/water-background.js";
     import AddColorBackground from "./helper/backgrounds/color-background.js";
+    import DarkRoom from "./helper/dark-room.js";
 
 /* Director functions */
 import MessageChain from "./helper/message-chain.js";
@@ -35,5 +36,6 @@ export {
     MessageChain,
     DramaZoom,
     AddColorBackground,
-    GetSwitchDoors
+    GetSwitchDoors,
+    DarkRoom
 };
