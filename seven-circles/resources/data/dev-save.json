@@ -8,7 +8,7 @@
 
         "NamedScript": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "NPCCLTest",
+                "x": 0, "y": 0, "scriptID": "DeadHell",
                 "direction": 0,
                 "_deserialize": true
             },

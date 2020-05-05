@@ -7,16 +7,16 @@ function GetWaterBackground(world) {
     world.dispatchRenderer.addResize(background.resize);
     return background;
 }
-function addWaterBackground(world) {
+function AddWaterBackground(world) {
     const background = GetWaterBackground(world);
     world.dispatchRenderer.addBackground(background.render);
 }
-function addFixedWaterBackground(world,x,y,width,height,topLayer) {
+function AddFixedWaterBackground(world,x,y,width,height,topLayer) {
     const background = GetWaterBackground(world);
     background.useCameraOffset = false;
     AddPositionBackground(
         world,background,x,y,width,height,topLayer
     );
 }
-export default addWaterBackground;
-export {addWaterBackground,addFixedWaterBackground};
+export default AddWaterBackground;
+export {AddWaterBackground,AddFixedWaterBackground};

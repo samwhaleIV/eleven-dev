@@ -201,7 +201,11 @@ function Runtime() {
 
         inventory = new Inventory();
 
-        this.LoadMenu();
+        if(DEMO) {
+            this.LoadMenu();
+        } else {
+            this.LoadWorld();
+        }
     };
 
     const audioMenu = DOMInterface.getMenu(AudioMenu);
