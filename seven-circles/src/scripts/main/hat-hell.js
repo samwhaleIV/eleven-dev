@@ -2,7 +2,8 @@ import {
     MessageChain,
     DramaZoom,
     AddColorBackground,
-    GetTransitionTrigger
+    GetTransitionTrigger,
+    SaveStone
 } from "../helper.js";
 
 const storeMap = "HatStore";
@@ -26,6 +27,8 @@ function HatHell({world,lastScript,saveState,transition}) {
         const player = world.addPlayer(0,5);
         player.direction = "right";
     }
+
+    const saveStone = new SaveStone(world,5,3);
 
     const talkToDemonGuy = async () => {
         if(saveState.get(talkedKey)) {
@@ -61,8 +64,9 @@ function HatHell({world,lastScript,saveState,transition}) {
         }
     };
 
-    this.interact = ({value}) => {
-        switch(value) {
+    this.interact = data => {
+        if(saveStone.tryInteract(data)) return;
+        switch(data.value) {
             case 16: transition(storeMap); break;
             case 17: talkToDemonGuy(); break;
         }

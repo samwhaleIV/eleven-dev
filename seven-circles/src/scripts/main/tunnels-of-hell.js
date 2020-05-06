@@ -7,12 +7,13 @@ import {
     AddFixedWaterBackground,
     MessageChain,
     DramaZoom,
-    GetTransitionTrigger
+    GetTransitionTrigger,
+    SaveStone
 } from "../helper.js";
 
 const nextMap = "ChocolateHell";
 
-function TunnelsOfHell({world,lastScript,inventory}) {
+function TunnelsOfHell({world,lastScript,inventory,saveState}) {
 
     const fromNextMap = lastScript === nextMap;
 
@@ -32,6 +33,8 @@ function TunnelsOfHell({world,lastScript,inventory}) {
         player.setPosition(4,3.5);
         player.direction = "down";
     }
+
+    const saveStone = new SaveStone(world,68,8);
 
     this.unload = () => {
         inventory.clear("red-key");
@@ -60,10 +63,10 @@ function TunnelsOfHell({world,lastScript,inventory}) {
         [49,13,"yellow-key"]
     ]);
 
-    const endWallLeftStartOpen = fromNextMap ? false : true;
-
-    const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",endWallLeftStartOpen,2000,48);
-    const endWallRight = new SpriteDoor(world,71,8,"grayDoor",false,2000,49);
+    const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",player.x < 55,2000,48);
+    const endWallRight = new SpriteDoor(
+        world,71,8,"grayDoor",saveState.get("talkedToDemonGuy")?true:false,2000,49
+    );
 
     const objective = new ObjectiveText(world);
 
@@ -87,6 +90,8 @@ function TunnelsOfHell({world,lastScript,inventory}) {
     };
 
     this.interact = data => {
+        if(saveStone.tryInteract(data)) return;
+
         const pickedUpItem = pickupField.tryPickup(data);
         if(pickedUpItem) {
             if(pickedUpItem === "red-key" && objective.status === "get-red-key") {
@@ -101,16 +106,15 @@ function TunnelsOfHell({world,lastScript,inventory}) {
             return;
         }
 
-        let talkedToDevilGuy = false;
-
         if(data.value === 16) {
-            if(talkedToDevilGuy) {
+            if(saveState.get("talkedToDevilGuy")) {
                 world.say("You can go now. I don't need the company.");
                 return;
             }
 
             world.playerController.lock();
-            talkedToDevilGuy = true;
+            saveState.set("talkedToDevilGuy",true);
+
             (async () => {
                 const dramaZoom = new DramaZoom(world,64,8);
                 await dramaZoom.zoomIn();

@@ -1,7 +1,8 @@
 import {
     GetTransitionTrigger,
     MessageChain,
-    GetSwitchDoors
+    GetSwitchDoors,
+    SaveStone
 } from "../helper.js";
 
 const previousMap = "RiverHell";
@@ -9,7 +10,7 @@ const nextMap = "BombTest";
 
 const {ResourceManager,UVTCReflection} = Eleven;
 
-function VoidHell({world,lastScript}) {
+function VoidHell({world,lastScript,saveState}) {
     world.setMap("void-hell");
     const {dispatchRenderer,grid,spriteFollower} = world;
 
@@ -25,6 +26,8 @@ function VoidHell({world,lastScript}) {
         const player = world.addPlayer(0,6.5);
         player.direction = "right";
     }
+
+    const saveStone = new SaveStone(world,38,7);
 
     const {player,camera,playerController} = world;
 
@@ -44,6 +47,9 @@ function VoidHell({world,lastScript}) {
     camera.horizontalPadding = true;
 
     const makeANewFriend = async () => {
+        if(saveState.get("void-hell-script")) return;
+        saveState.set("void-hell-script",true);
+
         playerController.lock();
 
         await delay(1000);
@@ -114,7 +120,8 @@ function VoidHell({world,lastScript}) {
 
     const switchDoors = GetSwitchDoors(world,[[42,5,"red",false]],[[40,4,"red"]]);
     this.interact = data => {
-        switchDoors.tryInteract(data);
+        if(saveStone.tryInteract(data)) return;
+        if(switchDoors.tryInteract(data)) return;
     };
 
     world.setTriggers([

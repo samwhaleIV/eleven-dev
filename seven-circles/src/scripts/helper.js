@@ -18,6 +18,7 @@ import InstallBombAreas from "./helper/bomb-areas.js";
 import PickupField from "./helper/pickup-field.js";
 import RiverRocks from "./helper/river-rocks.js";
 import StaticPickup from "./helper/static-pickup.js";
+import SaveStone from "./helper/save-stone.js";
     /* Doors */
     import GetSwitchDoors from "./helper/doors/switch-doors.js";
     import KeyDoor from "./helper/doors/key-door.js";
@@ -25,6 +26,7 @@ import StaticPickup from "./helper/static-pickup.js";
     import InvisibileWall from "./helper/doors/invisible-wall.js";
 
 export {
+    SaveStone,
     AddFixedWaterBackground,
     AddWaterBackground,
     InvisibileWall,

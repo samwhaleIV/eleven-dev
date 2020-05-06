@@ -1,8 +1,8 @@
 {
     "devfile": "This is the file you're looking for!",
 
-    "CleanSlate": true,
-    "Container": "NamedScript",
+    "CleanSlate": false,
+    "Container": null,
 
     "Containers": {
 

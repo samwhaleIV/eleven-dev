@@ -133,6 +133,8 @@ function World(callback) {
     this.keyDown = null;
     this.keyUp = null;
 
+    this.lastScript = null;
+
     this.textMessage = null;
     this.textMessageStack = new Array();
 
@@ -235,6 +237,7 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
     } else {
         data.lastScript = null;
     }
+    this.lastScript = data.lastScript;
 
     if(data.fromFade && this.playerController) {
         this.inputCopyState = this.playerController.getInputHandler().copyState();

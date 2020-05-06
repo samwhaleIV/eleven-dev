@@ -183,11 +183,11 @@ function Runtime() {
 
         const devSave = ResourceManager.getJSON(DEV_SAVE);
 
-        if(devSave) {
+        if(!DEMO && devSave) {
 
-            if(DEMO || devSave[CLEAN_SLATE]) SaveState.hardReset();
+            if(devSave[CLEAN_SLATE]) SaveState.hardReset();
 
-            const container = DEMO ? "Demo" : devSave[CONTAINER];
+            const container = devSave[CONTAINER];
             const containers = devSave[CONTAINERS];
 
             if(container && containers) {
