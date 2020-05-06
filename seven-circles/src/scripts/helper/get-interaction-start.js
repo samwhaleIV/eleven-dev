@@ -1,5 +1,5 @@
 const START = 100;
-const SPACING = 50;
+const SPACING = 1000;
 
 let value = START;
 

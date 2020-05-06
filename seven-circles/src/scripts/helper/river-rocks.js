@@ -30,7 +30,9 @@ function RiverRocks(world,script) {
         if(value === WATER_ROCK_SPOT_ID) {
             const [x,y] = tileRenderer.getXY(idx);
             waterPlacements[`${x},${y}`] = true;
-            world.setCollisionTile(x,y,1);
+            if(world.getCollisionTile(x,y) < 1) {
+                world.setCollisionTile(x,y,1);
+            }
         } else if(value === PICKUP_ROCK_ID) {
             const [x,y] = tileRenderer.getXY(idx);
             pickupRockLocations[`${x},${y}`] = true;

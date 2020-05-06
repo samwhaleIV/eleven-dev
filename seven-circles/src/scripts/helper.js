@@ -10,11 +10,14 @@ import MessageChain from "./helper/message-chain.js";
 import DramaZoom from "./helper/drama-zoom.js";
 import PanPreview from "./helper/pan-preview.js";
 
+import Teleporter from "./helper/teleporter.js";
+
 /* World functions */
 import GetTransitionTrigger from "./helper/transition-trigger.js";
 import InstallBombAreas from "./helper/bomb-areas.js";
 import PickupField from "./helper/pickup-field.js";
 import RiverRocks from "./helper/river-rocks.js";
+import StaticPickup from "./helper/static-pickup.js";
     /* Doors */
     import GetSwitchDoors from "./helper/doors/switch-doors.js";
     import KeyDoor from "./helper/doors/key-door.js";
@@ -26,7 +29,9 @@ export {
     AddWaterBackground,
     InvisibileWall,
     InstallBombAreas,
+    StaticPickup,
     PickupField,
+    Teleporter,
     KeyDoor,
     SpriteDoor,
     PanPreview,
