@@ -6,8 +6,9 @@ const MENU_CLASS = "menu-interface audio-menu";
 const VOLUME_CONTROL_CLASS = "volume-control";
 
 const BUTTON_DIFFERENCE = 0.1;
-const DOWN_SYMBOL = "-";
-const UP_SYMBOL = "+";
+const DOWN_SYMBOL = "🔈";
+const UP_SYMBOL = "🔊";
+const MUTE_SYMBOL = "🔇";
 
 const MAX_VOLUME = Constants.MaxVolume;
 const MIN_VOLUME = Constants.MinVolume;
@@ -22,9 +23,12 @@ function GetVolumeControl(getVolume,setVolume,name) {
     const up = document.createElement("button");
     up.appendChild(document.createTextNode(UP_SYMBOL));
 
+    const mute = document.createElement("button");
+    mute.appendChild(document.createTextNode(MUTE_SYMBOL));
+
     const status = document.createElement("p");
     const updateStatus = () => {
-        status.textContent = `${name} volume: ${(getVolume()*100).toFixed(0)}%`;
+        status.textContent = `${name} Volume: ${(getVolume()*100).toFixed(0)}%`;
     };
     updateStatus();
 
@@ -43,9 +47,15 @@ function GetVolumeControl(getVolume,setVolume,name) {
     up.onclick = event => {
         if(event.button === 0) updateVolume(BUTTON_DIFFERENCE);
     };
+    mute.onclick = event => {
+        if(event.button !== 0) return;
+        const currentVolume = getVolume();
+        updateVolume(currentVolume !== MIN_VOLUME ? -currentVolume : MAX_VOLUME);
+    };
 
     div.appendChild(down);
     div.appendChild(up);
+    div.appendChild(mute);
     div.appendChild(status);
 
     return div;

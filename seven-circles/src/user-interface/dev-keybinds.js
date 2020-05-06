@@ -79,7 +79,6 @@ function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
                 const {InputServer} = SVCC.Runtime;
                 const inverseBinds = InvertBinds(binds);
                 InputServer.setBinds(inverseBinds);
-                InputServer.saveBinds();
             }
         };
         window.addEventListener("keydown",listener);
@@ -106,6 +105,7 @@ function DevKeyBindMenu({terminate,proxyFrame}) {
     menu.className = MENU_CLASS; menu.classList.add("center");
 
     const binds = GetInvertBinds();
+    const startBindCount = Object.keys(binds).length;
 
     const entries = [];
 
@@ -116,10 +116,37 @@ function DevKeyBindMenu({terminate,proxyFrame}) {
         return true;
     };
 
+    const {InputServer,prompt} = SVCC.Runtime;
+    const requiredInputCount = Object.keys(InputCodes).length;
+
+    const badBinds = bindCount => {
+        return bindCount !== requiredInputCount;
+    };
+
+    const getBindCount = () => Object.keys(InputServer.getBinds()).length;
+
+    const validateBinds = () => {
+        const bindCount = getBindCount();
+
+        let message;
+        if(badBinds(bindCount)) {
+            if(bindCount === startBindCount) {
+                message = "You have are missing one or more key binds!";
+            } else {
+                message = "You have keys that are used more than once!";
+            }
+        } else {
+            return true;
+        }
+
+        prompt("Invalid key binds!",message,[{text:"Okay, I'll do something about it",type:"none"}]);
+        return false;
+    };
 
     const uiExit = ManagedBase(proxyFrame,()=>{
-        if(!editingFilter()) return "block";
+        if(!editingFilter() || !validateBinds()) return "block";
         terminate();
+        InputServer.saveBinds();
     },({impulse})=>{
         if(editingFilter() && impulse === "Escape") return "exit";
     });

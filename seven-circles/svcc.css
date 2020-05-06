@@ -1,37 +1,68 @@
 div.menu-interface {
-    width: 600px;
-    overflow-y: auto;
-    padding-bottom: 0;
-    max-height: 700px;
-    color: black;
-    background-color: #f4f4f4;
+    width: 800px;
+    max-height: 100%;
+    max-width: 100%;
+    color: white;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    box-sizing: border-box;
 }
 div.menu-interface div {
-    width: auto;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #fff;
-    margin-bottom: 8px;
     display: flex;
-    padding: 4px;
-    font-size: 14px;
-    line-height: 28px;
-}
-div.menu-interface div:nth-child(1) p {
-    text-align: center;
-    width: 100% !important;
+    justify-content: center;
+    flex-wrap: nowrap;
 }
 div.menu-interface div p {
-    display: inline-block;
-    text-align: left;
-    /* line-height: 28px; */
+    font-family: sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
 }
-div.menu-interface div p:nth-child(1) {
+div.menu-interface div {
+    background-color: #101010;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 32px;
+    box-sizing: border-box;
+}
+div.menu-interface div:nth-child(2n) {
+    background-color: #0a0a0a;
+}
+div.dev-key-binds div p:nth-child(1) {
     font-weight: bold;
-    padding-right: 12px;
-    height: 28px;
-    padding-left: 8px;
+    padding-right: 8px;
 }
+div.menu-interface div.volume-control {
+    padding: 10px;
+    height: 140px;
+    line-height: 125px;
+    font-weight: bold;
+}
+div.menu-interface div.volume-control p {
+    width: 156px;
+    text-align: left;
+    padding-left: 4px;
+}
+div.menu-interface div.volume-control button {
+    border: none;
+    background-color: transparent;
+    font-size: 38px;
+    color: #000;
+    margin: 0;
+    padding: 2px;
+    width: 56px;
+}
+div.interface {
+    background-color: transparent;
+}
+
+button:focus {
+    outline: none;
+}
+
 div.menu-interface div.editing {
     animation-name: edit-blink;
     animation-duration: 0.5s;
@@ -39,30 +70,6 @@ div.menu-interface div.editing {
     animation-timing-function: ease-in;
     color: white;
 }
-
-div.menu-interface div.volume-control {
-
-}
-div.menu-interface div.volume-control p {
-    margin: 0;
-    height: 20px;
-    display: block;
-    margin-left: 4px;
-    padding: 19px;
-    font-size: 14px;
-    padding-left: 2px;
-}
-div.menu-interface div.volume-control button {
-    width: 48px;
-    height: 52px;
-    margin: 8px 4px;
-    font-size: 21px;
-    padding: 4px;
-}
-div.volume-control button:focus {
-    outline: none;
-}
-
 @keyframes edit-blink {
     from {
         background-color: #514cc7;
@@ -95,23 +102,24 @@ div.inventory {
     padding-bottom: 0px;
     align-content: flex-start;
     letter-spacing: -1px;
+    background-color: hsla(0, 0%, 5%, 1);
 }
 .inventory .close-button {
     display: block;
     position: fixed;
     top: 0;
     left: 0px;
-    background-color: #dd3c3c;
     color: white;
     font-family: sans-serif;
-    width: 34px;
-    line-height: 29px;
+    width: 33px;
+    line-height: 30px;
     font-size: 12px;
     user-select: none;
     text-align: center;
 }
 .inventory .close-button::after {
     content: "X";
+    padding-right: 1px;
 }
 .inventory .item {
     background-color: #1c1c1c;
@@ -164,5 +172,120 @@ h1.title {
     font-size: 20px;
 }
 div.menu-interface div.button {
+    display: block;
+    height: 48px;
+    padding-left: 12px;
+    font-size: 12px;
+    margin-bottom: 6px;
     text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    line-height: 48px;
+}
+
+div.menu-interface div.button,
+.inventory .close-button {
+    transition-duration: 0.2s;
+    transition-property: background-color;
+}
+.inventory .close-button,
+div.menu-interface div.button,
+div.button-container button.bad {
+    background-color: #e41f1f;
+}
+
+div.button-container button.bad:hover,
+div.menu-interface div.button:hover,
+.inventory .close-button:hover {
+    background-color: #b71919;
+}
+
+div.button-container button.good:hover {
+    background-color: #1c7b22;
+}
+div.button-container button.good {
+    background-color: #20a528;
+}
+div.popup {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1b1b1bf2;
+    box-sizing: border-box;
+    padding: 8px;
+    z-index: 100;
+}
+div.popup div.inner-popup {
+    background-color: white;
+    color: black;
+    width: 800px;
+    height: 400px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    position: relative;
+    padding: 8px;
+    max-width: 100%;
+    max-height: 100%;
+    user-select: none;
+    box-sizing: border-box;
+}
+div.button-container {
+    position: absolute;
+    bottom: 0;
+    padding-bottom: inherit;
+    height: 48px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    left: 4px;
+    padding-top: 8px;
+    right: 4px;
+}
+div.button-container button {
+    height: 100%;
+    margin-left: 4px;
+    margin-right: 4px;
+    font-family: sans-serif;
+    font-size: 16px;
+    flex-grow: 1;
+}
+div.button-container button {
+    outline: none;
+}
+div.button-container button.good,
+div.button-container button.bad,
+button.exit-button {
+    padding: 4px;
+    color: white;
+    border: 0;
+}
+div.inner-popup div.inner-popup-text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    left: 0;
+}
+div.inner-popup-text h1 {
+    margin: 4px;
+    padding: 0;
+    text-align: center;
+    font-size: 26px;
+    font-family: sans-serif;
+    padding: 4px;
+    color: black;
+}
+div.inner-popup-text p {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 18px;
+    font-family: sans-serif;
+    margin: 4px;
+    padding: 4px;
 }

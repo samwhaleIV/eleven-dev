@@ -55,16 +55,6 @@ function FlipFlop(target) {
     });
 }
 
-function SaveBinds(keyBindSource) {
-    try {
-        const storageData = JSON.stringify(keyBindSource);
-        localStorage.setItem(LOCAL_STORAGE_ADDRESS,storageData);
-        console.log("Saved key binds to local storage!",storageData);
-    } catch(error) {
-        console.error(error);
-    }
-}
-
 function InputServer() {
 
     const keyBindSource = new Object();

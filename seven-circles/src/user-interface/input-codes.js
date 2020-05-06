@@ -7,13 +7,13 @@ const EXIT = "Escape";
 const INVENTORY = "Inventory";
 
 const InputCodes = Object.freeze({
+    Click: CLICK,
+    Exit: EXIT,
+    Inventory: INVENTORY,
     Up: MOVE_UP,
     Down: MOVE_DOWN,
     Left: MOVE_LEFT,
-    Right: MOVE_RIGHT,
-    Click: CLICK,
-    Exit: EXIT,
-    Inventory: INVENTORY
+    Right: MOVE_RIGHT
 });
 
 export default InputCodes;

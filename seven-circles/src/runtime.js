@@ -4,8 +4,10 @@ import SaveState from "./storage/save-state.js";
 import Scripts from "./scripts/manifest.js";
 import Constants from "./constants.js";
 import Inventory from "./items/inventory.js";
-import MainMenu from "./main-menu/main-menu.js";
+import MainMenu from "./user-interface/main-menu.js";
 import AudioMenu from "./user-interface/audio-menu.js";
+import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
+import CustomPrompt from "./user-interface/custom-prompt.js";
 
 const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
@@ -104,6 +106,8 @@ function Runtime() {
     };
 
     InstallAudioSettings(this);
+
+    this.prompt = CustomPrompt;
 
     const setFrame = async (frameConstructor,parameters) => {
         const faderRenderer = getFaderRenderer();
@@ -210,6 +214,9 @@ function Runtime() {
 
     const audioMenu = DOMInterface.getMenu(AudioMenu);
     this.ConfigAudio = () => audioMenu.show();
+
+    const keyBindMenu = DOMInterface.getMenu(DevKeyBindMenu);
+    this.ConfigKeyBinds = () => keyBindMenu.show();
 
     Object.freeze(this);
 }

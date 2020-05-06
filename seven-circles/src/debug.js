@@ -1,12 +1,11 @@
-import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
 import Constants from "./constants.js";
 import ImageGen from "./image-gen.js";
 
-const {CanvasManager,DOMInterface} = Eleven;
+const {CanvasManager} = Eleven;
 
 function Debug() {
+
     this.PanZoomWorld = () => {
-        //This may or may not work, the frame has to be a grid2D world
         const frame = CanvasManager.frame;
         const panZoom = frame.grid.getPanZoom();
         frame.spriteFollower.disable();
@@ -15,23 +14,13 @@ function Debug() {
 
     this.RetroMode = () => {
         (({Width,Height}) => {
-
         CanvasManager.setSize(Width,Height);
-    
-        })(Constants.RetroResolution);
-            
+        })(Constants.RetroResolution); 
         CanvasManager.enableBoxFill();
     };
 
-    const keyBindMenu = DOMInterface.getMenu(DevKeyBindMenu);
-    this.ConfigKeyBinds = () => keyBindMenu.show();
-
-    const testMenu = DOMInterface.getMenu(TestMenu);
-    this.ShowTestMenu = () => testMenu.show();
-    this.CloseTestMenu = () => testMenu.close();
-    this.TestMenuIsVisible = () => testMenu.visible;
-
     this.SaveCanvas = canvas => {
+        if(!canvas) canvas = CanvasManager.canvas;
         canvas.convertToBlob({
             type: "image/png"
         }).then(function(blob) {
@@ -47,15 +36,6 @@ function Debug() {
     };
 
     Object.freeze(this);
-}
-
-function TestMenu() {
-    const div = document.createElement("div");
-    div.classList.add("center");
-    div.style.width = "400px";
-    div.style.height = "400px";
-    div.style.backgroundColor = "orange";
-    return div;
 }
 
 export default Debug;

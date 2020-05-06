@@ -46,7 +46,7 @@ for(let i = 0;i<buttonAreas.length;i++) {
     values[3] /= buttonBaseHeight;
 }
 
-const {ResourceManager,AudioManager} = Eleven;
+const {ResourceManager,AudioManager,CanvasManager} = Eleven;
 
 function GetPlanetImage(size) {
     const buffer = new OffscreenCanvas(size,size);
@@ -132,20 +132,28 @@ function MainMenu() {
         selection = 0;
     };
 
-    const enterSelection = () => {
-        switch(selection) {
-            case 1: SVCC.Runtime.LoadWorld(); break;
-            case 2: SVCC.Runtime.ConfigAudio(); break;
-            case 3: SVCC.Debug.ConfigKeyBinds(); break;
-        }
+    const setupDOMExit = () => {
+
     };
 
+    const enterSelection = fromClick => {
+        switch(selection) {
+            case 1: SVCC.Runtime.LoadWorld(); break;
+            case 2:  SVCC.Runtime.ConfigAudio(); setupDOMExit(); break;
+            case 3: SVCC.Runtime.ConfigKeyBinds(); setupDOMExit(); break;
+            default: return;
+        }
+        if(fromClick) selection = 0;
+    };
+
+    let startSelection = 0;
     this.clickDown = ({x,y}) => {
         updateSelection(x,y);
+        startSelection = selection;
     };
     this.clickUp = ({x,y}) => {
         updateSelection(x,y);
-        enterSelection();
+        if(selection === startSelection) enterSelection(true);
     };
     this.pointerMove = ({x,y}) => {
         updateSelection(x,y);
@@ -174,7 +182,7 @@ function MainMenu() {
         }
 
         if(impulse === "Enter") {
-            enterSelection();
+            enterSelection(false);
         }
     };
 
