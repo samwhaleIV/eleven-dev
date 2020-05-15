@@ -6,6 +6,16 @@ import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
 import SpeedPill from "./scripts/speed-pill.js";
 
+function ImpulsePassthrough() {
+    this.retain = true;
+    this.action = ({world}) => {
+        if(world.playerController && world.playerController.locked) {
+            world.playerController.unlock();
+        }
+        return world.playerImpulse.impulse();
+    };
+}
+
 const ItemUseTable = {
     "elf-rock": [Pickup,27,"elf-rock"],
     "rock": [Pickup,28,"rock"],
@@ -21,7 +31,11 @@ const ItemUseTable = {
     "pink-key": [Key,"pink"],
     "chocolate-key": [Key,"chocolate"],
     "bomb": [Bomb],
-    "speed-pill": [SpeedPill]
+    "speed-pill": [SpeedPill],
+
+    /* Impulse passthroughs... */
+    "chocolate-milk": [ImpulsePassthrough],
+    "warp-crystal": [ImpulsePassthrough]
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

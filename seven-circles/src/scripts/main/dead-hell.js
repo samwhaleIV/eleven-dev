@@ -2,7 +2,8 @@ import {
     GetTransitionTrigger,
     AddFixedWaterBackground,
     DarkRoom,
-    RiverRocks
+    RiverRocks,
+    WarpGate
 } from "../helper.js";
 import Lantern from "../../weapons/lantern.js";
 
@@ -43,7 +44,10 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
         case "roomTwo": position = [13,1]; break;
         case "roomThree": position = [13,9]; break;
     }
-    setupMap(world,"dead-hell",...position,null,direction);
+
+    const mapName = "dead-hell";
+    setupMap(world,mapName,...position,null,direction);
+
     world.setTriggers([
         getExitTrigger(world,"roomOne",1),
         getExitTrigger(world,"roomTwo",2),
@@ -53,7 +57,12 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
     if(saveState.get("dead-hell-cell")) {
         clearPowerCell(world,6,17,false);
     }
-    this.interact = ({value,x,y}) => {
+
+    const warpGate = new WarpGate(world,6,10,[[5,13],[8,13]],mapName);
+    this.interact = data => {
+        if(warpGate.tryInteract(data)) return;
+
+        const {value,x,y} = data;
         if(value === 18) {
             clearPowerCell(world,x,y);
             inventory.give("power-cell");

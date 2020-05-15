@@ -19,6 +19,7 @@ import PickupField from "./helper/pickup-field.js";
 import RiverRocks from "./helper/river-rocks.js";
 import StaticPickup from "./helper/static-pickup.js";
 import SaveStone from "./helper/save-stone.js";
+import WarpGate from "./helper/warp-gate.js";
     /* Doors */
     import GetSwitchDoors from "./helper/doors/switch-doors.js";
     import KeyDoor from "./helper/doors/key-door.js";
@@ -44,5 +45,6 @@ export {
     DramaZoom,
     AddColorBackground,
     GetSwitchDoors,
-    DarkRoom
+    DarkRoom,
+    WarpGate
 };

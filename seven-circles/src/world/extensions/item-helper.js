@@ -1,7 +1,7 @@
 import ItemUseTable from "../../items/item-use-table.js";
 import ItemNotification from "../item-notification.js";
 
-const DID_NOTHING = "This item doesn't want to do anything right now.";
+const DID_NOTHING = "This item won't do anything here.";
 const BAD_ITEM_PLACMEMENT = "The item doesn't want to go here!";
 
 function useItem(safeID,take,message) {

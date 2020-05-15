@@ -99,10 +99,27 @@ function getLightingTile(x,y) {
     return this.getTile(LIGHTING_LAYER,x,y);
 }
 
+function stamp(x,y,tileID,width,height,layer) {
+    const {textureColumns,textureRows} = this.tileRenderer;
+    for(let stampX = 0;stampX < width;stampX++) {
+        for(let stampY = 0;stampY < height;stampY++) {
+            const value = tileID + stampX + textureRows * stampY;
+            this.setTile(layer,stampX+x,stampY+y,value);
+        }
+    }
+}
+function stampForeground(x,y,tileID,width,height) {
+    stamp.call(this,x,y,tileID,width,height,FOREGROUND_LAYER);
+}
+function stampBackground() {
+    stamp.call(this,x,y,tileID,width,height,BACKGROUND_LAYER);
+}
+
 export default {
-    getLightingTile, getInteractionTile, getCollisionTile, 
+    getLightingTile, getInteractionTile, getCollisionTile,
     setSuperForegroundTile, getSuperForegroundTile,
     setForegroundTile, getForegroundTile, setBackgroundTile, getBackgroundTile,
     pushTileChanges, pushLightingChanges, pushInteractionChanges, pushCollisionChanges,
-    getTile, setTile, setLightingTile, setInteractionTile, setCollisionTile
+    getTile, setTile, setLightingTile, setInteractionTile, setCollisionTile,
+    stampForeground, stampBackground
 };

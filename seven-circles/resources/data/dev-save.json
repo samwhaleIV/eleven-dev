@@ -1,19 +1,16 @@
 {
     "devfile": "This is the file you're looking for!",
 
-    "CleanSlate": false,
-    "Container": null,
+    "CleanSlate": true,
+    "Container": "Named",
 
     "Containers": {
 
-        "NamedScript": {
+        "Named": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "GraveHell",
+                "x": 0, "y": 0, "scriptID": "DeadHell",
                 "direction": 0,
                 "_deserialize": true
-            },
-            "Inventory": {
-                "present": 10
             }
         },
 
