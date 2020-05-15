@@ -3,7 +3,8 @@ import {
     AddFixedWaterBackground,
     DarkRoom,
     RiverRocks,
-    WarpGate
+    WarpGate,
+    WarpCrystalBox
 } from "../helper.js";
 import Lantern from "../../weapons/lantern.js";
 
@@ -57,9 +58,12 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
     if(saveState.get("dead-hell-cell")) {
         clearPowerCell(world,6,17,false);
     }
+    
+    const warpCrystalBox = new WarpCrystalBox(world,12,16,[[13,14]],mapName);
 
     const warpGate = new WarpGate(world,6,10,[[5,13],[8,13]],mapName);
     this.interact = data => {
+        if(warpCrystalBox.tryInteract(data)) return;
         if(warpGate.tryInteract(data)) return;
 
         const {value,x,y} = data;
@@ -72,14 +76,25 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
 }
 
 function RoomOne({world,room}) {
-    setupMap(world,"dead-hell-1",3,1,room);
+    const mapName = "dead-hell-1";
+
+    setupMap(world,mapName,3,1,room);
     world.camera.verticalPadding = true;
+
+    const warpCrystalBox = new WarpCrystalBox(world,4,6,[[3,4],[6,4]],mapName);
+
+    this.interact = data => {
+        if(warpCrystalBox.tryInteract(data)) return;
+    };
 }
 function RoomTwo({world,room,inventory,saveState}) {
-    setupMap(world,"dead-hell-2",7,2,room);
+    const mapName = "dead-hell-2";
+    const cellKey = `${mapName}-cell`;
+
+    setupMap(world,mapName,7,2,room);
     world.camera.verticalPadding = true;
     const rocks = new RiverRocks(world,this);
-    if(saveState.get("dead-hell-2-cell")) {
+    if(saveState.get(cellKey)) {
         clearPowerCell(world,7,7,false);
     }
     this.interact = data => {
@@ -88,18 +103,21 @@ function RoomTwo({world,room,inventory,saveState}) {
         if(value === 16) {
             clearPowerCell(world,x,y);
             inventory.give("power-cell");
-            saveState.set("dead-hell-2-cell",true);
+            saveState.set(cellKey,true);
         }
 
     }
     AddFixedWaterBackground(world,4,4,7,7);
 }
 function RoomThree({world,room,inventory,saveState}) {
-    setupMap(world,"dead-hell-3",5,2,room);
+    const mapName = "dead-hell-3";
+    const cellKey = `${mapName}-cell`;
+
+    setupMap(world,mapName,5,2,room);
     DarkRoom(world);
     const {player} = world;
 
-    if(saveState.get("dead-hell-3-cell")) {
+    if(saveState.get(cellKey)) {
         clearPowerCell(world,4,56,false);
     }
 
@@ -115,7 +133,7 @@ function RoomThree({world,room,inventory,saveState}) {
             }
         } else if(value === 17) {
             clearPowerCell(world,x,y);
-            saveState.set("dead-hell-3-cell",true);
+            saveState.set(cellKey,true);
             inventory.give("power-cell");
         }
     };

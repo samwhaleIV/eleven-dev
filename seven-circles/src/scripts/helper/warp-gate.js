@@ -8,9 +8,9 @@ const GATE_OPEN_ID = 1036;
 const GATE_WIDTH = 2;
 const GATE_HEIGHT = 3;
 
-function WarpGate(world,gateX,gateY,crystalHolders,saveStateBase) {
+function WarpGate(world,gateX,gateY,crystalHolders,saveStateBase,gateUsed) {
     const {saveState,inventory} = world;
-    const keyFilter = key => `${saveStateBase}-crystal-${key}`;
+    const keyFilter = key => `${saveStateBase}-warp-crystal-holder-${key}`;
 
     const hasCrystal = key => Boolean(saveState.get(keyFilter(key)));
     const registerCrystal = key => saveState.set(keyFilter(key),true);
@@ -70,6 +70,11 @@ function WarpGate(world,gateX,gateY,crystalHolders,saveStateBase) {
 
     const gateInteract = () => {
         if(gateIsOpen()) {
+            if(!gateUsed) {
+                world.message("The gate won't do anything.");
+                return;
+            }
+            gateUsed();
             world.prompt("Do you want to use the warp gate?");
         } else {
             world.message("All the crystals must be placed in the crystal holders!");

@@ -20,6 +20,7 @@ import RiverRocks from "./helper/river-rocks.js";
 import StaticPickup from "./helper/static-pickup.js";
 import SaveStone from "./helper/save-stone.js";
 import WarpGate from "./helper/warp-gate.js";
+import WarpCrystalBox from "./helper/warp-crystal-box.js";
     /* Doors */
     import GetSwitchDoors from "./helper/doors/switch-doors.js";
     import KeyDoor from "./helper/doors/key-door.js";
@@ -46,5 +47,6 @@ export {
     AddColorBackground,
     GetSwitchDoors,
     DarkRoom,
-    WarpGate
+    WarpGate,
+    WarpCrystalBox
 };

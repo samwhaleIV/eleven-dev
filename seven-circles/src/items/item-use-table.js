@@ -35,7 +35,8 @@ const ItemUseTable = {
 
     /* Impulse passthroughs... */
     "chocolate-milk": [ImpulsePassthrough],
-    "warp-crystal": [ImpulsePassthrough]
+    "warp-crystal": [ImpulsePassthrough],
+    "power-cell": [ImpulsePassthrough]
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{
