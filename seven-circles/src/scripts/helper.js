@@ -2,7 +2,7 @@
 import ObjectiveText from "./helper/objective-text.js"
     /* Render helpers */
     import {AddWaterBackground,AddFixedWaterBackground} from "./helper/backgrounds/water-background.js";
-    import AddColorBackground from "./helper/backgrounds/color-background.js";
+    import {AddNamedBackground,AddColorBackground} from "./helper/backgrounds/color-background.js";
     import DarkRoom from "./helper/dark-room.js";
 
 /* Director functions */
@@ -28,6 +28,7 @@ import WarpCrystalBox from "./helper/warp-crystal-box.js";
     import InvisibileWall from "./helper/doors/invisible-wall.js";
 
 export {
+    AddNamedBackground,
     SaveStone,
     AddFixedWaterBackground,
     AddWaterBackground,

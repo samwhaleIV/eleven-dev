@@ -1,7 +1,7 @@
 import {
     MessageChain,
     DramaZoom,
-    AddColorBackground,
+    AddNamedBackground,
     GetTransitionTrigger,
     SaveStone
 } from "../helper.js";
@@ -15,7 +15,7 @@ const talkedKey = "talkedToDemonGuyInHallway";
 function HatHell({world,lastScript,saveState,transition}) {
     world.setMap("hat-hell");
     world.camera.horizontalPadding = true;
-    AddColorBackground(world,"black");
+    AddNamedBackground(world,"hell");
 
     if(lastScript === nextMap) {
         const player = world.addPlayer(18,5);

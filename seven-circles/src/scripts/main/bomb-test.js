@@ -9,7 +9,7 @@ function BombTest({world}) {
 
     let playerX = 0, playerY = 0;
 
-    let bombLocations = [];
+    const bombLocations = [];
 
     tileRenderer.readLayer(4).forEach((value,idx)=>{
         if(value === 16) {
@@ -32,6 +32,6 @@ function BombTest({world}) {
             await delay(500);
             world.say("That's it? The demo is over? What happens next? Is it programmed yet?\n\nStay tuned and find out more next week, six pm (Pacific Standard Time) right here on [REDACTED]!");
         }
-    }
+    };
 }
 export default BombTest;

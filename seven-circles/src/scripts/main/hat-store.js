@@ -1,10 +1,10 @@
-import {AddColorBackground} from "../helper.js";
+import {AddNamedBackground} from "../helper.js";
 
 const parentMap = "HatHell";
 
 function HatStore({world,transition}) {
     world.setMap("hat-store");
-    AddColorBackground(world,"black");
+    AddNamedBackground(world,"hell");
 
     const player = world.addPlayer(3.5,8);
     player.direction = "up";

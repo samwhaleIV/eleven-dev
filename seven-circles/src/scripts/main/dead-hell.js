@@ -3,6 +3,7 @@ import {
     AddFixedWaterBackground,
     DarkRoom,
     RiverRocks,
+    AddNamedBackground,
     WarpGate,
     WarpCrystalBox
 } from "../helper.js";
@@ -17,6 +18,7 @@ const rooms = {
 
 function setupMap(world,map,playerX,playerY,room,direction) {
     world.setMap(map);
+    AddNamedBackground(world,"hell");
     const player = world.addPlayer(playerX,playerY);
     player.direction = direction || "down";
     if(room) setReturnTrigger(world,room);

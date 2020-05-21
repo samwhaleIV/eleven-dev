@@ -1,14 +1,14 @@
 import {
     KeyDoor,
     PickupField,
-    AddColorBackground,
+    AddNamedBackground,
     SpriteDoor,
     ObjectiveText,
     AddFixedWaterBackground,
     MessageChain,
     DramaZoom,
     GetTransitionTrigger,
-    SaveStone
+    SaveStone,
 } from "../helper.js";
 
 const nextMap = "ChocolateHell";
@@ -18,7 +18,7 @@ function TunnelsOfHell({world,lastScript,inventory,saveState}) {
     const fromNextMap = lastScript === nextMap;
 
     world.setMap("tunnels-of-hell");
-    AddColorBackground(world,"black");
+    AddNamedBackground(world,"hell");
 
     AddFixedWaterBackground(world,81,7,5,5,{
         width: 1,height: 1,y: 10.5,x: 83

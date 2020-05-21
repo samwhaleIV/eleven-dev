@@ -1,3 +1,5 @@
+import NamedColors from "./named-colors.js";
+
 function AddColorBackground(world,color) {
     const render = (()=>{
         const {context,size} = Eleven.CanvasManager;
@@ -9,4 +11,9 @@ function AddColorBackground(world,color) {
     })();
     world.dispatchRenderer.addBackground(render);
 }
+function AddNamedBackground(world,name) {
+    AddColorBackground(world,NamedColors[name]);
+}
+
 export default AddColorBackground;
+export {AddNamedBackground, AddColorBackground};
