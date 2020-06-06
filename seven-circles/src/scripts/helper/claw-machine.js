@@ -85,11 +85,6 @@ function CenterPiece(world,x,y,bounds,xRope,yRope) {
         const {xDelta,yDelta,velocityX,velocityY} = this;
         const velocityBase = time.delta / 1000;
 
-        console.log(
-            this.xDelta === 0 ? "0" : velocityX.toFixed(2),
-            this.yDelta === 0 ? "0" : velocityY.toFixed(2)
-            );
-
         if(xDelta !== 0) {
             let change = velocityX * xDelta * velocityBase;
             change = grid.roundToPixels(change);
@@ -116,7 +111,7 @@ function CenterPiece(world,x,y,bounds,xRope,yRope) {
     }
 }
 
-function ClawMachine(world,x1,y1,x2,y2,baseStations) {
+function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
     const minX = x1 + 1, minY = y1 + 1;
     const maxX = x2 - 1, maxY = y2 - 1;
 
@@ -146,17 +141,21 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations) {
     let savedInputs = null, inputUpdater = null;
 
     const controllerEnd = async () => {
+        world.setInputs(savedInputs);
+
+        centerPiece.xDelta = 0;
+        centerPiece.yDelta = 0;
+
         const {spriteFollower,camera,player,playerController} = world;
         world.dispatchRenderer.removeUpdate(inputUpdater);
 
         spriteFollower.disable();
         await camera.moveTo(
-            player.x+player.xOffset||0,player.y+player.yOffset||0,CONTROL_CAMERA_TIME
+            player.x+(player.xOffset||0),player.y+(player.yOffset||0),CONTROL_CAMERA_TIME
         );
         spriteFollower.target = player;
         spriteFollower.enable();
-        
-        world.setInputs(savedInputs);
+
         playerController.unlock();
     };
 
@@ -219,11 +218,36 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations) {
             processDownKeys(); downKeys = null;
         },centerPiece.zIndex-1);
 
-        const downKeyApplicator = keys => downKeys = Object.assign(downKeys||{},keys);;
+        const downKeyApplicator = keys => downKeys = Object.assign(downKeys||{},keys);
         const inputKeys = keyBind.poll(downKeyApplicator);
         const inputGamepad = downKeyApplicator;
 
-        world.setInputs([inputKeys,null,null,inputGamepad,null,null]);
+        const keyDown = data => {
+            const impulse = data.impulse;
+            if(impulse === codes.Click) {
+                if(!clawAction) return;
+                const x = Math.round(centerPiece.x);
+                const y = Math.round(centerPiece.y);
+                clawAction(x,y);
+            } else if(impulse === codes.Exit) {
+                controllerEnd();
+            }
+        };
+
+        const keyUp = data => savedInputs[2](data);
+
+        const boundKeyDown = keyBind.impulse(keyDown);
+        const keyDownBase = data => savedInputs[1](data);
+
+        world.setInputs([
+            inputKeys,data=>{
+                keyDownBase(data);
+                boundKeyDown(data);
+            },keyUp,inputGamepad,data => {
+                keyDownBase(data);
+                keyDown(data);
+            },keyUp
+        ]);
     };
 
     this.tryInteract = ({value}) => {
