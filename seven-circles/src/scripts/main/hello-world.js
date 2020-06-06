@@ -54,17 +54,21 @@ function Title() {
 
         let t = 1;
 
-        if(fadeInStart !== null) {
-            t = (now - fadeInStart) / TITLE_FADE_IN_DURATION;
+        const isStartFade = fadeInStart !== null;
+        if(isStartFade || fadeOutStart !== null) {
+            const fadeDuration = isStartFade ? TITLE_FADE_IN_DURATION : TITLE_FADE_OUT_DURATION
+            t = (now - fadeInStart) / fadeDuration;
             if(t < 0) t = 0; else if(t > 1) {
-                t = 1; fadeInStart = null; fadeInResolve();
+                t = 1;
+                if(isStartFade) {
+                    fadeInStart = null;
+                    fadeInResolve();
+                } else {
+                    fadeOutStart = null;
+                    fadeOutResolve();
+                }
             }
-        } else if(fadeOutStart !== null) {
-            t = (now - fadeOutStart) / TITLE_FADE_OUT_DURATION;
-            if(t < 0) t = 0; else if(t > 1) {
-                t = 1; fadeOutStart = null; fadeOutResolve(); 
-            }
-            t = 1 - t;
+            if(!fadeInStart) t = 1 - t;
         }
 
         context.fillStyle = `rgba(255,255,255,${t})`;

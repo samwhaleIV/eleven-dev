@@ -2,13 +2,13 @@
     "devfile": "This is the file you're looking for!",
 
     "CleanSlate": false,
-    "Container": null,
+    "Container": "Named",
 
     "Containers": {
 
         "Named": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "DeadHell",
+                "x": 0, "y": 0, "scriptID": "PaintHell",
                 "direction": 0,
                 "_deserialize": true
             }

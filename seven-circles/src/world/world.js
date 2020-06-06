@@ -15,6 +15,7 @@ import SpatialSound from "./extensions/spatial-sound.js";
 import Sprites from "./extensions/sprites.js";
 import TileEditor from "./extensions/tile-editor.js";
 import TriggerHandler from "./extensions/trigger-handler.js";
+import InputProxy from "./extensions/input-proxy.js";
 
 const WORLD_EXTENSIONS = [
     FadeMe,
@@ -24,7 +25,8 @@ const WORLD_EXTENSIONS = [
     SpatialSound,
     Sprites,
     TileEditor,
-    TriggerHandler
+    TriggerHandler,
+    InputProxy
 ];
 
 const {

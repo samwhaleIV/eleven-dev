@@ -90,4 +90,7 @@ function addTextSprite(data) {
     this.highSpriteLayer.add(textSprite,ZIndexBook.TextSprite);
     return textSprite;
 }
-export default {addTextSprite, addNPC, addPlayer, addCustomPlayer, addTileSprite, summonSprite};
+function addSprite(sprite,ZIndex) {
+    return this.spriteLayer.add(sprite,ZIndex);
+}
+export default {addTextSprite, addSprite, addNPC, addPlayer, addCustomPlayer, addTileSprite, summonSprite};

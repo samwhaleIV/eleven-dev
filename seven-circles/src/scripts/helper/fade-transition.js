@@ -32,8 +32,6 @@ async function FadeTransition(world,script,data,fadeTime) {
     await world.fadeFromBlack(fadeTime).then(world.popFader);
 
     const startLocked = tryScriptStart(world);
-    if(!startLocked) {
-        tryUnlock(world);
-    }
+    if(!startLocked) tryUnlock(world);
 }
 export default FadeTransition;

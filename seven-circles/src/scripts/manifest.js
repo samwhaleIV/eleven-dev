@@ -16,10 +16,11 @@ import RiverHell from "./main/river-hell.js";
 import SwitchHell from "./main/switch-hell.js";
 import TunnelsOfHell from "./main/tunnels-of-hell.js";
 import VoidHell from "./main/void-hell.js";
+import PaintHell from "./main/paint-hell.js";
 
 const Scripts = ScriptBook.Import(
     BombTest,ChocolateHell,DeadHell,GraveHell,HatHell,HatStore,HelloWorld,
-    NpcClTest,    Preload,RiverHell,SwitchHell,TunnelsOfHell,VoidHell
+    NpcClTest,Preload,RiverHell,SwitchHell,TunnelsOfHell,VoidHell,PaintHell
 );
 
 export default Scripts;
