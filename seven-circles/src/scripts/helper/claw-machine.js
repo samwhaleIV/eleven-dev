@@ -138,24 +138,40 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
             world.setInteractionTile(x,y,ID);
         }
     }
+    this.baseStationIDs = interactionIDs;
 
     let inputProxy = null, inputUpdater = null;
 
-    const controllerEnd = async () => {
-        inputProxy.close(); inputProxy = null;
+    let terminating = false;
+
+    const controllerEnd = async (animated=true) => {
+        if(inputProxy) {
+            inputProxy.close(); inputProxy = null;
+        };
 
         centerPiece.xDelta = 0, centerPiece.yDelta = 0;
-
-        const {spriteFollower,camera,player,playerController} = world;
         world.dispatchRenderer.removeUpdate(inputUpdater);
 
-        spriteFollower.disable();
-        await camera.moveTo(player,CONTROL_CAMERA_TIME);
+        if(animated) {
 
-        spriteFollower.target = player;
-        spriteFollower.enable();
+            const {spriteFollower,camera,player,playerController} = world;
+    
+            spriteFollower.disable();
+            await camera.moveTo(player,CONTROL_CAMERA_TIME);
+    
+            spriteFollower.target = player;
+            spriteFollower.enable();
+    
+            playerController.unlock();
+        }
 
-        playerController.unlock();
+        terminating = false;
+    };
+
+    this.exit = async () => {
+        if(terminating) return;
+        terminating = true;
+        await controllerEnd(false);
     };
 
     const controllerStart = async () => {
@@ -178,9 +194,10 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
 
         let downKeys = null;
 
-        const {codes,managedGamepad} = SVCC.Runtime.InputServer
+        const {codes,managedGamepad} = SVCC.Runtime.InputServer;
 
         const processDownKeys = () => {
+            if(terminating) return;
             let xDelta = 0, yDelta = 0;
 
             const leftAxis = managedGamepad.getLeftAxis();
@@ -222,6 +239,7 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
         };
 
         const keyDown = data => {
+            if(terminating) return;
             const impulse = data.impulse;
             if(impulse === codes.Click) {
                 if(!clawAction) return;
@@ -229,6 +247,7 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
                 const y = Math.round(centerPiece.y);
                 clawAction(x,y);
             } else if(impulse === codes.Exit) {
+                terminating = true;
                 controllerEnd();
             }
         };

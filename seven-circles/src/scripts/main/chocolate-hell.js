@@ -118,7 +118,7 @@ function ChocolateHell({world,lastScript,inventory}){
                                 objective.close();
                             }
                             await PanPreview({
-                                world,x: 39,y: 28,delay: 2500,
+                                world,x: 39,y: 28,
                                 middleEvent: async () => {
                                     await frameDelay(500);
                                     this.endDoor.open();

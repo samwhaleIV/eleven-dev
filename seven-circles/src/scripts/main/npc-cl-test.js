@@ -20,17 +20,21 @@ function NPCCLTest({world}) {
     player.showHitBox = true;
     npc.showHitBox = true;
 
-    this.start = async () => {
-        const {controller} = npc;
-        let i = 0;
-        while(true) {
-            switch(i++%4) {
-                case 0: await controller.move(-5,0); break;
-                case 1: await controller.move(0,-5); break;
-                case 2: await controller.move(5,0); break;
-                case 3: await controller.move(0,5); break;
+    this.start = () => {
+        (async () => {
+            const {controller} = npc;
+            let i = 0;
+            while(true) {
+                switch(i++%4) {
+                    case 0: await controller.move(-5,0); break;
+                    case 1: await controller.move(0,-5); break;
+                    case 2: await controller.move(5,0); break;
+                    case 3: await controller.move(0,5); break;
+                }
             }
-        }
+        })();
+        return false;
+
     };
 }
 export default NPCCLTest;

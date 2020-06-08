@@ -5,6 +5,7 @@ import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
 import SpeedPill from "./scripts/speed-pill.js";
+import BlueprintFragment from "./scripts/blueprint-fragment.js";
 
 function ImpulsePassthrough() {
     this.retain = true;
@@ -36,7 +37,8 @@ const ItemUseTable = {
     /* Impulse passthroughs... */
     "chocolate-milk": [ImpulsePassthrough],
     "warp-crystal": [ImpulsePassthrough],
-    "power-cell": [ImpulsePassthrough]
+    "power-cell": [ImpulsePassthrough],
+    "blueprint-fragment": [BlueprintFragment]
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

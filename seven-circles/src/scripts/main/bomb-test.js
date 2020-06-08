@@ -27,11 +27,13 @@ function BombTest({world}) {
 
     this.interact = pickupField.tryPickup;
 
-    this.start = async () => {
-        if(DEMO) {
+    this.start = () => {
+        if(DEMO) (async () => {
             await delay(500);
-            world.say("That's it? The demo is over? What happens next? Is it programmed yet?\n\nStay tuned and find out more next week, six pm (Pacific Standard Time) right here on [REDACTED]!");
-        }
+            await world.say("That's it? The demo is over? What happens next? Is it programmed yet?\n\nStay tuned and find out more next week, six pm (Pacific Standard Time) right here on [REDACTED]!");
+            world.playerController.unlock();
+        })();
+        return Boolean(DEMO);
     };
 }
 export default BombTest;
