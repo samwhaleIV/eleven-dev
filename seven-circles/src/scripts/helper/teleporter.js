@@ -54,17 +54,12 @@ function Teleporter(world,beacons) {
 
         spriteFollower.disable();
 
-        let {xOffset,yOffset} = player;
-        if(!xOffset) xOffset = 0; if(!yOffset) yOffset = 0;
-
         player.x = x - (player.hitBox.width / 2) - 0.5;
-        player.y = y - yOffset;
+        player.y = y - player.yOffset;
 
         player.direction = "right";
 
-        await camera.moveTo(
-            player.x+xOffset,player.y+yOffset,TRAVEL_TIME
-        );
+        await camera.moveTo(player,TRAVEL_TIME);
 
         await sizeLoop(startWidth);
 

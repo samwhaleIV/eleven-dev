@@ -69,9 +69,9 @@ function ProjectileBase({
         terminate();
     };
 
-    target.update = time => {
+    target.update = ({deltaSecond}) => {
 
-        const delta = target.velocity * (time.delta / 1000);
+        const delta = target.velocity * deltaSecond;
 
         switch(target.direction) {
             case 0: target.y -= delta; break;

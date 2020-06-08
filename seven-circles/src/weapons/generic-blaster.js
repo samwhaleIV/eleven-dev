@@ -34,8 +34,8 @@ function GenericBlaster(image) {
 
         const offset = PROJECTILE_POINTS[direction];
 
-        x += (offset.x * this.owner.width) + (this.owner.xOffset || 0);
-        y += (offset.y * this.owner.height) + (this.owner.yOffset || 0);
+        x += (offset.x * this.owner.width) + this.owner.xOffset;
+        y += (offset.y * this.owner.height) + this.owner.yOffset;
 
         let soundX, soundY;
 

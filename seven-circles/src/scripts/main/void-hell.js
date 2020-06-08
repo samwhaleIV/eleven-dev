@@ -41,8 +41,8 @@ function VoidHell({world,lastScript,saveState}) {
         world.say("We'll be in touch.");
     };
 
-    antiPlayer.xOffset = world.player.xOffset || 0;
-    antiPlayer.yOffset = world.player.yOffset || 0;
+    antiPlayer.xOffset = player.xOffset;
+    antiPlayer.yOffset = player.yOffset;
 
     camera.horizontalPadding = true;
 
@@ -65,11 +65,7 @@ function VoidHell({world,lastScript,saveState}) {
         const startScale = camera.scale;
 
         await Promise.all([
-            camera.moveTo(
-                antiPlayer.x+antiPlayer.xOffset,
-                antiPlayer.y+antiPlayer.yOffset,
-                1000
-            ),
+            camera.moveTo(antiPlayer,1000),
             camera.zoomTo(startScale+4,1000)
         ]);
         spriteFollower.target = antiPlayer;

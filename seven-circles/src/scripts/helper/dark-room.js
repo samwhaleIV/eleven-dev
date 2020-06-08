@@ -78,13 +78,11 @@ function DarkRoom(world,targets) {
             x+WORLD_SPOT_OFFSET,y+WORLD_SPOT_OFFSET
         );
         if(target) spotSprite.update = () => {
-            let {x,y,width,height,xOffset,yOffset,noFog} = target;
+            let {camX,camY,width,height,noFog} = target;
             spotSprite.noRender = !noFog;
-
-            x += WORLD_SPOT_OFFSET, y += WORLD_SPOT_OFFSET;
-            if(xOffset) x += xOffset; if(yOffset) y += yOffset;
-            x += width / 2; y += height / 2;
-            spotSprite.x = x; spotSprite.y = y;
+            camX += WORLD_SPOT_OFFSET, camY += WORLD_SPOT_OFFSET;
+            camX += width / 2; camY += height / 2;
+            spotSprite.x = camX; spotSprite.y = camY;
         };
         highSpriteLayer.add(spotSprite,ZIndexBook.FogHoles);
     }

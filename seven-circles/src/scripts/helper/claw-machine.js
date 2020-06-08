@@ -14,7 +14,7 @@ const CENTER_PIECE = 921;
 const CONTROL_CAMERA_TIME = 400;
 
 const DIGITAL_VELOCITY = 3.25;
-const ANALOG_VELOCITY = 3.5;
+const ANALOG_VELOCITY = 4;
 
 const DIGITAL_DOUBLE_AXIS_SCALE = 3 / 4;
 
@@ -81,12 +81,11 @@ function CenterPiece(world,x,y,bounds,xRope,yRope) {
 
     const {grid} = world;
 
-    this.update = time => {
+    this.update = ({deltaSecond}) => {
         const {xDelta,yDelta,velocityX,velocityY} = this;
-        const velocityBase = time.delta / 1000;
 
         if(xDelta !== 0) {
-            let change = velocityX * xDelta * velocityBase;
+            let change = velocityX * xDelta * deltaSecond;
             change = grid.roundToPixels(change);
             
             let x = this.x + change;
@@ -95,7 +94,7 @@ function CenterPiece(world,x,y,bounds,xRope,yRope) {
         }
 
         if(yDelta !== 0) {
-            let change = velocityY * yDelta * velocityBase;
+            let change = velocityY * yDelta * deltaSecond;
             change = grid.roundToPixels(change);
 
             let y = this.y + change;
@@ -122,7 +121,9 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
     const verticalRope = new Rope(world,true,y1,height+1);
     const horizontalRope = new Rope(world,false,x1,width+1);
 
-    const centerPiece = new CenterPiece(world,x1 + width / 2,y1 + height / 2,bounds,horizontalRope,verticalRope);
+    const centerPiece = new CenterPiece(
+        world,x1 + width / 2,y1 + height / 2,bounds,horizontalRope,verticalRope
+    );
 
     world.addSprite(verticalRope), world.addSprite(horizontalRope);
     world.addSprite(centerPiece);
@@ -138,21 +139,19 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
         }
     }
 
-    let savedInputs = null, inputUpdater = null;
+    let inputProxy = null, inputUpdater = null;
 
     const controllerEnd = async () => {
-        world.setInputs(savedInputs);
+        inputProxy.close(); inputProxy = null;
 
-        centerPiece.xDelta = 0;
-        centerPiece.yDelta = 0;
+        centerPiece.xDelta = 0, centerPiece.yDelta = 0;
 
         const {spriteFollower,camera,player,playerController} = world;
         world.dispatchRenderer.removeUpdate(inputUpdater);
 
         spriteFollower.disable();
-        await camera.moveTo(
-            player.x+(player.xOffset||0),player.y+(player.yOffset||0),CONTROL_CAMERA_TIME
-        );
+        await camera.moveTo(player,CONTROL_CAMERA_TIME);
+
         spriteFollower.target = player;
         spriteFollower.enable();
 
@@ -166,8 +165,8 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
         } = world;
 
         playerController.lock();
-        savedInputs = world.getInputs();
-        world.clearInputs();
+        inputProxy = world.getInputProxy();
+
         spriteFollower.disable();
 
         await camera.moveTo(
@@ -179,7 +178,7 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
 
         let downKeys = null;
 
-        const {codes,keyBind,managedGamepad} = SVCC.Runtime.InputServer
+        const {codes,managedGamepad} = SVCC.Runtime.InputServer
 
         const processDownKeys = () => {
             let xDelta = 0, yDelta = 0;
@@ -218,9 +217,9 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
             processDownKeys(); downKeys = null;
         },centerPiece.zIndex-1);
 
-        const downKeyApplicator = keys => downKeys = Object.assign(downKeys||{},keys);
-        const inputKeys = keyBind.poll(downKeyApplicator);
-        const inputGamepad = downKeyApplicator;
+        const downKeyApplicator = keys => {
+            downKeys = Object.assign(downKeys||{},keys);
+        };
 
         const keyDown = data => {
             const impulse = data.impulse;
@@ -234,20 +233,13 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
             }
         };
 
-        const keyUp = data => savedInputs[2](data);
-
-        const boundKeyDown = keyBind.impulse(keyDown);
-        const keyDownBase = data => savedInputs[1](data);
-
-        world.setInputs([
-            inputKeys,data=>{
-                keyDownBase(data);
-                boundKeyDown(data);
-            },keyUp,inputGamepad,data => {
-                keyDownBase(data);
-                keyDown(data);
-            },keyUp
-        ]);
+        inputProxy.set({
+            sendToBase: true,
+            boundKeyboard: true,
+            mirroredGamepad: true,
+            keyDown: keyDown,
+            input: downKeyApplicator,
+        });
     };
 
     this.tryInteract = ({value}) => {
