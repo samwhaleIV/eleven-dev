@@ -2,9 +2,12 @@ const LevelOrder = [
     null,
     "TunnelsOfHell",
     "ChocolateHell",
-    "HatHell",
+    "HatHell", //HatStore
     "RiverHell",
     "VoidHell",
+    null,
+    "GraveHell",
+    "DeadHell",
     null,
     "PaintHell",
     "SwitchHell",
@@ -19,6 +22,7 @@ const LevelChain = new function LevelChain() {
     });
 
     const getRelative = (delta,name) => {
+        if(typeof name !== "string") return null;
         return LevelOrder[lookup[name]+delta] || null;
     };
 
