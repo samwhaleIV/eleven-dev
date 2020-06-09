@@ -6,6 +6,7 @@ import FaderList from "./fader-list.js";
 
 import FadeTransition from "../scripts/helper/fade-transition.js";
 import Lifetime from "../scripts/helper/lifetime.js";
+import LevelChain from "../scripts/level-chain.js";
 
 import FadeMe from "./extensions/fade-me.js";
 import ItemHelper from "./extensions/item-helper.js";
@@ -56,6 +57,10 @@ const PLAYER_SPRITE = Constants.PlayerSprite;
 let tileset = null;
 let maps = null;
 let playerImage = null;
+
+const BAD_SCRIPT = () => {
+    throw Error("Bad script! The script object is not a constructor (Check for script book warnings?)");
+};
 
 function World(callback) {
 
@@ -245,7 +250,9 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
         this.inputCopyState = this.playerController.getInputHandler().copyState();
     }
 
-    if(typeof script === "string") {
+    let scriptName = null;
+    if(script === null || typeof script === "string") {
+        scriptName = script;
         script = ScriptBook.Get(script);
     }
 
@@ -268,11 +275,27 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
     data.saveState = this.saveState;
     data.lifetime = Lifetime;
 
+    const lastMap = LevelChain.getLast(scriptName);
+    const nextMap = LevelChain.getNext(scriptName);
+
+    data.lastMap = lastMap;
+    data.nextMap = nextMap;
+    data.fromNextMap = data.lastScript === data.nextMap;
+    data.fromLastMap = data.lastScript === data.lastMap;
+
     data.world = this;
 
     data.transition = (script,data,fadeTime) => {
         FadeTransition(this,script,data,fadeTime);
     };
+    data.transitionLast = (data,fadeTime) => {
+        FadeTransition(this,lastMap,data,fadeTime);
+    };
+    data.transitionNext = (data,fadeTime) => {
+        FadeTransition(this,nextMap,data,fadeTime);
+    };
+
+    if(typeof script !== "function") BAD_SCRIPT();
 
     script = new script(data); this.script = script;
     if(this.playerController) this.playerController.lock();

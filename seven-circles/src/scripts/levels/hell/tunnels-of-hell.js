@@ -11,11 +11,7 @@ import {
     SaveStone,
 } from "../helper.js";
 
-const nextMap = "ChocolateHell";
-
-function TunnelsOfHell({world,lastScript,inventory,saveState}) {
-
-    const fromNextMap = lastScript === nextMap;
+function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
 
     world.setMap("tunnels-of-hell");
     AddNamedBackground(world,"hell");

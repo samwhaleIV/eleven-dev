@@ -1,4 +1,4 @@
-import StarField from "../helper/star-field.js";
+import StarField from "../../helper/star-field.js";
 
 const TITLE_TEXT = "";
 const TITLE_FONT = "22px sans-serif";

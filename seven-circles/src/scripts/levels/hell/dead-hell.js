@@ -7,7 +7,7 @@ import {
     WarpGate,
     WarpCrystalBox
 } from "../helper.js";
-import Lantern from "../../weapons/lantern.js";
+import Lantern from "../../../weapons/lantern.js";
 
 const rooms = {
     "main": MainRoom,

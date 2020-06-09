@@ -6,13 +6,10 @@ import {
     SaveStone
 } from "../helper.js";
 
-const storeMap = "HatStore";
-const previousMap = "ChocolateHell";
-const nextMap = "RiverHell";
+const STORE_MAP = "HatStore";
+const TALKED_KEY = "talkedToDemonGuyInHallway";
 
-const talkedKey = "talkedToDemonGuyInHallway";
-
-function HatHell({world,lastScript,saveState,transition}) {
+function HatHell({world,lastScript,saveState,transition,lastMap,nextMap}) {
     world.setMap("hat-hell");
     world.camera.horizontalPadding = true;
     AddNamedBackground(world,"hell");
@@ -20,7 +17,7 @@ function HatHell({world,lastScript,saveState,transition}) {
     if(lastScript === nextMap) {
         const player = world.addPlayer(18,5);
         player.direction = "left";
-    } else if(lastScript === storeMap) {
+    } else if(lastScript === STORE_MAP) {
         const player = world.addPlayer(10,3);
         player.direction = "down";
     } else {
@@ -31,7 +28,7 @@ function HatHell({world,lastScript,saveState,transition}) {
     const saveStone = new SaveStone(world,5,3);
 
     const talkToDemonGuy = async () => {
-        if(saveState.get(talkedKey)) {
+        if(saveState.get(TALKED_KEY)) {
             await world.say("Arise! Go forth and conquer!");
         } else {
             world.playerController.lock();
@@ -60,14 +57,14 @@ function HatHell({world,lastScript,saveState,transition}) {
 
             await dramaZoom.zoomOut();
             world.playerController.unlock();
-            saveState.set(talkedKey,true);
+            saveState.set(TALKED_KEY,true);
         }
     };
 
     this.interact = data => {
         if(saveStone.tryInteract(data)) return;
         switch(data.value) {
-            case 16: transition(storeMap); break;
+            case 16: transition(STORE_MAP); break;
             case 17: talkToDemonGuy(); break;
         }
     };
@@ -75,14 +72,14 @@ function HatHell({world,lastScript,saveState,transition}) {
     let sadGoodbye = false;
 
     const dontKnowWhyYouSayGoodbyeISayHello = () => {
-        if(!sadGoodbye && lastScript === previousMap && !saveState.get(talkedKey)) {
+        if(!sadGoodbye && lastScript === lastMap && !saveState.get(TALKED_KEY)) {
             sadGoodbye = true;
             world.say("Wow. Leaving without even saying hello?");
         }
     };
 
     world.setTriggers([
-        GetTransitionTrigger(world,1,previousMap,"left"),
+        GetTransitionTrigger(world,1,lastMap,"left"),
         GetTransitionTrigger(world,2,nextMap,"right"),
         [3,dontKnowWhyYouSayGoodbyeISayHello]
     ]);

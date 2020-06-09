@@ -15,13 +15,9 @@ const BAD_HOLE = 0;
 const GOOD_HOLE = 1;
 const EMPTY_HOLE = 2;
 
-const previousMap = "TBD_1";
-const nextMap = "TBD_2";
-
 const DOOR_ID = 17;
 
-function PaintHell({world,inventory,lastScript}) {
-    const fromNextMap = lastScript === nextMap;
+function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
 
     world.setMap("paint-hell");
     world.camera.padding = true;

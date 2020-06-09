@@ -5,12 +5,9 @@ import {
     SaveStone
 } from "../helper.js";
 
-const previousMap = "RiverHell";
-const nextMap = "BombTest";
-
 const {ResourceManager,UVTCReflection} = Eleven;
 
-function VoidHell({world,lastScript,saveState}) {
+function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
     world.setMap("void-hell");
     const {dispatchRenderer,grid,spriteFollower} = world;
 
@@ -121,7 +118,7 @@ function VoidHell({world,lastScript,saveState}) {
     };
 
     world.setTriggers([
-        GetTransitionTrigger(world,1,previousMap,"left"),
+        GetTransitionTrigger(world,1,lastMap,"left"),
         GetTransitionTrigger(world,2,nextMap,"right"),
         [3,makeANewFriend,true]
     ]);

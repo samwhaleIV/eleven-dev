@@ -2,17 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 const NEW_LINE = "\n";
-const TAB = `    `;
-
 const MANIFEST_FILE = "manifest.js";
 
 const SCRIPT_ROOT = "../src/scripts/";
-const SCRIPT_FOLDER = "main/";
+const SCRIPT_FOLDER = "levels/";
 
 const INPUT_FOLDER = SCRIPT_ROOT + SCRIPT_FOLDER;
 const OUTPUT_PATH = SCRIPT_ROOT + MANIFEST_FILE;
-
-const IMPORT_NEW_LINE_RATE = 8;
 
 let output = "";
 const writeLine = line => {
@@ -24,16 +20,11 @@ const writeLine = line => {
 const writeImportLine = (importName,path) => {
     writeLine(`import ${importName} from "./${path}";`);
 };
-const write = text => {
-    output += text;
-};
+const write = text => output += text;
 
 writeLine(`/* Notice: This is an auto-generated file. Modifying it can have unexpected results! */`);
-
 writeLine();
-
 writeImportLine("ScriptBook","script-book.js");
-
 writeLine();
 
 const capitalize = (string,index,length) => {
@@ -71,32 +62,32 @@ const scriptList = new Array();
 
 writeLine("/* Note that these import aliases might not reflect the real script identifier/function names. */");
 
-fs.readdirSync(INPUT_FOLDER).forEach(filePath => {
-    const extension = path.extname(filePath);
-    const fileName = path.basename(filePath,extension);
+const addScripts = (directory,subfolder="") => {
+    const files = fs.readdirSync(directory);
+    files.forEach(filePath => {
 
-    const scriptName = getScriptName(fileName);
-    writeImportLine(scriptName,SCRIPT_FOLDER + fileName + extension);
-    
-    scriptList.push(scriptName);
-});
+        const fullPath = path.join(directory,filePath);
 
-writeLine();
+        if(fs.lstatSync(fullPath).isDirectory()) {
+            addScripts(fullPath,`${subfolder}${filePath}/`);
+            writeLine();
+            return;
+        }
 
-writeLine(`const Scripts = ScriptBook.Import(`);
-for(let i = 0;i<scriptList.length;i++) {
-    switch(i % IMPORT_NEW_LINE_RATE) {
-        case IMPORT_NEW_LINE_RATE - 1:
-            writeLine(); 
-        case 0:
-            write(TAB);
-        default:
-            const name = scriptList[i]; write(name);
-            if(i < scriptList.length-1) write(`,`);
-            break;
-    }
-}
-writeLine();
+        const extension = path.extname(filePath);
+        const fileName = path.basename(filePath,extension);
+
+        const scriptName = getScriptName(fileName);
+        writeImportLine(scriptName,SCRIPT_FOLDER + subfolder + fileName + extension);
+        
+        scriptList.push(scriptName);
+    });
+};
+
+addScripts(INPUT_FOLDER);
+
+write(`const Scripts = ScriptBook.Import(`);
+write(scriptList.join(","));
 writeLine(`);`);
 writeLine();
 

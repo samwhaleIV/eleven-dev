@@ -9,10 +9,7 @@ import {
     GetTransitionTrigger
 } from "../helper.js";
 
-const previousMap = "HatHell";
-const nextMap = "VoidHell";
-
-function RiverHell({world,lastScript,inventory}) {
+function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
     world.setMap("river-hell");
     world.camera.padding = true;
     AddWaterBackground(world);
@@ -81,7 +78,7 @@ function RiverHell({world,lastScript,inventory}) {
     };
 
     world.setTriggers([
-        GetTransitionTrigger(world,1,previousMap),
+        GetTransitionTrigger(world,1,lastMap),
         GetTransitionTrigger(world,2,nextMap)
     ]);
 }

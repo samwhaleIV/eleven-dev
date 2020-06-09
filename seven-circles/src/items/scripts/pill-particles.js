@@ -24,8 +24,8 @@ const growEffect = getEffect("#3AFFFF");
 const shrinkEffect = getEffect("#FFA03A");
 const speedEffect = getEffect("#FF1E1E");
 
-const emit = (world,player,effect) => {
-    const effectScale = player.scale || 1;
+const emit = (world,player,effect,scale) => {
+    const effectScale = scale || player.scale || 1;
     effect.size = PARTICLE_SIZE * effectScale;
 
     const emitter = ParticleSystem.getEmitter(effect);

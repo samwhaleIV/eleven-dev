@@ -16,13 +16,10 @@ const END_DOOR = [39,27];
 
 const DELIVERY_COUNT = 4;
 
-const previousMap = "TunnelsOfHell";
-const nextMap = "HatHell";
-
-function ChocolateHell({world,lastScript,inventory}){
-
-    const fromNextMap = lastScript === nextMap;
-
+function ChocolateHell({
+    world,lastScript,inventory,
+    lastMap,nextMap,fromNextMap
+}){
     world.setMap("chocolate-hell");
     world.camera.enablePadding();
     AddWaterBackground(world);
@@ -137,7 +134,7 @@ function ChocolateHell({world,lastScript,inventory}){
     };
 
     world.setTriggers([
-        GetTransitionTrigger(world,1,previousMap),
+        GetTransitionTrigger(world,1,lastMap),
         GetTransitionTrigger(world,2,nextMap)
     ]);
 

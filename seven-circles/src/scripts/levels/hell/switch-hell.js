@@ -4,9 +4,7 @@ import {
     InstallBombAreas
 } from "../helper.js";
 
-const previousMap = null;
-
-function SwitchHell({world,inventory,transition}) {
+function SwitchHell({world,inventory,transition,lastMap,nextMap}) {
     world.setMap("switch-hell");
 
     const player = world.addPlayer(15,3);
@@ -52,13 +50,13 @@ function SwitchHell({world,inventory,transition}) {
     };
 
     world.setTriggers([
-        [1,()=>{transition(previousMap)},true],
+        [1,()=>{transition(lastMap)},true],
         [2,async ()=>{
             if(await world.prompt(
                 "Do you want to crawl into the odd looking hole?",
                 ["Yes, get me out of here!","No. I want to stay here forever."]
             ) === 0) {
-                transition("SwitchHell",null,2000);
+                transition(nextMap,null,2000);
             }
         }]
     ]);

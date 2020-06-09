@@ -1,4 +1,4 @@
-import Constants from "../../constants.js";
+import Constants from "../../../constants.js";
 const PRELOAD_FILES = Constants.WorldPreloadFile;
 
 const {ResourceManager} = Eleven;

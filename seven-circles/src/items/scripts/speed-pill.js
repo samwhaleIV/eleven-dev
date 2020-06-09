@@ -116,7 +116,7 @@ function SpeedPill() {
 
         const sound = ResourceManager.getAudio("grow");
         AudioManager.play(sound);
-        PillParticles.Emit(world,player,PillParticles.Speed);
+        PillParticles.Emit(world,player,PillParticles.Speed,2);
 
         world.spriteLayer.add(new Ghost(player),player.zIndex-1);
 

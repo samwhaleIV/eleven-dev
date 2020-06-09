@@ -1,6 +1,6 @@
 import {AddNamedBackground} from "../helper.js";
 
-const parentMap = "HatHell";
+const PARENT_MAP = "HatHell";
 
 function HatStore({world,transition}) {
     world.setMap("hat-store");
@@ -11,7 +11,7 @@ function HatStore({world,transition}) {
 
     this.interact = ({value}) => {
         if(value === 16) {
-            transition(parentMap); return;
+            transition(PARENT_MAP); return;
         }
     };
 }
