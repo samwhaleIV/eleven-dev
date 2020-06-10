@@ -22,6 +22,9 @@ import SaveStone from "../helper/save-stone.js";
 import WarpGate from "../helper/warp-gate.js";
 import WarpCrystalBox from "../helper/warp-crystal-box.js";
 import ClawMachine from "../helper/claw-machine.js";
+import {
+    InstallLastTrigger,InstallNextTrigger,InstallLevelChainTriggers,GetNextTrigger,GetLastTrigger
+} from "../helper/level-chain-triggers.js";
     /* Doors */
     import GetSwitchDoors from "../helper/doors/switch-doors.js";
     import KeyDoor from "../helper/doors/key-door.js";
@@ -51,5 +54,10 @@ export {
     DarkRoom,
     WarpGate,
     WarpCrystalBox,
-    ClawMachine
+    ClawMachine,
+    InstallLastTrigger,
+    InstallNextTrigger,
+    InstallLevelChainTriggers,
+    GetNextTrigger,
+    GetLastTrigger
 };

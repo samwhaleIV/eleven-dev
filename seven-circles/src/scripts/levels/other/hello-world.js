@@ -82,7 +82,7 @@ function Title() {
     }
 }
 
-function HelloWorld({world,transition}) {
+function HelloWorld({world}) {
     world.setMap("empty");
     const {dispatchRenderer} = world;
 
@@ -104,7 +104,7 @@ function HelloWorld({world,transition}) {
                 title.text = "";
                 await frameDelay(TEXT_DELAY);
             }
-            transition(TARGET_SCRIPT,null,FADE_OUT_TIME);
+            world.transition(TARGET_SCRIPT,null,FADE_OUT_TIME);
         })();
     };
 }

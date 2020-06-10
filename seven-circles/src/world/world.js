@@ -59,7 +59,7 @@ let maps = null;
 let playerImage = null;
 
 const BAD_SCRIPT = () => {
-    throw Error("Bad script! The script object is not a constructor (Check for script book warnings?)");
+    console.warn("Bad script! The script object is not a constructor (Check for script book warnings?)");
 };
 
 function World(callback) {
@@ -74,6 +74,8 @@ function World(callback) {
 
     this.tilesetColumns = 0;
     this.tileSize = BASE_TILE_SIZE;
+
+    this.scriptData = null;
 
     this.load = async () => {
 
@@ -114,7 +116,7 @@ function World(callback) {
 
     this.spriteFollower = new SpriteFollower(camera,null,false);
 
-    this.script = null;
+    this.script = null; this.scriptData = null;
 
     const dispatchRenderer = new DispatchRenderer();
     this.dispatchRenderer = dispatchRenderer;
@@ -236,7 +238,7 @@ World.prototype.disableSuperForeground = function() {
     this.grid.decacheTop();
 }
 
-World.prototype.runScript = async function(script,data,runStartScript=true) {
+World.prototype.setLevel = async function(script,data,runStartScript=true) {
     if(!data) data = new Object();
 
     if(this.script) {
@@ -254,6 +256,14 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
     if(script === null || typeof script === "string") {
         scriptName = script;
         script = ScriptBook.Get(script);
+    } else {
+        scriptName = script.name;
+    }
+    if(typeof script !== "function") {
+        BAD_SCRIPT();
+        const fallbackMap = Constants.ErrorLevel;
+        script = ScriptBook.Get(fallbackMap);
+        scriptName = fallbackMap;
     }
 
     const processPauseSequencing = CanvasManager.frame && !CanvasManager.paused;
@@ -282,22 +292,11 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
     data.nextMap = nextMap;
     data.fromNextMap = data.lastScript === data.nextMap;
     data.fromLastMap = data.lastScript === data.lastMap;
-
     data.world = this;
 
-    data.transition = (script,data,fadeTime) => {
-        FadeTransition(this,script,data,fadeTime);
-    };
-    data.transitionLast = (data,fadeTime) => {
-        FadeTransition(this,lastMap,data,fadeTime);
-    };
-    data.transitionNext = (data,fadeTime) => {
-        FadeTransition(this,nextMap,data,fadeTime);
-    };
-
-    if(typeof script !== "function") BAD_SCRIPT();
-
+    this.scriptData = data;
     script = new script(data); this.script = script;
+
     if(this.playerController) this.playerController.lock();
 
     if(this.pendingScriptData !== null) {
@@ -324,16 +323,27 @@ World.prototype.runScript = async function(script,data,runStartScript=true) {
 
     this.inputCopyState = null;
 
-    if(runStartScript) {
-        let startLocked = false;
-        if(script.start) {
-            startLocked = script.start();
-        }
-        if(!startLocked && this.playerController) {
-            this.playerController.unlock();
-        }
+    if(runStartScript) this.startScript();
+}
+World.prototype.startScript = function() {
+    const {script} = this;
+    let startLocked = false;
+    if(script.start) {
+        startLocked = script.start();
+    }
+    if(!startLocked && this.playerController) {
+        this.playerController.unlock();
     }
 }
+World.prototype.transitionNext = function(data,fadeTime) {
+    this.transition(this.scriptData.nextMap,data,fadeTime);
+}
+World.prototype.transitionLast = function(data,fadeTime) {
+    this.transition(this.scriptData.lastMap,data,fadeTime);
+}
+World.prototype.transition = function(script,data,fadeTime) {
+    FadeTransition(this,script,data,fadeTime);
+}   
 
 World.prototype.reset = function() {
     this.validateParseOnlyMethod();

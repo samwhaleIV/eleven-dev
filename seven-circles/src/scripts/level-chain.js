@@ -1,29 +1,40 @@
-const LevelOrder = [
-    null,
-    "TunnelsOfHell",
-    "ChocolateHell",
-    "HatHell", //HatStore
-    "RiverHell",
-    "VoidHell",
-    null,
-    "GraveHell",
-    "DeadHell",
-    null,
-    "PaintHell",
-    "SwitchHell",
-    null
+const LevelBlocks = [
+    /* The last instance of a level name is put into the lookup table */
+    [
+        /* HatHell is only referenced in this block, not indexed. It's relative to HatStore */
+        "HatHell",
+        "HatStore"
+    ],
+    [
+        "TunnelsOfHell",
+        "ChocolateHell",
+        "HatHell",
+        "RiverHell",
+        "VoidHell",
+        "PaintHell",
+        null,
+        "GraveHell",
+        "DeadHell",
+        null,
+        "SwitchHell"
+    ],
 ];
 
 const LevelChain = new function LevelChain() {
     const lookup = new Object();
 
-    LevelOrder.forEach((levelName,index) => {
-        lookup[levelName] = index;
-    });
+    LevelBlocks.forEach((block,blockIndex) => block.forEach((levelName,index) => {
+        if(levelName === null) return;
+        lookup[levelName] = [blockIndex,index];
+    }));
 
     const getRelative = (delta,name) => {
         if(typeof name !== "string") return null;
-        return LevelOrder[lookup[name]+delta] || null;
+
+        const result = lookup[name]; if(!result) return null;
+
+        const [blockIndex,index] = result;
+        return LevelBlocks[blockIndex][index+delta] || null;
     };
 
     const getNext = getRelative.bind(this,+1);

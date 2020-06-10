@@ -6,7 +6,7 @@ import {
     PanPreview,
     RiverRocks,
     ObjectiveText,
-    GetTransitionTrigger
+    InstallLevelChainTriggers
 } from "../helper.js";
 
 const NO_MILK_SKELE = 783;
@@ -17,8 +17,7 @@ const END_DOOR = [39,27];
 const DELIVERY_COUNT = 4;
 
 function ChocolateHell({
-    world,lastScript,inventory,
-    lastMap,nextMap,fromNextMap
+    world,inventory,fromNextMap
 }){
     world.setMap("chocolate-hell");
     world.camera.enablePadding();
@@ -26,15 +25,12 @@ function ChocolateHell({
 
     const player = world.addPlayer();
 
-    switch(lastScript) {
-        default:
-            player.setPosition(20,4);
-            player.direction = "down";
-            break;
-        case nextMap:
-            player.setPosition(45,29);
-            player.direction = "up";
-            break;
+    if(fromNextMap) {
+        player.setPosition(45,29);
+        player.direction = "up";
+    } else {
+        player.setPosition(20,4);
+        player.direction = "down";
     }
 
     const riverRocks = new RiverRocks(world,this);
@@ -133,10 +129,7 @@ function ChocolateHell({
         }
     };
 
-    world.setTriggers([
-        GetTransitionTrigger(world,1,lastMap),
-        GetTransitionTrigger(world,2,nextMap)
-    ]);
+    InstallLevelChainTriggers(world);
 
     this.keyDoorOpened = door => {
         if(objective.status === "find-stash" && door.color === "chocolate") {

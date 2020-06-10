@@ -1,4 +1,10 @@
-import {ClawMachine,SpriteDoor,PanPreview,ObjectiveText} from "../helper.js";
+import {
+    ClawMachine,
+    SpriteDoor,
+    PanPreview,
+    ObjectiveText,
+    InstallLevelChainTriggers
+} from "../helper.js";
 
 const CANVAS = [918,919];
 const BLUEPRINT = [982,983];
@@ -189,5 +195,7 @@ function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
             return false;
         }
     };
+
+    InstallLevelChainTriggers(world);
 }
 export default PaintHell;

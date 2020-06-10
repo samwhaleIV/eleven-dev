@@ -151,7 +151,7 @@ function Runtime() {
 
     this.LoadWorld = async () => {
         await setFrame(World,[async world=>{
-            await world.runScript(PRELOAD_SCRIPT);
+            await world.setLevel(PRELOAD_SCRIPT);
         }]);
 
         if(DEV) {

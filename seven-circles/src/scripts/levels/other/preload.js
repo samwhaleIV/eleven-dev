@@ -16,7 +16,7 @@ function Preload({world,lifetime}) {
         const {script,data} = lifetime.getStartScript();
         data.fromPreload = true;
 
-        await world.runScript(script,data);
+        await world.setLevel(script,data);
     };
 }
 export default Preload;

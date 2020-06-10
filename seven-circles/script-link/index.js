@@ -7,6 +7,8 @@ const MANIFEST_FILE = "manifest.js";
 const SCRIPT_ROOT = "../src/scripts/";
 const SCRIPT_FOLDER = "levels/";
 
+const EXCLUSION_FILES = {"helper":true};
+
 const INPUT_FOLDER = SCRIPT_ROOT + SCRIPT_FOLDER;
 const OUTPUT_PATH = SCRIPT_ROOT + MANIFEST_FILE;
 
@@ -78,8 +80,9 @@ const addScripts = (directory,subfolder="") => {
         const fileName = path.basename(filePath,extension);
 
         const scriptName = getScriptName(fileName);
+        if(EXCLUSION_FILES[scriptName.toLowerCase()]) return;
+
         writeImportLine(scriptName,SCRIPT_FOLDER + subfolder + fileName + extension);
-        
         scriptList.push(scriptName);
     });
 };

@@ -2,14 +2,15 @@ import {
     MessageChain,
     DramaZoom,
     AddNamedBackground,
-    GetTransitionTrigger,
-    SaveStone
+    SaveStone,
+    
 } from "../helper.js";
+import { GetLastTrigger, GetNextTrigger } from "../../helper/level-chain-triggers.js";
 
 const STORE_MAP = "HatStore";
 const TALKED_KEY = "talkedToDemonGuyInHallway";
 
-function HatHell({world,lastScript,saveState,transition,lastMap,nextMap}) {
+function HatHell({world,lastScript,saveState,lastMap,nextMap}) {
     world.setMap("hat-hell");
     world.camera.horizontalPadding = true;
     AddNamedBackground(world,"hell");
@@ -64,7 +65,7 @@ function HatHell({world,lastScript,saveState,transition,lastMap,nextMap}) {
     this.interact = data => {
         if(saveStone.tryInteract(data)) return;
         switch(data.value) {
-            case 16: transition(STORE_MAP); break;
+            case 16: world.transition(STORE_MAP); break;
             case 17: talkToDemonGuy(); break;
         }
     };
@@ -79,8 +80,8 @@ function HatHell({world,lastScript,saveState,transition,lastMap,nextMap}) {
     };
 
     world.setTriggers([
-        GetTransitionTrigger(world,1,lastMap,"left"),
-        GetTransitionTrigger(world,2,nextMap,"right"),
+        GetLastTrigger(world,1,"left"),
+        GetNextTrigger(world,2,"right"),
         [3,dontKnowWhyYouSayGoodbyeISayHello]
     ]);
 }

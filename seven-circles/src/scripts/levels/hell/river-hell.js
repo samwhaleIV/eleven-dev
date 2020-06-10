@@ -6,7 +6,7 @@ import {
     InstallBombAreas,
     MessageChain,
     ObjectiveText,
-    GetTransitionTrigger
+    InstallLevelChainTriggers
 } from "../helper.js";
 
 function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
@@ -77,9 +77,6 @@ function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
         return false;
     };
 
-    world.setTriggers([
-        GetTransitionTrigger(world,1,lastMap),
-        GetTransitionTrigger(world,2,nextMap)
-    ]);
+    InstallLevelChainTriggers(world);
 }
 export default RiverHell;
