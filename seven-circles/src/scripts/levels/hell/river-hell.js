@@ -9,7 +9,7 @@ import {
     InstallLevelChainTriggers
 } from "../helper.js";
 
-function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
+function RiverHell({world,inventory,fromNextMap}) {
     world.setMap("river-hell");
     world.camera.padding = true;
     AddWaterBackground(world);
@@ -17,7 +17,7 @@ function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
     const objective = new ObjectiveText(world);
 
     const player = world.addPlayer();
-    if(lastScript === nextMap) {
+    if(fromNextMap) {
         player.setPosition(6,80);
         player.direction = "up";
     } else {
@@ -51,27 +51,38 @@ function RiverHell({world,lastScript,inventory,lastMap,nextMap}) {
     };
     this.unload();
 
+    let gotLastBomb = false;
+
     this.interact = data => {
         if(doors.tryInteract(data)) return;
         if(pickupField.tryPickup(data)) return;
         if(riverRocks.tryPickup(data)) return;
 
         if(data.value === 16) {
-            world.say("Can you save my friends? They got trapped on the other side of the river!");
+            if(gotLastBomb) {
+                world.say("You saved my friends! You're a saint!");
+            } else {
+                world.say("Help! I lost my key in the mud! My friends are trapped on the other end of the river!");
+            }
         } else if(data.value === 17) {
+            if(gotLastBomb) {
+                world.say("Thanks again for the help!");
+                return;
+            }
             (async ()=>{
                 await MessageChain(world,[
                     "Freedom! Thank you kind soul!",
-                    "Take this, it might be useful to you if you know how to use it."
+                    "Take this as a token of our gratitude."
                 ],true);
                 if(objective.status === "freedom") objective.close();
                 inventory.give("bomb",1);
+                gotLastBomb = true;
             })();
         }
     };
 
     this.start = () => {
-        if(lastScript !== nextMap) {
+        if(!fromNextMap) {
             objective.set("Free the trapped skeledemons!","freedom");
         }
         return false;

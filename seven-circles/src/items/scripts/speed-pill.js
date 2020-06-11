@@ -2,15 +2,15 @@ import PillParticles from "./pill-particles.js";
 
 const {ResourceManager, AudioManager} = Eleven;
 
-const SPEED_MODIFIER = 1.75;
+const SPEED_MODIFIER = 1.5;
 
 const SPEED_PILL_FLAG = "speedPillActive";
 
-const GHOST_BUFFER_SIZE = 4;
+const GHOST_BUFFER_SIZE = 3;
 const SPRITE_SIZE = 16;
 
-const FIRST_ALPHA = 0.6;
-const LAST_ALPHA = 0.25;
+const FIRST_ALPHA = 0.2;
+const LAST_ALPHA = 0.05;
 
 function ghostAlphaLerp(t) {
     return (1 - t) * FIRST_ALPHA + t * LAST_ALPHA;
