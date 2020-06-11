@@ -5,7 +5,6 @@ import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
 import SpeedPill from "./scripts/speed-pill.js";
-import BlueprintFragment from "./scripts/blueprint-fragment.js";
 
 function ImpulsePassthrough() {
     this.retain = true;
@@ -22,28 +21,34 @@ const ItemUseTable = {
     "rock": [Pickup,28,"rock"],
     "sink": [Pickup,29,"sink"],
     "present": [Present,30],
-    "big-pill": [BigPill],
-    "small-pill": [SmallPill],
-    "blaster": [Blaster],
+    "big-pill": BigPill,
+    "small-pill": SmallPill,
+    "blaster": Blaster,
     "red-key": [Key,"red"],
     "blue-key": [Key,"blue"],
     "yellow-key": [Key,"yellow"],
     "green-key": [Key,"green"],
     "pink-key": [Key,"pink"],
     "chocolate-key": [Key,"chocolate"],
-    "bomb": [Bomb],
-    "speed-pill": [SpeedPill],
+    "bomb": Bomb,
+    "speed-pill": SpeedPill,
 
     /* Impulse passthroughs... */
-    "chocolate-milk": [ImpulsePassthrough],
-    "warp-crystal": [ImpulsePassthrough],
-    "power-cell": [ImpulsePassthrough],
-    "blueprint-fragment": [BlueprintFragment]
+    "chocolate-milk": ImpulsePassthrough,
+    "warp-crystal": ImpulsePassthrough,
+    "power-cell": ImpulsePassthrough,
+    "blueprint-fragment": ImpulsePassthrough
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{
-    const sourceObject = values.shift();
-    ItemUseTable[key] = new sourceObject(...values);
+    let useObject;
+    if(Array.isArray(values)) {
+        const sourceObject = values.shift();
+        useObject = new sourceObject(...values);
+    } else {
+        useObject = new values();
+    }
+    ItemUseTable[key] = useObject;
 });
 
 Object.freeze(ItemUseTable);

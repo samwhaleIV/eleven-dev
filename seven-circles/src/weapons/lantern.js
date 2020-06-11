@@ -1,7 +1,7 @@
 const NAME = "lantern";
 
 function Lantern() {
-    const image = Eleven.ResourceManager.getImage("player-lamp");
+    const image = Eleven.ResourceManager.getImage("weapon/lamp");
 
     this.name = NAME;
 

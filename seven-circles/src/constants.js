@@ -28,7 +28,7 @@ const Constants = Object.freeze({
     MinVolume: 0,
     MaxVolume: 1,
 
-    PlayerSprite: "player",
+    PlayerSprite: "player/default",
     GameStartScript: "HelloWorld",
     GamePreloadScript: "Preload",
     ErrorLevel: "ErrorPlace",

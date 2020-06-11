@@ -1,11 +1,6 @@
 const LevelBlocks = [
     /* The last instance of a level name is put into the lookup table */
     [
-        /* HatHell is only referenced in this block, not indexed. It's relative to HatStore */
-        "HatHell",
-        "HatStore"
-    ],
-    [
         "TunnelsOfHell",
         "ChocolateHell",
         "HatHell",

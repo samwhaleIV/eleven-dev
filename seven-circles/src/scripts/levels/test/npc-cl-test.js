@@ -12,7 +12,7 @@ function NPCCLTest({world}) {
     world.camera.scale = 7
     world.player.velocity = 15;
 
-    const npc = world.addNPC(13,7,ResourceManager.getImage("player"));
+    const npc = world.addNPC(13,7,ResourceManager.getImage("player/default"));
     npc.velocity = player.velocity;
     npc.x += Math.random() * 2;
     npc.y += Math.random() * 2;

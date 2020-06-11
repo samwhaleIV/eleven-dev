@@ -14,7 +14,7 @@ function KeyWeapon(type,script) {
     const textureY = colorTable[type] || 0;
     this.color = type;
 
-    const image = Eleven.ResourceManager.getImage("player-keys");
+    const image = Eleven.ResourceManager.getImage("weapon/keys");
 
     this.name = NAME;
 

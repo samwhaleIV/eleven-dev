@@ -23,7 +23,7 @@ const EMPTY_HOLE = 2;
 
 const DOOR_ID = 17;
 
-function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
+function PaintHell({world,inventory,fromNextMap}) {
 
     world.setMap("paint-hell");
     world.camera.padding = true;
@@ -32,11 +32,15 @@ function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
 
     const objective = new ObjectiveText(world);
 
+    this.unload = () => {
+        inventory.clear("blueprint-fragment");
+    };
+    this.unload();
+
     this.start = () => {
         if(!fromNextMap) {
             objective.set("Locate blueprint fragments!","find-blueprints");
         }
-        inventory.clear("blueprint-fragment");
         return false;
     };
 
@@ -157,13 +161,13 @@ function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
     let blueprintsGained = 0;
 
     this.interact = async data => {
-        if(spriteDoor.tryInteract(data)) {
-            world.message("The door won't open until the canvas is complete.");
-            return;
-        }
         if(isBaseStation(data.value) && inventory.has("blueprint-fragment")) {
             useFragment();
             inventory.take("blueprint-fragment");
+            return;
+        }
+        if(spriteDoor.tryInteract(data)) {
+            world.message("The door won't open until the canvas is complete.");
             return;
         }
         if(clawMachine.tryInteract(data)) return;
@@ -184,15 +188,6 @@ function PaintHell({world,inventory,fromNextMap,lastMap,nextMap}) {
             } else {
                 world.message("The hole only has air inside it. Maybe try another hole?");
             }
-        }
-    };
-
-    this.tryUseBlueprintFragment = interactionID => {
-        if(isBaseStation(interactionID)) {
-            useFragment();
-            return true;
-        } else {
-            return false;
         }
     };
 

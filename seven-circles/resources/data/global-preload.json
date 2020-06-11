@@ -1,10 +1,8 @@
 {
     "Image": [
         "items.png",
-        "player.png",
+        "player/default.png",
         "world-tileset.png"
     ],
-    "JSON": [
-        "maps.json"
-    ]
+    "JSON": ["maps.json"]
 }

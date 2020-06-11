@@ -1,13 +1,18 @@
 {
     "Image": [
-        "player-gun.png",
-        "enemy-gun.png",
-        "other.png",
-        "player-keys.png",
-        "player-rock.png",
-        "player-bomb.png",
         "anti-player.png",
-        "player-lamp.png"
+
+        "weapon/keys.png",
+        "weapon/rock.png",
+        "weapon/bomb.png",
+        "weapon/lamp.png",
+        "weapon/gun.png",
+        "weapon/enemy-gun.png",
+
+        "player/alien.png",
+        "player/halo.png",
+        "player/helmet.png",
+        "player/red-hat.png"
     ],
     "Audio": [
         "grow.mp3",

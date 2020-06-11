@@ -2,7 +2,7 @@ const NAME = "rock-pickup";
 
 function PickupRock(script) {
 
-    const image = Eleven.ResourceManager.getImage("player-rock");
+    const image = Eleven.ResourceManager.getImage("weapon/rock");
 
     this.name = NAME;
 

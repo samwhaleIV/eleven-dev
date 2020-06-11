@@ -3,14 +3,130 @@ import {
     DramaZoom,
     AddNamedBackground,
     SaveStone,
-    
+    GetLastTrigger,
+    GetNextTrigger
 } from "../helper.js";
-import { GetLastTrigger, GetNextTrigger } from "../../helper/level-chain-triggers.js";
+import Constants from "../../../constants.js";
 
-const STORE_MAP = "HatStore";
 const TALKED_KEY = "talkedToDemonGuyInHallway";
 
-function HatHell({world,lastScript,saveState,lastMap,nextMap}) {
+const EMPTY_HAT_STAND = 31;
+const HELMET_STAND = 32;
+const ALIEN_STAND = 33;
+const RED_HAT_STAND = 95;
+const HALO_STAND = 96;
+const NO_HAT = "none";
+
+function HatStore({world,saveState}) {
+    world.setMap("hat-store");
+    AddNamedBackground(world,"hell");
+
+    const getStandSaveKey = ID => `hat-store-stand-${ID}`;
+
+    const hatStands = [[1,5],[1,3],[2,1],[5,1],[6,3],[6,5]];
+    const standKeys = {};
+
+    const hatLookup = {
+        [EMPTY_HAT_STAND]: NO_HAT,
+        [HELMET_STAND]: "helmet",
+        [RED_HAT_STAND]: "red-hat",
+        [HALO_STAND]: "halo",
+        [ALIEN_STAND]: "alien"
+    };
+    const inverseHatLookup = new Object();
+    for(const [key,value] of Object.entries(hatLookup)) {
+        inverseHatLookup[value] = key;
+    }
+    inverseHatLookup[NO_HAT] = EMPTY_HAT_STAND;
+
+    const hashXY = (x,y) => `${x},${y}`;
+
+    for(let i = 0;i<hatStands.length;i++) {
+        const [x,y] = hatStands[i];
+        const saveKey = getStandSaveKey(i);
+        const storedHat = saveState.get(saveKey);
+        standKeys[hashXY(x,y)] = saveKey;
+        if(!storedHat) continue;
+        world.setForegroundTile(x,y,inverseHatLookup[storedHat]);
+    }
+
+    const player = world.addPlayer(3.5,8);
+    player.direction = "up";
+
+    const getCurrentHat = () => {
+        const currentHat = saveState.get("player-hat");
+        if(!currentHat) return NO_HAT;
+        return currentHat;
+    };
+
+    const setHat = name => {
+        player.texture = Eleven.ResourceManager.getImage(
+            name ? `player/${name}` : Constants.PlayerSprite
+        );
+        saveState.set("player-hat",name);
+    };
+
+    const badSwap = () => {
+        world.message("You can't put this kind of hat here.");
+    };
+    const cantSwap = () => {
+        world.message("There's no hat here.");
+    };
+
+    const swapHat = (x,y) => {
+        const value = world.getForegroundTile(x,y);
+        let newValue = value;
+
+        const currentHat = getCurrentHat();
+        const emptyStand = value === EMPTY_HAT_STAND;
+        const hasHat = currentHat !== NO_HAT;
+
+        if(emptyStand) {
+            if(hasHat) {
+                setHat(null);
+                newValue = inverseHatLookup[currentHat];
+                if(!newValue) {
+                    badSwap(); return;
+                }
+            } else {
+                cantSwap(); return;
+            }
+        } else {
+            if(hasHat) {
+                setHat(hatLookup[value]);
+                newValue = inverseHatLookup[currentHat];
+                if(!newValue) {
+                    badSwap(); return;
+                }
+            } else {
+                setHat(hatLookup[value]);
+                newValue = EMPTY_HAT_STAND;
+            }
+        }
+
+        const saveValue = hatLookup[newValue];
+        saveState.set(standKeys[hashXY(x,y)],saveValue);
+        world.setForegroundTile(x,y,newValue);
+    };
+
+    this.interact = ({value,x,y}) => {
+        if(value === 16) {
+            world.transition(HatHell,{fromStore:true});
+        } else if(value === 17) {
+            swapHat(x,y);
+        } else if(value === 18) {
+            world.message("Christmas hats won't fit you.");
+        }
+    };
+}
+
+function HatHell(data) {
+    if(data.hatStore) {
+        HatStore.call(this,data); return;
+    }
+
+    const {world,lastScript,saveState,lastMap,nextMap,fromStore} = data;
+
     world.setMap("hat-hell");
     world.camera.horizontalPadding = true;
     AddNamedBackground(world,"hell");
@@ -18,7 +134,7 @@ function HatHell({world,lastScript,saveState,lastMap,nextMap}) {
     if(lastScript === nextMap) {
         const player = world.addPlayer(18,5);
         player.direction = "left";
-    } else if(lastScript === STORE_MAP) {
+    } else if(fromStore) {
         const player = world.addPlayer(10,3);
         player.direction = "down";
     } else {
@@ -30,7 +146,10 @@ function HatHell({world,lastScript,saveState,lastMap,nextMap}) {
 
     const talkToDemonGuy = async () => {
         if(saveState.get(TALKED_KEY)) {
-            await world.say("Arise! Go forth and conquer!");
+            await world.say(saveState.get("player-hat")?
+                "Hey! Nice hat. It suits you.":
+                "Arise! Go forth and conquer!"
+            );
         } else {
             world.playerController.lock();
 
@@ -65,7 +184,7 @@ function HatHell({world,lastScript,saveState,lastMap,nextMap}) {
     this.interact = data => {
         if(saveStone.tryInteract(data)) return;
         switch(data.value) {
-            case 16: world.transition(STORE_MAP); break;
+            case 16: world.transition(HatHell,{hatStore:true}); break;
             case 17: talkToDemonGuy(); break;
         }
     };
