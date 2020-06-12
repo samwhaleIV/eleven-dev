@@ -6,8 +6,9 @@ const LevelBlocks = [
         "HatHell",
         "RiverHell",
         "VoidHell",
+        "MazeHell",
         "PaintHell",
-        null,
+        null, //a saveable level
         "GraveHell",
         "DeadHell",
         null,

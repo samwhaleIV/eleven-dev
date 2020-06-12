@@ -21,6 +21,10 @@ function MazeHell({world,fromNextMap}) {
     const teleporter = new Teleporter(world,[[56,66,47,68]]);
 
     this.interact = data => {
+        if(data.value === 16) {
+            world.say("I've been trying to get through this maze for longer than I can remember. I even left arrows to help me find my place. I've had no luck.");
+            return;
+        }
         if(teleporter.tryInteract(data)) {
             if(objective.status === "escape") {
                 objective.close();

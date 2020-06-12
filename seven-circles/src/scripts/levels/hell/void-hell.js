@@ -113,6 +113,10 @@ function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
 
     const switchDoors = GetSwitchDoors(world,[[42,5,"red",false]],[[40,4,"red"]]);
     this.interact = data => {
+        if(data.value === 16) {
+            world.say(Math.random() > 0.5 ? "What are you looking at, punk?" : "Take a picture, it'll last longer.");
+            return;
+        }
         if(saveStone.tryInteract(data)) return;
         if(switchDoors.tryInteract(data)) return;
     };

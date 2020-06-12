@@ -2,7 +2,7 @@ import PillParticles from "./pill-particles.js";
 
 const {ResourceManager, AudioManager} = Eleven;
 
-const SPEED_MODIFIER = 1.5;
+const SPEED_MODIFIER = 4;
 
 const SPEED_PILL_FLAG = "speedPillActive";
 

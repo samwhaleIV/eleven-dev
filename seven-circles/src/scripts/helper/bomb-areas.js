@@ -125,7 +125,9 @@ function InstallBombAreas(world,script) {
             const [x,y,foregroundTile] = destructionTiles[i];
             world.setForegroundTile(x,y,foregroundTile);
             world.setCollisionTile(x,y,0);
+            world.setInteractionTile(x,y,0);
         }
+        world.pushInteractionChanges();
         world.pushCollisionChanges();
     };
 
@@ -134,6 +136,9 @@ function InstallBombAreas(world,script) {
 
     const badBomb = () => {
         world.message("This isn't a good place for a bomb!");
+    };
+    const placeNearNotOn = () => {
+        world.message("Try placing the bomb next to the door instead of on it!");
     };
 
     script.placeBomb = () => {
@@ -154,6 +159,9 @@ function InstallBombAreas(world,script) {
                     addBomb(world,x,y,callback);
                     return true;
                 }
+            } else if(value === BOMB_DESTRUCTION_ID) {
+                placeNearNotOn();
+                return true;
             }
             return false;
         }});

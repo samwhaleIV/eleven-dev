@@ -116,6 +116,8 @@ function HatStore({world,saveState}) {
             swapHat(x,y);
         } else if(value === 18) {
             world.message("Christmas hats won't fit you.");
+        } else if(value === 19) {
+            world.say("Hey! Feel free to try on any hat you want!");
         }
     };
 }
