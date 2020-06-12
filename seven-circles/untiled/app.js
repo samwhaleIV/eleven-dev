@@ -149,6 +149,7 @@ function App() {
             Digit6: "toggleLighting"
         },
         noRepeat: {
+            KeyF: "fillSelection",
             Digit1: "selectBackground",
             Digit2: "selectForeground",
             Digit3: "selectSuperForeground",
@@ -221,6 +222,58 @@ function App() {
                 world.set(tileX,tileY,tileValue,activeLayer);
             }
         }
+    };
+
+    const wallTypes = {7:1,8:1};
+    const wallCollisionFill = () => {
+        const {width,height} = world.grid;
+        for(let x = 0;x<width;x++) {
+            for(let y = 0;y<height;y++) {
+                const value = world.get(x,y,0)
+                if(value in wallTypes) {
+                    const collisionValue = wallTypes[value];
+                    historyBuffer.push({
+                        x,y,layer:3,value:collisionValue,oldValue:world.get(x,y,3)
+                    });
+                    world.set(x,y,collisionValue,3);
+                }
+            }
+        }
+        const buffer = historyBuffer.splice(0);
+        if(redoStack.length) redoStack.splice(0);
+        eventStack.push(buffer);
+    };
+
+    const getFillValue = () => {
+        if(erasing) {
+            return 0;
+        } else if(randomModeOn) {
+            return getRandomBrushIndex();
+        } else {
+            return brush.value[0][0];
+        }
+    };
+
+    let targetColor = null;
+    const floodFill = (x,y) => {
+        const color = world.get(x,y,activeLayer);
+        const replacementColor = getFillValue();
+
+        if(targetColor === replacementColor || color !== targetColor) return;
+        world.set(x,y,replacementColor,activeLayer);
+
+        floodFill(x,y+1); floodFill(x,y-1);
+        floodFill(x+1,y); floodFill(x-1,y);
+    };
+
+    const fill = () => {
+        const {x,y} = selection;
+        targetColor = world.get(x,y,activeLayer);
+        floodFill(x,y);
+        targetColor = null;
+        const buffer = historyBuffer.splice(0);
+        if(redoStack.length) redoStack.splice(0);
+        eventStack.push(buffer);
     };
 
     const paint = () => {
@@ -764,6 +817,14 @@ function App() {
                 setMap(testName);
             } else {
                 setMap(mapName);
+            }
+        },
+        fillSelection: () => {
+            const visibleLayers = world.getVisibleLayers();
+            if(activeLayer === 3 && visibleLayers[3] && visibleLayers[0]) {
+                wallCollisionFill();
+            } else {
+                fill();
             }
         },
 

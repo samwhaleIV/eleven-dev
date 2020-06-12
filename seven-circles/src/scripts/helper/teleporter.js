@@ -50,9 +50,9 @@ function Teleporter(world,beacons) {
 
     const teleportPlayer = async (x,y) => {
         const startWidth = player.width;
-        await sizeLoop(0);
-
         spriteFollower.disable();
+
+        await sizeLoop(0);
 
         player.x = x - (player.hitBox.width / 2) - 0.5;
         player.y = y - player.yOffset;

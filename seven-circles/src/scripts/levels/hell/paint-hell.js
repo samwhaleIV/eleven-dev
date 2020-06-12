@@ -27,8 +27,13 @@ function PaintHell({world,inventory,fromNextMap}) {
 
     world.setMap("paint-hell");
     world.camera.padding = true;
-    const player = world.addPlayer(22,2);
-    player.direction = "down";
+    if(fromNextMap) {
+        const player = world.addPlayer(7,33);
+        player.direction = "up";
+    } else {
+        const player = world.addPlayer(22,2);
+        player.direction = "down";
+    }
 
     const objective = new ObjectiveText(world);
 

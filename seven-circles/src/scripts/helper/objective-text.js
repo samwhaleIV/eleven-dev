@@ -11,6 +11,8 @@ const TRANSITION_TIME = 500;
 const CENTER_TRANSITION_TIME = 1000;
 const OFFSCREEN_DISTANCE_FACTOR = 12;
 const CENTERED_DISTANCE_FACTOR = 2;
+const LETTER_SPACING = 0.5;
+const WORD_SPACING = 2;
 
 const {TextSprite} = Eleven;
 
@@ -19,6 +21,8 @@ const labelBase = {
     backgroundColor: TEXT_BACKGROUND,
     backgroundPadding: TEXT_PADDING,
     scale: TEXT_SCALE,
+    wordSpacing: WORD_SPACING,
+    letterSpacing: LETTER_SPACING,
     absolutePositioning: true
 };
 
