@@ -5,9 +5,14 @@ const INTERACTION_START = GetInteractionStart();
 const TRAVEL_TIME = 300;
 const SIZE_DURATION = 100;
 
+const NO_PLAYER = () => {
+    throw Error("No player or player controller! Initialize the teleporters after adding the player to the level!");
+};
+
 function Teleporter(world,beacons) {
 
     const {playerController,camera,spriteFollower,player} = world;
+    if(!playerController || !player) NO_PLAYER();
 
     const links = new Object();
 

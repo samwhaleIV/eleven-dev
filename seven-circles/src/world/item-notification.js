@@ -30,6 +30,9 @@ function ItemNotification(world,itemName,amount) {
 
     const textSprite = world.addTextSprite({
         text: `+${world.notificationState.count} ${itemName}`,
+        letterSpacing: 1 / 3,
+        wordSpacing: 1,
+        scale: 3,
         color: "white",
         target: world.player,
         y: LABEL_OFFSET

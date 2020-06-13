@@ -48,6 +48,7 @@ function RiverHell({world,inventory,fromNextMap}) {
         inventory.clear("bomb");
         inventory.clear("red-key");
         inventory.clear("yellow-key");
+        inventory.clear("speed-pill");
     };
     this.unload();
 
