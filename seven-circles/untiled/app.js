@@ -17,6 +17,27 @@ const { CanvasManager, ResourceManager } = Eleven;
 
 function App() {
 
+    const wallCollisionTypes = {7:1,8:1};
+
+    const fillSimilars = (sets=>{
+        const table = new Object();
+        for(const set of sets) {
+            const group = new Object();
+            for(const value of set) {
+                table[value] = group;
+                group[value] = true;
+            }
+        }
+        return table;
+    })([
+        [71,72,135,136,832,833], //Hell floor
+        [7,8] //Hell wall
+    ]);
+    const isFillSimilar = (a,b) => {
+        if(a === b) return true;
+        return a in fillSimilars && b in fillSimilars;
+    };
+
     const tilesets = {
         world: null,
         light: null,
@@ -224,14 +245,13 @@ function App() {
         }
     };
 
-    const wallTypes = {7:1,8:1};
     const wallCollisionFill = () => {
         const {width,height} = world.grid;
         for(let x = 0;x<width;x++) {
             for(let y = 0;y<height;y++) {
                 const value = world.get(x,y,0)
-                if(value in wallTypes) {
-                    const collisionValue = wallTypes[value];
+                if(value in wallCollisionTypes) {
+                    const collisionValue = wallCollisionTypes[value];
                     historyBuffer.push({
                         x,y,layer:3,value:collisionValue,oldValue:world.get(x,y,3)
                     });
@@ -265,7 +285,7 @@ function App() {
         const color = world.get(x,y,activeLayer);
         let replacementColor = getFillValue();
 
-        if(targetColor === replacementColor || color !== targetColor) return;
+        if(isFillSimilar(replacementColor,targetColor) || !isFillSimilar(color,targetColor)) return;
 
         historyBuffer.push({
             x,y,layer:activeLayer,
@@ -279,13 +299,14 @@ function App() {
             const [x,y] = queue.shift();
             for(const [xOffset,yOffset] of cardinalMatrix) {
                 const nodeX = x + xOffset, nodeY = y + yOffset;
-                if(world.get(nodeX,nodeY,activeLayer) === targetColor) {
+                const nodeColor = world.get(nodeX,nodeY,activeLayer);
+                if(isFillSimilar(nodeColor,targetColor)) {
                     queue.push([nodeX,nodeY]);
 
                     replacementColor = getFillValue();
                     historyBuffer.push({
                         x:nodeX,y:nodeY,layer:activeLayer,
-                        value:replacementColor,oldValue:targetColor
+                        value:replacementColor,oldValue:nodeColor
                     });
                     world.set(nodeX,nodeY,replacementColor,activeLayer);
                 }
