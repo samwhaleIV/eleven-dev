@@ -133,7 +133,8 @@ function App() {
             KeyS: "panDown",
             KeyD: "panRight",
             KeyZ: "zoomIn",
-            KeyX: "zoomOut"
+            KeyX: "zoomOut",
+            KeyF: "fillSelection",
         },
         ctrl: {
             KeyZ: "undo",
@@ -149,7 +150,6 @@ function App() {
             Digit6: "toggleLighting"
         },
         noRepeat: {
-            KeyF: "fillSelection",
             Digit1: "selectBackground",
             Digit2: "selectForeground",
             Digit3: "selectSuperForeground",
@@ -254,19 +254,47 @@ function App() {
         }
     };
 
+    const cardinalMatrix = [[1,0],[-1,0],[0,1],[0,-1]];
+
     let targetColor = null;
     const floodFill = (x,y) => {
+        /* Reworked from https://en.wikipedia.org/wiki/Flood_fill */
+
+        if(x < 0 || x >= world.grid.width || y < 0 || y >= world.grid.height) return;
+
         const color = world.get(x,y,activeLayer);
-        const replacementColor = getFillValue();
+        let replacementColor = getFillValue();
 
         if(targetColor === replacementColor || color !== targetColor) return;
-        world.set(x,y,replacementColor,activeLayer);
 
-        floodFill(x,y+1); floodFill(x,y-1);
-        floodFill(x+1,y); floodFill(x-1,y);
+        historyBuffer.push({
+            x,y,layer:activeLayer,
+            value:replacementColor,oldValue:color
+        });
+        world.set(x,y,replacementColor,activeLayer);
+    
+        const queue = new Array();
+        queue.push([x,y]);
+        while(queue.length) {
+            const [x,y] = queue.shift();
+            for(const [xOffset,yOffset] of cardinalMatrix) {
+                const nodeX = x + xOffset, nodeY = y + yOffset;
+                if(world.get(nodeX,nodeY,activeLayer) === targetColor) {
+                    queue.push([nodeX,nodeY]);
+
+                    replacementColor = getFillValue();
+                    historyBuffer.push({
+                        x:nodeX,y:nodeY,layer:activeLayer,
+                        value:replacementColor,oldValue:targetColor
+                    });
+                    world.set(nodeX,nodeY,replacementColor,activeLayer);
+                }
+            }
+        }
     };
 
     const fill = () => {
+        if(targetColor !== null) return;
         const {x,y} = selection;
         targetColor = world.get(x,y,activeLayer);
         floodFill(x,y);
