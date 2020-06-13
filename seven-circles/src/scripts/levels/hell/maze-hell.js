@@ -21,8 +21,15 @@ function MazeHell({world,fromNextMap}) {
     const teleporter = new Teleporter(world,[[56,66,47,68]]);
 
     this.interact = data => {
-        if(data.value === 16) {
-            world.say("I've been trying to get through this maze for longer than I can remember. I even left arrows to help me find my place. I've had no luck.");
+        const {value} = data;
+        if(value === 16) {
+            world.say("I've been trying to get through this maze for longer than I can remember. I left arrows to help guide me, but they haven't helped.");
+            return;
+        } else if(value === 17) {
+            world.message("It's a pile of arrows.");
+            return;
+        } else if(value === 18) {
+            world.say("Can't a skeledemon drink chocolate milk in peace? And.. Piece.");
             return;
         }
         if(teleporter.tryInteract(data)) {
