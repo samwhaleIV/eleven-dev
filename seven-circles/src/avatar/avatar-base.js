@@ -1,7 +1,7 @@
 const {AnimatedSprite, MultiLayer, CollisionTypes} = Eleven;
 
-function GetAvatarBase(world,x,y,image) {
-    const sprite = new AnimatedSprite(image,x,y);
+function GetAvatarBase(world,x,y,image,...parameters) {
+    const sprite = new AnimatedSprite(image,x,y,...parameters);
 
     sprite.world = world;
     sprite.collisionType = CollisionTypes.Avatar;
@@ -9,7 +9,13 @@ function GetAvatarBase(world,x,y,image) {
 
     const updateLayer = new MultiLayer();
     const renderLayer = new MultiLayer();
-    renderLayer.add(sprite.render);
+    const renderBase = sprite.render;
+    const renderBaseID = renderLayer.add(renderBase);
+
+    const shiftRenderBase = () => {
+        renderLayer.remove(renderBaseID);
+        return renderBase;
+    };
 
     const boundAddition = function(multiLayer,layer,priority) {
         return multiLayer.add(layer.bind(this),priority);
@@ -23,6 +29,8 @@ function GetAvatarBase(world,x,y,image) {
 
     sprite.render = (...data) => renderLayer.forEach(layer => layer(...data));
     sprite.update = (...data) => updateLayer.forEach(layer => layer(...data));
+
+    sprite.shiftRenderBase = shiftRenderBase;
 
     return sprite;
 }

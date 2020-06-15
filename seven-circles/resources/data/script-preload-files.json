@@ -12,7 +12,9 @@
         "player/alien.png",
         "player/halo.png",
         "player/helmet.png",
-        "player/red-hat.png"
+        "player/red-hat.png",
+
+        "the-watcher.png"
     ],
     "Audio": [
         "grow.mp3",

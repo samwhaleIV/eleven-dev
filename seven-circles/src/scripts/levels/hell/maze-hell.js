@@ -29,7 +29,7 @@ function MazeHell({world,fromNextMap}) {
             world.message("It's a pile of arrows.");
             return;
         } else if(value === 18) {
-            world.say("Can't a skeledemon drink chocolate milk in peace? And.. Piece.");
+            world.say("Can't a skeledemon drink chocolate milk in peace?");
             return;
         }
         if(teleporter.tryInteract(data)) {

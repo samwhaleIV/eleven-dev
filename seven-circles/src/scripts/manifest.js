@@ -9,6 +9,7 @@ import GraveHell from "./levels/hell/grave-hell.js";
 import HatHell from "./levels/hell/hat-hell.js";
 import MazeHell from "./levels/hell/maze-hell.js";
 import PaintHell from "./levels/hell/paint-hell.js";
+import PondHell from "./levels/hell/pond-hell.js";
 import RiverHell from "./levels/hell/river-hell.js";
 import SwitchHell from "./levels/hell/switch-hell.js";
 import TunnelsOfHell from "./levels/hell/tunnels-of-hell.js";
@@ -21,7 +22,7 @@ import Preload from "./levels/other/preload.js";
 import BombTest from "./levels/test/bomb-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
 
-const Scripts = ScriptBook.Import(ChocolateHell,DeadHell,GraveHell,HatHell,MazeHell,PaintHell,RiverHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,Preload,BombTest,NpcClTest);
+const Scripts = ScriptBook.Import(ChocolateHell,DeadHell,GraveHell,HatHell,MazeHell,PaintHell,PondHell,RiverHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,Preload,BombTest,NpcClTest);
 
 export default Scripts;
 

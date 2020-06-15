@@ -8,7 +8,7 @@ const NPC_VELOCITY = Constants.NPCSpeed;
 
 const {CollisionTypes, InstallHitBox} = Eleven;
 
-function Avatar(isPlayer,...parameters) {
+function Avatar(isPlayer) {
     WeaponHandler.call(this);
 
     this.collisionType = CollisionTypes.Avatar;
