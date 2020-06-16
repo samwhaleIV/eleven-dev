@@ -35,7 +35,7 @@ function PondHell({world,fromNextMap}) {
         [31,4.75,0,1/2,false],
         [37,4.75,2,0,true],
         [32.5,11.5,1,3/4,true],
-        [44,14,3,3,false],
+        [43,13.5,3,3,false],
         [47,5.75,2,1/2,true]
     ].forEach(data=>addWatcher(...data));
 
