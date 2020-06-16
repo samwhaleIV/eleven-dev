@@ -1,53 +1,110 @@
 const NAME = "watcher-beam";
 
+const beamColor = "#FF0000";
+const beamDistance = 3.95;
+
+const beamHorizontalOffset = 12 / 16;
+const beamVerticalOffset = 5 / 16;
+
+function BeamSprite(owner,world) {
+
+    this.x = 0; this.y = 0;
+    this.width = 0; this.height = 0;
+    this.collides = true;
+    this.isVertical = false;
+    this.collisionType = Eleven.CollisionTypes.LivingTrigger;
+
+    const bindUp = () => {
+        this.y = owner.y - beamDistance;
+        this.x = owner.x + beamHorizontalOffset;
+        this.width = 8 / 16;
+        this.height = beamDistance;
+        this.isVertical = true;
+    };
+    const bindDown = () => {
+        this.y = owner.y + owner.height;
+        this.x = owner.x + beamHorizontalOffset;
+        this.width = 8 / 16;
+        this.height = beamDistance;
+        this.isVertical = true;
+    };
+    const bindRight = () => {
+        this.x = owner.x + owner.width;
+        this.y = owner.y + beamVerticalOffset;
+        this.width = beamDistance;
+        this.height = 3 / 16;
+        this.isVertical = false;
+    };
+    const bindLeft = () => {
+        this.x = owner.x - beamDistance;
+        this.y = owner.y + beamVerticalOffset;
+        this.width = beamDistance;
+        this.height = 3 / 16;
+        this.isVertical = false;
+    };
+
+    const bindMatrix = [bindUp,bindRight,bindDown,bindLeft];
+    this.update = () => bindMatrix[owner.direction]();
+    
+    const sendCollision = () => {
+        if(world.script.watcherBeamCollided) {
+            world.script.watcherBeamCollided();
+        }
+    };
+
+    this.checkCollision = () => {
+        let collisionResult = world.collisionLayer.collides(this);
+        if(!collisionResult) return;
+        if(collisionResult.isHitBox) {
+            collisionResult = collisionResult.target;
+        }
+        if(collisionResult.isPlayer) sendCollision();
+    };
+    this.trigger = data => {
+        console.log(data);
+        if(data.isPlayer) sendCollision();
+    };
+
+    this.render = (context,x,y,width,height) => {
+        context.fillStyle = beamColor;
+        if(this.isVertical) {
+            width /= 2;
+            context.beginPath();
+            const pixelSize = (width / this.width * 2) / 16;
+            const beamWidth = 3 * pixelSize;
+
+            context.rect(x,y,beamWidth,height);
+    
+            context.rect(x + pixelSize * 5,y,beamWidth,height);
+            context.fill();
+        } else {
+            context.fillRect(Math.ceil(x),Math.ceil(y),Math.floor(width),Math.floor(height));
+        }
+    };
+}
+
 function WatcherBeam() {
     const spriteSize = 32;
-    const beamColor = "#FF0000";
+
     const image = Eleven.ResourceManager.getImage("weapon/watcher-beam");
     this.name = NAME;
 
-    const beamDistance = 1.975;
-    const smallDimension = 3;
+    let beamSpriteID = null;
+    const beamSprite = new BeamSprite(this.owner,this.world);
 
-    const beamHorizontalOffset1 = 12;
-    const beamHorizontalOffset2 = 17;
+    const {spriteLayer} = this.world;
+    this.unload = () => spriteLayer.remove(beamSpriteID);
+    this.load = () => spriteLayer.add(beamSprite,this.world.player.zIndex+1);
 
-    const beamVerticalOffset = 5;
-
-    const LR_Beam = (context,x,y,pixelSize,width,_) => {
-        const beamWidth = width * beamDistance, beamHeight = pixelSize * smallDimension;
-        context.fillRect(x+width,y+pixelSize*beamVerticalOffset,beamWidth,beamHeight);
+    this.checkCollision = async () => {
+        await frameDelay();
+        beamSprite.checkCollision();
     };
-    const RL_Beam = (context,x,y,pixelSize,width,_) => {
-        const beamWidth = width * beamDistance, beamHeight = pixelSize * smallDimension;
-        context.fillRect(x-beamWidth,y+pixelSize*beamVerticalOffset,beamWidth,beamHeight);
-    };
-    const UD_Beam = (context,x,y,pixelSize,_,height) => {
-        const beamHeight = height * beamDistance, beamWidth = pixelSize * smallDimension;
-        context.beginPath();
-        const beamY = y+height
-        context.rect(x+pixelSize*beamHorizontalOffset1,beamY,beamWidth,beamHeight);
-        context.rect(x+pixelSize*beamHorizontalOffset2,beamY,beamWidth,beamHeight);
-        context.fill();
-    };
-    const DU_Beam = (context,x,y,pixelSize,_,height) => {
-        const beamHeight = height * beamDistance, beamWidth = pixelSize * smallDimension;
-        context.beginPath();
-        const beamY = y-beamHeight;
-        context.rect(x+pixelSize*beamHorizontalOffset1,beamY,beamWidth,beamHeight);
-        context.rect(x+pixelSize*beamHorizontalOffset2,beamY,beamWidth,beamHeight);
-        context.fill();
-    };
-    const beamTable = [DU_Beam,LR_Beam,UD_Beam,RL_Beam];
 
     this.render = (context,x,y,width,height) => {
         const {directionMatrix, direction} = this.owner;
         const textureX = directionMatrix[direction];
         context.drawImage(image,textureX,0,spriteSize,spriteSize,x,y,width,height);
-
-        const pixelSize = 0.03125 * width;
-        context.fillStyle = beamColor;
-        beamTable[direction](context,x,y,pixelSize,width,height);
     };
 }
 

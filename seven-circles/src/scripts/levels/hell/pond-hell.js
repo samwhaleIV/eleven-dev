@@ -3,11 +3,10 @@ import WatcherBeam from "../../../weapons/watcher-beam.js";
 
 const {UVTCReflection,ResourceManager} = Eleven;
 
-function PondHell(data) {
-    const {world,fromNextMap} = data;
-    console.log("Pond hell load data:",data);
+function PondHell({world,fromNextMap}) {
+
     world.setMap("pond-hell");
-    const verticalStart = 0.91;
+    const verticalStart = 0.7;
     const player = fromNextMap ? world.addPlayer(48,0) : world.addPlayer(5,0);
     player.y = verticalStart;
     player.direction = "down";
@@ -18,10 +17,10 @@ function PondHell(data) {
     const addWatcher = (x,y,direction=0,tickOffset=0,rotatePolarity=true,tickMod=12) => {
         tickOffset *= tickMod;
         const watcher = world.addNPC(x,y,watcherImage,2,2);
+        watcher.collisionType = 0;
         watcher.zIndex = player.zIndex + 1;
         watcher.collides = false;
         watchers.push(watcher);
-        watcher.renderOffscreen = true;
         watcher.setWeapon(WatcherBeam);
         Object.assign(watcher,{direction,tickMod,rotatePolarity,tickOffset});
         return watcher;
@@ -45,6 +44,15 @@ function PondHell(data) {
     let tickNumber = 0;
     const tickRate = 120;
 
+    this.watcherBeamCollided = () => {
+        runNPCCycle = false;
+        world.playerController.lock();
+        (async ()=>{
+            await world.message("You've been spotted!");
+            world.transition("PondHell");
+        })();
+    };
+
     const NPCCycle = async () => {
         while(runNPCCycle) {
             for(const watcher of watchers) {
@@ -57,6 +65,7 @@ function PondHell(data) {
                     if(--direction < 0) direction = 3;
                 }
                 watcher.direction = direction;
+                watcher.getWeapon().checkCollision();
             }
             tickNumber++;
             await delay(tickRate);
@@ -71,7 +80,8 @@ function PondHell(data) {
 
     const ladderSpeed = 2, waterSpeed = 1.3;
     player.velocity = waterSpeed;
-    player.hitBox.height /= 2;
+    player.hitBox.height = 0.75;
+    player.yOffset = 0.125;
 
     const playerBuffer = new OffscreenCanvas(0,0);
     const bufferContext = playerBuffer.getContext("2d",{alpha:true});
@@ -80,7 +90,8 @@ function PondHell(data) {
 
     const fullDeepDifference = -0.25;
     const sinkDistance = 0.75;
-    const sinkLadders = [[5,0.5],[48,0.5]];
+    const sinkStart = 1 / 12;
+    const sinkLadders = [[5,sinkStart],[48,sinkStart]];
 
     const {grid,dispatchRenderer} = world;
     const worldHalfHeight = grid.width / 2;
