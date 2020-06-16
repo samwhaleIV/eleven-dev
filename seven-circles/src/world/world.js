@@ -61,6 +61,12 @@ let playerImage = null;
 const BAD_SCRIPT = () => {
     console.warn("Bad script! The script object is not a constructor (Check for script book warnings?)");
 };
+const LEVEL_CHANGE_IN_PROGRESS = () => {
+    throw Error("A level is already being set. You cannot set levels in a nested pattern!");
+};
+const ILLEGAL_SCRIPT_METHOD = () => {
+    throw Error("This method is only for use during the initial script sequencing!");
+};
 
 function World(callback) {
 
@@ -239,12 +245,14 @@ World.prototype.disableSuperForeground = function() {
 }
 
 World.prototype.setLevel = async function(script,data,runStartScript=true) {
+    if(this.pendingScriptData) LEVEL_CHANGE_IN_PROGRESS();
+
     if(!data) data = new Object();
 
     if(this.script) {
         data.lastScript = this.script.constructor.name;
     } else {
-        data.lastScript = null;
+        if(!data.lastScript) data.lastScript = null;
     }
     this.lastScript = data.lastScript;
 
@@ -299,10 +307,8 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
 
     if(this.playerController) this.playerController.lock();
 
-    if(this.pendingScriptData !== null) {
-        Object.assign(this.script,this.pendingScriptData);
-        this.pendingScriptData = null;
-    }
+    Object.assign(this.script,this.pendingScriptData);
+    this.pendingScriptData = null;
 
     if(script.load) await script.load();
 
@@ -326,6 +332,7 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
     if(runStartScript) this.startScript();
 }
 World.prototype.startScript = function() {
+    //If the value returned from script.start is truthy, the player controller is not automatically unlocked.
     const {script} = this;
     let startLocked = false;
     if(script.start) {
@@ -375,7 +382,6 @@ World.prototype.reset = function() {
     this.collisionChangePending = false;
     this.interactionChangePending = false;
 }
-
 World.prototype.setMap = function(mapName) {
     this.validateParseOnlyMethod();
 
@@ -399,10 +405,8 @@ World.prototype.setMap = function(mapName) {
         this.cacheSuperForeground();
     }
 }
-
 World.prototype.validateParseOnlyMethod = function() {
-    if(this.pendingScriptData !== null) return;
-    throw Error("This method is only for use during the initial script sequencing!");
+    if(this.pendingScriptData !== null) return; ILLEGAL_SCRIPT_METHOD();
 }
 
 World.prototype.getTextureXY = function(tileID,premultiply=true) {

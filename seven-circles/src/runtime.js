@@ -8,8 +8,8 @@ import MainMenu from "./user-interface/main-menu.js";
 import AudioMenu from "./user-interface/audio-menu.js";
 import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
 import CustomPrompt from "./user-interface/custom-prompt.js";
+import WorldPreload from "./scripts/world-preload.js";
 
-const PRELOAD_SCRIPT = Constants.GamePreloadScript;
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
 const GLOBAL_PRELOAD = Constants.GlobalResourceFile;
 const FADER_TIME = Constants.FaderDuration;
@@ -150,10 +150,7 @@ function Runtime() {
     };
 
     this.LoadWorld = async () => {
-        await setFrame(World,[async world=>{
-            await world.setLevel(PRELOAD_SCRIPT);
-        }]);
-
+        await setFrame(World,[WorldPreload]);
         if(DEV) {
             globalThis.world = CanvasManager.frame;
             globalThis.inventory = this.Inventory;

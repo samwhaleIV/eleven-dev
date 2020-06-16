@@ -30,7 +30,6 @@ const Constants = Object.freeze({
 
     PlayerSprite: "player/default",
     GameStartScript: "HelloWorld",
-    GamePreloadScript: "Preload",
     ErrorLevel: "ErrorPlace",
 
     MenuSong: "murder",

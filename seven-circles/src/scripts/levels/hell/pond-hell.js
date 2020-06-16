@@ -1,27 +1,75 @@
 import {} from "../helper.js";
+import WatcherBeam from "../../../weapons/watcher-beam.js";
 
 const {UVTCReflection,ResourceManager} = Eleven;
 
-function PondHell({world,fromNextMap}) {
+function PondHell(data) {
+    const {world,fromNextMap} = data;
+    console.log("Pond hell load data:",data);
     world.setMap("pond-hell");
     const verticalStart = 0.91;
     const player = fromNextMap ? world.addPlayer(48,0) : world.addPlayer(5,0);
     player.y = verticalStart;
     player.direction = "down";
     world.camera.padding = true;
-
     const watcherImage = ResourceManager.getImage("the-watcher");
+
     const watchers = [];
-    const addWatcher = (x,y) => {
+    const addWatcher = (x,y,direction=0,tickOffset=0,rotatePolarity=true,tickMod=12) => {
+        tickOffset *= tickMod;
         const watcher = world.addNPC(x,y,watcherImage,2,2);
+        watcher.zIndex = player.zIndex + 1;
         watcher.collides = false;
         watchers.push(watcher);
+        watcher.renderOffscreen = true;
+        watcher.setWeapon(WatcherBeam);
+        Object.assign(watcher,{direction,tickMod,rotatePolarity,tickOffset});
         return watcher;
     };
-    const w1 = addWatcher(6,5);
-    Object.assign(globalThis,{w1});
 
-    const ladderSpeed = 2, waterSpeed = 1.5;
+    [
+        [6,5,0,1/2,true],
+        [15,5,3,0,false],
+        [7,12,1,3/4,false],
+        [21,12,2,1/2,true],
+        [25,5.75,0,1/4,false],
+        [31,4.75,0,1/2,false],
+        [37,4.75,2,0,true],
+        [32.5,11.5,1,3/4,true],
+        [44,14,3,3,false],
+        [47,5.75,2,1/2,true]
+    ].forEach(data=>addWatcher(...data));
+
+    let runNPCCycle = true;
+
+    let tickNumber = 0;
+    const tickRate = 120;
+
+    const NPCCycle = async () => {
+        while(runNPCCycle) {
+            for(const watcher of watchers) {
+                const {tickMod,tickOffset,rotatePolarity} = watcher;
+                if((tickNumber+tickOffset) % tickMod !== 0) continue;
+                let direction = watcher.direction;
+                if(rotatePolarity) {
+                    if(++direction > 3) direction = 0;
+                } else {
+                    if(--direction < 0) direction = 3;
+                }
+                watcher.direction = direction;
+            }
+            tickNumber++;
+            await delay(tickRate);
+        }
+    };
+
+    this.unload = () => runNPCCycle = false;
+    this.start = () => {
+        NPCCycle();
+        return false;
+    };
+
+    const ladderSpeed = 2, waterSpeed = 1.3;
     player.velocity = waterSpeed;
     player.hitBox.height /= 2;
 
@@ -43,7 +91,7 @@ function PondHell({world,fromNextMap}) {
     const blipWidthEastWest = 6, blipWidthNorthSouth = 10;
 
     player.addRender((context,x,y,width,height,time)=>{
-        const [ladderX,ladderY] = sinkLadders[player.y < worldHalfHeight ? 0 : 1];
+        const [ladderX,ladderY] = sinkLadders[player.x < worldHalfHeight ? 0 : 1];
 
         const xDistance = Math.abs(player.x - ladderX);
         const yDistance = player.y < ladderY ? 0 : Math.abs(player.y - ladderY);
