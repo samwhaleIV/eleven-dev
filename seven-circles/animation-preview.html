@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Preview</title>
+    <link rel="stylesheet" href="../eleven/engine/eleven.css">
+    <link rel="shortcut icon" type="image/png" href="favicon-alt.png">
+    <script src="../eleven/engine/eleven.js" type="module"></script>
+    <style>
+        canvas {
+            padding: 12px;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #151515;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+
+        const data = {
+            frameWidth: 16,
+            frameHeight: 16,
+            rowOffset: 0,
+            columnOffset: 0,
+            backgroundColor: "white",
+
+            frameTime: 1000 / 60,
+            horizontal: false,
+            image: "fire"
+        };
+        
+        const {CanvasManager,ResourceManager} = Eleven;
+
+        function AnimationViewer({
+            frameWidth,frameHeight,
+            rowOffset,columnOffset,
+            frameTime,horizontal,image,backgroundColor
+        }) {
+            const rows = image.height / frameHeight;
+            const columns = image.width / frameWidth;
+
+            console.log("Image rows:",rows,"Image columns:",columns);
+
+            CanvasManager.enableBoxFill();
+            CanvasManager.setSize(frameWidth,frameHeight);
+
+            let pauseTimeOffset = 0;
+            let paused = false;
+            let pauseStart = null;
+
+            const speedChangeDelta = 1.75;
+
+            this.keyDown = ({code}) => {
+                switch(code) {
+                    case "Digit9":
+                        frameTime *= speedChangeDelta;
+                        break;
+                    case "Digit0":
+                        frameTime /= speedChangeDelta;
+                        break;
+                    case "KeyP":
+                        if(paused) {
+                            pauseTimeOffset -= performance.now() - pauseStart;
+                            pauseStart = null;
+                        } else {
+                            pauseStart = performance.now();
+                        }
+                        paused = !paused;
+                        break;
+                    case "KeyO":
+                        horizontal = !horizontal;
+                        break;
+                    case "Minus":
+                        if(horizontal) {
+                            if(--rowOffset < 0) rowOffset = rows - 1;
+                        } else {
+                            if(--columnOffset < 0) columnOffset = columns - 1;
+                        }
+                        break;
+                    case "Equal":
+                        if(horizontal) {
+                            if(++rowOffset >= rows) rowOffset = 0;
+                        } else {
+                            if(++columnOffset >= columns) columnOffset = 0;
+                        }
+                        break;
+                }
+            };
+
+            this.render = (context,{width,height},{now}) => {
+                let row = rowOffset, column = columnOffset;
+
+                if(paused) now = pauseStart;
+                now += pauseTimeOffset;
+
+                const frameNumber = Math.floor(now / frameTime);
+
+                if(horizontal) column += frameNumber; else row += frameNumber;
+
+                row = row % rows, column = column % columns;
+
+                context.fillStyle = backgroundColor;
+                context.fillRect(0,0,width,height);
+
+                context.drawImage(
+                    image,column*frameWidth,row*frameHeight,frameWidth,frameHeight,
+                    0,0,width,height
+                );
+            };
+        }
+        async function Start() {
+            const {image} = data;
+            await ResourceManager.queueImage(image).load();
+            data.image = ResourceManager.getImage(image);
+            await CanvasManager.setFrame(AnimationViewer,[data]);
+            CanvasManager.start();
+        }
+        Start();
+    </script>
+</body>
+</html>
