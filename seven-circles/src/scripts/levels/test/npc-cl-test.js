@@ -1,4 +1,4 @@
-import {AddColorBackground} from "../helper.js";
+import {AddColorBackground,AddFireSprite} from "../helper.js";
 
 const {ResourceManager} = Eleven;
 
@@ -6,18 +6,27 @@ function NPCCLTest({world}) {
     world.setMap("test-chamber");
     const player = world.addPlayer(5.660714285714286,12.464285714285714);
     player.direction = "down";
-    world.camera.padding = false;
+    world.camera.padding = true;
     AddColorBackground(world,"black");
 
-    world.camera.scale = 7
-    world.player.velocity = 15;
+    AddFireSprite(world,"Red",7,11);
+    AddFireSprite(world,"Red",6.5,11);
+/*
+    const {grid} = world;
+    for(let i = 0;i<20;i++) {
+        const {animationPlayer} = AddFireSprite(world,"Red",Math.random()*(grid.width-1),Math.random()*(grid.height-1));
+        animationPlayer.rowOffset += Math.floor(animationPlayer.rows * Math.random());
+    }*/
+
+    world.camera.scale = 7;
+    //world.player.velocity = 15;
 
     const npc = world.addNPC(13,7,ResourceManager.getImage("the-watcher"),2,2);
     //npc.velocity = player.velocity;
     npc.x += Math.random() * 2;
     npc.y += Math.random() * 2;
 
-    player.showHitBox = true;
+    //player.showHitBox = true;
     npc.showHitBox = false;
 
     this.start = () => {

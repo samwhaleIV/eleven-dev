@@ -2,6 +2,9 @@
     "Image": [
         "anti-player.png",
 
+        "effects/fire.png",
+        "effects/fire-yellow.png",
+
         "weapon/keys.png",
         "weapon/rock.png",
         "weapon/bomb.png",

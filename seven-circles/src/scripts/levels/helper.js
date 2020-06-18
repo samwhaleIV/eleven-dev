@@ -13,6 +13,7 @@ import PanPreview from "../helper/pan-preview.js";
 import Teleporter from "../helper/teleporter.js";
 
 /* World functions */
+import AddFireSprite from "../helper/fire-sprite.js";
 import GetTransitionTrigger from "../helper/transition-trigger.js";
 import InstallBombAreas from "../helper/bomb-areas.js";
 import PickupField from "../helper/pickup-field.js";
@@ -32,6 +33,7 @@ import {
     import InvisibileWall from "../helper/doors/invisible-wall.js";
 
 export {
+    AddFireSprite,
     AddNamedBackground,
     SaveStone,
     AddFixedWaterBackground,
