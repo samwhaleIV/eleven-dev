@@ -6,6 +6,8 @@ const beamDistance = 3.95;
 const beamHorizontalOffset = 12 / 16;
 const beamVerticalOffset = 5 / 16;
 
+const beamConnectionOffset = 0.05;
+
 function BeamSprite(owner,world) {
 
     this.x = 0; this.y = 0;
@@ -15,28 +17,28 @@ function BeamSprite(owner,world) {
     this.collisionType = Eleven.CollisionTypes.LivingTrigger;
 
     const bindUp = () => {
-        this.y = owner.y - beamDistance;
+        this.y = owner.y - beamDistance + beamConnectionOffset;
         this.x = owner.x + beamHorizontalOffset;
         this.width = 8 / 16;
         this.height = beamDistance;
         this.isVertical = true;
     };
     const bindDown = () => {
-        this.y = owner.y + owner.height;
+        this.y = owner.y + owner.height - beamConnectionOffset;
         this.x = owner.x + beamHorizontalOffset;
         this.width = 8 / 16;
         this.height = beamDistance;
         this.isVertical = true;
     };
     const bindRight = () => {
-        this.x = owner.x + owner.width;
+        this.x = owner.x + owner.width - beamConnectionOffset;
         this.y = owner.y + beamVerticalOffset;
         this.width = beamDistance;
         this.height = 3 / 16;
         this.isVertical = false;
     };
     const bindLeft = () => {
-        this.x = owner.x - beamDistance;
+        this.x = owner.x - beamDistance + beamConnectionOffset;
         this.y = owner.y + beamVerticalOffset;
         this.width = beamDistance;
         this.height = 3 / 16;
@@ -65,6 +67,8 @@ function BeamSprite(owner,world) {
         if(data.isPlayer) sendCollision();
     };
 
+    this.roundRenderPosition = true;
+
     this.render = (context,x,y,width,height) => {
         context.fillStyle = beamColor;
         if(this.isVertical) {
@@ -78,7 +82,7 @@ function BeamSprite(owner,world) {
             context.rect(x + pixelSize * 5,y,beamWidth,height);
             context.fill();
         } else {
-            context.fillRect(Math.ceil(x),Math.ceil(y),Math.floor(width),Math.floor(height));
+            context.fillRect(x,y,width,height);
         }
     };
 }
@@ -91,10 +95,11 @@ function WatcherBeam() {
 
     let beamSpriteID = null;
     const beamSprite = new BeamSprite(this.owner,this.world);
+    this.owner.zIndex = this.world.player.zIndex + 1;
 
     const {spriteLayer} = this.world;
     this.unload = () => spriteLayer.remove(beamSpriteID);
-    this.load = () => spriteLayer.add(beamSprite,this.world.player.zIndex+1);
+    this.load = () => spriteLayer.add(beamSprite,this.owner.zIndex - 1);
 
     this.checkCollision = async () => {
         await frameDelay();

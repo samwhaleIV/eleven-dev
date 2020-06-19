@@ -5,9 +5,9 @@ const LABEL_OFFSET = -10.25 / 16;
 
 const SCALE = Constants.WorldCanvasScale;
 
-const LETTER_SPACING = SCALE < 1 ? 1 * SCALE : 1 / 3 * SCALE;
+const LETTER_SPACING = SCALE < 1 ? 1 * SCALE : (1 / 3) * SCALE;
 const WORD_SPACING = SCALE < 1 ? 2 * SCALE : 1;
-const TEXT_SCALE = SCALE < 1 ? Math.ceil(2 * SCALE) : 3;
+const TEXT_SCALE = SCALE < 1 ? SCALE < 0.5 ? 1 : 2 : 3 * SCALE;
 
 function ItemNotification(world,itemName,amount) {
 
