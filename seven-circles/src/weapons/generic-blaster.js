@@ -2,6 +2,7 @@ import GenericProjectile from "./generic-projectile.js";
 
 const FIRE_TIMEOUT = 100;
 const NAME = "generic-blaster";
+const DEFAULT_IMAGE = "weapon/gun";
 
 const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
@@ -15,6 +16,8 @@ const PROJECTILE_POINTS = Object.freeze({
 });
 
 function GenericBlaster(image) {
+
+    if(!image) image = Eleven.ResourceManager.getImage(DEFAULT_IMAGE);
 
     this.name = NAME;
 
