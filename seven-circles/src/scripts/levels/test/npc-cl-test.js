@@ -14,14 +14,16 @@ function NPCCLTest({world}) {
     AddFireSprite(world,"Red",9,12);
 
     player.setWeapon(WaterFists);
+    
+    //AddFireSprite(world,"Red",5,12);
 
+    /*
     const {grid} = world;
     for(let i = 0;i<20;i++) {
         const {animationPlayer} = AddFireSprite(world,"Red",Math.floor(Math.random()*(grid.width-1)),Math.floor(Math.random()*(grid.height-1)));
         animationPlayer.rowOffset += Math.floor(animationPlayer.rows * Math.random());
-    }
+    }*/
 
-    world.camera.scale = 7;
     //world.player.velocity = 15;
 
     const npc = world.addNPC(13,7,ResourceManager.getImage("the-watcher"),2,2);

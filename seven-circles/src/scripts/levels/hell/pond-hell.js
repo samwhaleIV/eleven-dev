@@ -86,7 +86,6 @@ function PondHell({world,fromNextMap}) {
     const playerBuffer = new OffscreenCanvas(0,0);
     const bufferContext = playerBuffer.getContext("2d",{alpha:true});
 
-    const renderBase = player.shiftRenderBase();
 
     const fullDeepDifference = -0.25;
     const sinkDistance = 0.75;
@@ -101,7 +100,8 @@ function PondHell({world,fromNextMap}) {
 
     const blipWidthEastWest = 6, blipWidthNorthSouth = 10;
 
-    player.addRender((context,x,y,width,height,time)=>{
+    const renderBase = player.render;
+    player.render = (context,x,y,width,height,time) => {
         const [ladderX,ladderY] = sinkLadders[player.x < worldHalfHeight ? 0 : 1];
 
         const xDistance = Math.abs(player.x - ladderX);
@@ -132,7 +132,7 @@ function PondHell({world,fromNextMap}) {
             x+width/2-blipWidth/2,Math.ceil(y+height-waterBlipPixelSize),
             blipWidth,waterBlipPixelSize
         );
-    });
+    };
 
     const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);
     dispatchRenderer.addBackground(reflector.clear);
