@@ -1,4 +1,5 @@
 import {AddColorBackground,AddFireSprite} from "../helper.js";
+import WaterFists from "../../../weapons/water-fists.js";
 
 const {ResourceManager} = Eleven;
 
@@ -10,18 +11,21 @@ function NPCCLTest({world}) {
     AddColorBackground(world,"black");
 
     AddFireSprite(world,"Red",7,11);
-    AddFireSprite(world,"Red",6.5,11);
-/*
+    AddFireSprite(world,"Red",9,12);
+
+    player.setWeapon(WaterFists);
+
     const {grid} = world;
     for(let i = 0;i<20;i++) {
-        const {animationPlayer} = AddFireSprite(world,"Red",Math.random()*(grid.width-1),Math.random()*(grid.height-1));
+        const {animationPlayer} = AddFireSprite(world,"Red",Math.floor(Math.random()*(grid.width-1)),Math.floor(Math.random()*(grid.height-1)));
         animationPlayer.rowOffset += Math.floor(animationPlayer.rows * Math.random());
-    }*/
+    }
 
     world.camera.scale = 7;
     //world.player.velocity = 15;
 
     const npc = world.addNPC(13,7,ResourceManager.getImage("the-watcher"),2,2);
+    npc.zIndex = player.zIndex + 1;
     //npc.velocity = player.velocity;
     npc.x += Math.random() * 2;
     npc.y += Math.random() * 2;

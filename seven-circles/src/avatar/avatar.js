@@ -23,7 +23,7 @@ function Avatar(isPlayer) {
         this.showHitBox = false;
     } else {
         NPCController.call(this);
-        InstallHitBox(this,6/8,7/8);
+        InstallHitBox(this,1,this.height);
         this.yOffset = 0;
         this.alignment = Alignments.Neutral;
         this.velocity = NPC_VELOCITY;

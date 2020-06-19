@@ -4,6 +4,7 @@
 
         "effects/fire.png",
         "effects/fire-yellow.png",
+        "effects/water.png",
 
         "weapon/keys.png",
         "weapon/rock.png",
@@ -11,6 +12,7 @@
         "weapon/lamp.png",
         "weapon/gun.png",
         "weapon/enemy-gun.png",
+        "weapon/water-fists.png",
 
         "weapon/watcher-beam.png",
 

@@ -1,10 +1,15 @@
+const MISSING_IMAGE = () => {
+    throw Error("Animation player does not have a suitable image!");
+};
+
 function AnimationPlayer({
-    frameWidth,frameHeight,
+    frameWidth=16,frameHeight=16,
     rowOffset=0,columnOffset=0,
-    frameTime=100,
-    horizontal=false,imageName
+    frameTime=100,looping=true,
+    horizontal=false,imageName,image
 }) {
-    const image = Eleven.ResourceManager.getImage(imageName);
+    if(imageName) image = Eleven.ResourceManager.getImage(imageName);
+    if(!image) MISSING_IMAGE();
 
     this.rowOffset = rowOffset;
     this.columnOffset = columnOffset;
@@ -39,7 +44,10 @@ function AnimationPlayer({
         enumerable: true
     });
 
+    let startTime = looping ? null : performance.now();
     this.render = (context,x,y,width,height,{now}) => {
+        if(startTime) now -= startTime;
+
         let row = this.rowOffset, column = this.columnOffset;
 
         if(paused) now = pauseStart;
@@ -47,7 +55,13 @@ function AnimationPlayer({
 
         const frameNumber = Math.floor(now / this.frameTime);
 
-        if(this.horizontal) column += frameNumber; else row += frameNumber;
+        if(this.horizontal) {
+            column += frameNumber;
+            if(!looping && column >= this.columns) return;
+        } else {
+            row += frameNumber;
+            if(!looping && row >= this.rows) return;
+        }
 
         row = row % this.rows, column = column % this.columns;
 

@@ -1,7 +1,5 @@
 import AnimationPlayer from "../../animation-player.js";
 
-/* Water color: 142, 236, 255, 176 (Alpha) */
-
 const FIRE_TYPES = {
     Red: {
         imageName: "effects/fire",
@@ -30,11 +28,30 @@ function FireSprite(world,type,x,y) {
     this.x = x + 0.5 - this.width / 2;
     this.y = y + 1 - this.height;
 
-    this.collides = true;
-
     const animationPlayer = new AnimationPlayer(type);
     this.animationPlayer = animationPlayer;
-    this.render = animationPlayer.render;
+
+    this.collides = true;
+    this.collisionType = Eleven.CollisionTypes.ProjectileTarget;
+    let fireStrength = 1;
+
+    this.extinguish = () => {
+        fireStrength -= 0.99;
+        if(fireStrength < 0 && this.remove) this.remove();
+    };
+    
+    this.update = ({deltaSecond}) => {
+        if(fireStrength < 1 && fireStrength > 0) {
+            fireStrength += 3 * deltaSecond;
+        }
+    };
+
+    this.render = (context,x,y,width,height,time) => {
+        const startAlpha = context.globalAlpha;
+        context.globalAlpha = fireStrength;
+        animationPlayer.render(context,x,y,width,height,time);
+        context.globalAlpha = startAlpha;
+    };
 }
 
 function AddFireSprite(world,type,x,y) {

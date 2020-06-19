@@ -24,9 +24,10 @@ const defaultRender = function(context,x,y,width,height) {
 
 function ProjectileBase({
     target, world, owner, width, height, render,
-    color, x, y, terminate, onCollision, velocity
+    color, x, y, terminate, onCollision, velocity, maxDistance
 }) {
     const ownerAlignment = owner.alignment || Alignments.Neutral;
+    if(!maxDistance) maxDistance = PROJECTILE_MAX_DISTANCE;
 
     if(!target) MISSING_TARGET();
 
@@ -82,11 +83,12 @@ function ProjectileBase({
 
         movementDistance += delta;
 
-        if(Math.abs(movementDistance) > PROJECTILE_MAX_DISTANCE) {
+        if(Math.abs(movementDistance) > maxDistance) {
             terminate(); return;
         }
 
-        const collisionResult = world.collisionLayer.collides(target);
+        let collisionResult = world.collisionLayer.collides(target);
+        if(!collisionResult) collisionResult = world.tileCollision.collides(target);
         if(collisionResult) handleCollision(collisionResult);
     };
 }
