@@ -59,12 +59,15 @@ function ProjectileBase({
     let movementDistance = 0;
 
     const handleCollision = collisionResult => {
-        if(collisionResult.isHitBox) collisionResult = collisionResult.target;
+        let hitBox = collisionResult;
+        if(collisionResult.isHitBox) {
+            collisionResult = collisionResult.target;
+        }
 
         const targetAlignment = collisionResult.alignment || Alignments.Neutral;
         if(!ownerAlignment.canAttack[targetAlignment.ID]) return;
 
-        if(onCollision) onCollision(collisionResult);
+        if(onCollision) onCollision(collisionResult,hitBox);
         if(collisionResult.onProjectile) collisionResult.onProjectile(target);
 
         terminate();

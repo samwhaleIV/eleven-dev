@@ -5,7 +5,7 @@ const NAME = "water-fists";
 
 const PROJECTILE_Y_OFFSET = 0.2;
 const PROJECTILE_FRAME_TIME = 80;
-const PROJECTILE_IMPACT_SPEED_DAMPENING = 1.5;
+const PROJECTILE_IMPACT_SPEED_DAMPENING = 2;
 const PROJECTILE_IMPACT_DECAY_TIME = 100;
 const PROJECTILE_SIZE = 10 / 16;
 const PROJECTILE_HORIZONTAL_OFFSET = 0.125;
@@ -13,7 +13,11 @@ const PROJECTILE_VELOCITY = 8;
 const PROJECTILE_MAX_DISTANCE = 2;
 
 const PARTICLE_DURATION = 100;
-const PARTICLE_VELOCITY = 300;
+
+const PARTICLE_VELOCITY = 90;
+const SPLASH_VELOCITY = 400;
+const INNER_SPLASH_DISTANCE = 0.1;
+
 const PARTICLE_SIZE = 8;
 const PARTICLE_COUNT = 12;
 const PARTICLE_POOL_COUNT = 3;
@@ -43,17 +47,32 @@ function WaterBlast(image,world,owner,x,y,terminate) {
 
     const render = animationPlayer.render;
 
-    const onCollision = target => {
+    const onCollision = (target,hitBox) => {
         if(terminating) return;
-        let {x,y,width,height} = this;
-        if(target.collisionType !== 1) {
-            if(this.direction % 2 === 0) {
-                y = (y + target.y) / 2;
-            } else {
-                x = (x + target.x) / 2;
-            }
+        let px, py, horizontalSplash;
+        switch(this.direction) {
+            case 0: //up
+                horizontalSplash = true;
+                px = this.x + this.width / 2;
+                py = hitBox.y + hitBox.height - INNER_SPLASH_DISTANCE;
+                break;
+            case 1: //right
+                horizontalSplash = false;
+                py = this.y + this.height / 2;
+                px = hitBox.x + INNER_SPLASH_DISTANCE;
+                break;
+            case 2: //down
+                horizontalSplash = true;
+                px = this.x + this.width / 2;
+                py = hitBox.y + INNER_SPLASH_DISTANCE;
+                break;
+            case 3: //left
+                horizontalSplash = false;
+                py = this.y + this.height / 2;
+                px = hitBox.x + hitBox.width - INNER_SPLASH_DISTANCE;
+                break;
         }
-        waterBurstEffect(world,x+width/2,y+height/2);
+        waterBurstEffect(world,px,py,horizontalSplash);
         if(target.extinguish) target.extinguish();
     };
 
@@ -76,7 +95,7 @@ function WaterBlast(image,world,owner,x,y,terminate) {
 
 const {ParticleSystem} = Eleven;
 
-const PARTICLE_BASE = ParticleSystem.getType("Base",{
+const SUPER_PARTICLE_BASE = {
     duration: PARTICLE_DURATION,
     color: (() => {
         let colorIndex = 0;
@@ -88,10 +107,19 @@ const PARTICLE_BASE = ParticleSystem.getType("Base",{
     count: PARTICLE_COUNT,
     xv: PARTICLE_VELOCITY,
     yv: PARTICLE_VELOCITY
-});
+};
 
-function waterBurstEffect(world,x,y) {
-    const pool = ParticleSystem.getPool(PARTICLE_BASE,PARTICLE_POOL_COUNT);
+const PARTICLE_BASE_X = ParticleSystem.getType(
+    "Base",Object.assign(Object.assign(new Object(),SUPER_PARTICLE_BASE),{yv:SPLASH_VELOCITY})
+);
+const PARTICLE_BASE_Y = ParticleSystem.getType(
+    "Base",Object.assign(Object.assign(new Object(),SUPER_PARTICLE_BASE),{xv:SPLASH_VELOCITY})
+);
+
+function waterBurstEffect(world,x,y,horizontalSplash) {
+    const pool = ParticleSystem.getPool(
+        horizontalSplash ? PARTICLE_BASE_Y : PARTICLE_BASE_X,PARTICLE_POOL_COUNT
+    );
     const particleSprite = world.addParticles(x,y,pool);
 
     pool.fire(()=>{

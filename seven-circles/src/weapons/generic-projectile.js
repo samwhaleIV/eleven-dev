@@ -4,12 +4,8 @@ import ProjectileBase from "./projectile-base.js";
 function GenericProjectile(
     world,owner,x,y,terminate
 ) {
-    const onCollision = collisionResult => {
-        let {x,y} = this; 
-
-        let hitBox = collisionResult.hitBox;
-        if(!hitBox) hitBox = collisionResult;
-
+    const onCollision = (collisionResult,hitBox) => {
+        let {x,y} = this;
 
         switch(this.direction) {
             case 1: x = hitBox.x + hitBox.width * (1 / 5); break;

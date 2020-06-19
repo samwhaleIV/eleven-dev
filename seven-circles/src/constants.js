@@ -1,4 +1,4 @@
-const WorldCanvasScale = 0.5;
+const WorldCanvasScale = 1;
 
 const Constants = Object.freeze({
     Namespace: "SVCC",
