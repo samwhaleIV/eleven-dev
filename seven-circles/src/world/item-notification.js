@@ -1,5 +1,13 @@
+import Constants from "../constants.js";
+
 const TIMEOUT = 1000;
 const LABEL_OFFSET = -10.25 / 16;
+
+const SCALE = Constants.WorldCanvasScale;
+
+const LETTER_SPACING = SCALE < 1 ? 1 * SCALE : 1 / 3 * SCALE;
+const WORD_SPACING = SCALE < 1 ? 2 * SCALE : 1;
+const TEXT_SCALE = SCALE < 1 ? Math.ceil(2 * SCALE) : 3;
 
 function ItemNotification(world,itemName,amount) {
 
@@ -30,9 +38,9 @@ function ItemNotification(world,itemName,amount) {
 
     const textSprite = world.addTextSprite({
         text: `+${world.notificationState.count} ${itemName}`,
-        letterSpacing: 1 / 3,
-        wordSpacing: 1,
-        scale: 3,
+        letterSpacing: LETTER_SPACING,
+        wordSpacing: WORD_SPACING,
+        scale: TEXT_SCALE,
         color: "white",
         target: world.player,
         y: LABEL_OFFSET

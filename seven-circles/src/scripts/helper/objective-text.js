@@ -1,8 +1,10 @@
 import ZIndexBook from "../../world/z-indices.js";
 import Constants from "../../constants.js";
 
+const SCALE = Constants.WorldCanvasScale
+
 const TOP_DISTANCE = Constants.WorldUIScreenMargin;
-const TEXT_SCALE = 4;
+const TEXT_SCALE = 4 * SCALE;
 const TEXT_COLOR = "white";
 const TEXT_BACKGROUND = "black";
 const TEXT_PADDING = 2;

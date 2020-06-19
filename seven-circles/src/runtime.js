@@ -14,6 +14,7 @@ const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
 const GLOBAL_PRELOAD = Constants.GlobalResourceFile;
 const FADER_TIME = Constants.FaderDuration;
 const MINIMUM_TRANSITION_TIME = Constants.FakeLoadingTime;
+const WORLD_CANVAS_SCALE = Constants.WorldCanvasScale;
 
 const MUSIC_VOLUME_KEY = Constants.MusicVolumeKey;
 const SOUND_VOLUME_KEY = Constants.SoundVolumeKey;
@@ -150,14 +151,20 @@ function Runtime() {
     };
 
     this.LoadWorld = async () => {
-        await setFrame(World,[WorldPreload]);
+        await setFrame(World,[async world => {
+            CanvasManager.setScale(WORLD_CANVAS_SCALE);
+            await WorldPreload(world);
+        }]);
         if(DEV) {
             globalThis.world = CanvasManager.frame;
             globalThis.inventory = this.Inventory;
         }
     };
 
-    this.LoadMenu = () => setFrame(MainMenu);
+    this.LoadMenu = () => {
+        CanvasManager.setScale(1);
+        setFrame(MainMenu);
+    };
 
     const globalPreload = async () => {
         await ResourceManager.queueText(GLOBAL_PRELOAD + ".json").load();

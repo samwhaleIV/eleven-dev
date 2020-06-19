@@ -2,12 +2,14 @@ import ZIndexBook from "./z-indices.js";
 import Constants from "../constants.js";
 
 const {TextLayer} = Eleven;
+const SCALE = Constants.WorldCanvasScale;
 
 const BOTTOM_MARGIN = Constants.WorldUIScreenMargin;
 
-const WIDTH = 800;
-const HEIGHT = 300;
-const TEXT_SCALE = 4;
+const WIDTH = 800 * SCALE;
+const HEIGHT = 300 * SCALE;
+const TEXT_SCALE = 4 * SCALE;
+
 const ROW_SPACING = 1;
 const BOX_PADDING = 4;
 const TEXT_SPACING = 0.5;
@@ -38,7 +40,7 @@ function GetRenderer(container,target="textLayer") {
     return (context,{halfWidth,height}) => {
         const textLayer = container[target]; if(!textLayer) return;
         const x = Math.floor(halfWidth - textLayer.width / 2);
-        const y = height - textLayer.height - BOTTOM_MARGIN;
+        const y = Math.floor(height - textLayer.height - BOTTOM_MARGIN);
         context.fillStyle = "white";
         context.fillRect(x,y,textLayer.width,textLayer.height);
         textLayer.render(context,x,y);
