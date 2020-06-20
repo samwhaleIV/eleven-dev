@@ -9,6 +9,7 @@ import AudioMenu from "./user-interface/audio-menu.js";
 import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
 import CustomPrompt from "./user-interface/custom-prompt.js";
 import WorldPreload from "./scripts/world-preload.js";
+import GetSong from "./storage/song-getter.js";
 
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
 const GLOBAL_PRELOAD = Constants.GlobalResourceFile;
@@ -102,24 +103,25 @@ function Runtime() {
     const inputServer = getInputServer();
     this.InputServer = inputServer;
 
-    const getFaderRenderer = () => {
-        return Faders.Black; //todo: proper fader
-    };
+    const getFaderRenderer = () => Faders.Black;
 
     InstallAudioSettings(this);
 
     this.prompt = CustomPrompt;
 
-    const setFrame = async (frameConstructor,parameters) => {
+    const setFrame = async (frameConstructor,parameters,canvasScale) => {
         const faderRenderer = getFaderRenderer();
         const oldFrame = CanvasManager.frame;
 
         if(oldFrame) {
             const fader = new Fader(faderRenderer);
             oldFrame.child = fader;
-            await fader.fadeOut(FADER_TIME);
             if(oldFrame.unload) oldFrame.unload();
-            AudioManager.fadeOutMusic(FADER_TIME);
+
+            await Promise.all([
+                fader.fadeOut(FADER_TIME),
+                AudioManager.fadeOutMusicAsync(FADER_TIME)
+            ]);
         }
 
         if(!CanvasManager.paused) {
@@ -129,10 +131,12 @@ function Runtime() {
 
         inputServer.managedGamepad.reset();
 
+        AudioManager.stopMusic();
         const framePromise = await CanvasManager.setFrame(frameConstructor,parameters);
 
         const loadPromises = [framePromise];
         if(oldFrame) loadPromises.push(delay(MINIMUM_TRANSITION_TIME));
+        CanvasManager.setScale(canvasScale || 1);
         await Promise.all(loadPromises);
 
         const frame = CanvasManager.frame;
@@ -151,19 +155,19 @@ function Runtime() {
     };
 
     this.LoadWorld = async () => {
-        await setFrame(World,[async world => {
-            CanvasManager.setScale(WORLD_CANVAS_SCALE);
-            await WorldPreload(world);
-        }]);
+        await setFrame(World,[WorldPreload],WORLD_CANVAS_SCALE);
         if(DEV) {
             globalThis.world = CanvasManager.frame;
             globalThis.inventory = this.Inventory;
         }
     };
 
-    this.LoadMenu = () => {
-        CanvasManager.setScale(1);
-        setFrame(MainMenu);
+    this.LoadMenu = async () => {
+        const hasOldFrame = CanvasManager.frame;
+        await setFrame(MainMenu);
+        const song = await GetSong(Constants.MenuSong);
+        AudioManager.playMusicLooping(song);
+        if(hasOldFrame) AudioManager.musicRadio.fadeIn(Constants.FaderDuration);
     };
 
     const globalPreload = async () => {

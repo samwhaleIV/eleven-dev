@@ -8,7 +8,7 @@
 
         "Named": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "NPCCLTest",
+                "x": 0, "y": 0, "scriptID": "TunnelsOfHell",
                 "direction": 0,
                 "_deserialize": true
             }

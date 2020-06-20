@@ -32,7 +32,7 @@ function dispatchMessage(dispatchRenderer,text) {
 
     const textLayer = new TextLayer({
         text: text,
-        rowSpacing: 1,
+        lineSpacing: 1,
         boxPadding: 4,
         scale: 4,
         textSpacing: 0.5,

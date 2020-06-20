@@ -1,4 +1,3 @@
-import Constants from "./constants.js";
 import ImageGen from "./image-gen.js";
 
 const {CanvasManager} = Eleven;
@@ -10,13 +9,6 @@ function Debug() {
         const panZoom = frame.grid.getPanZoom();
         frame.spriteFollower.disable();
         panZoom.bindToFrame(frame);
-    };
-
-    this.RetroMode = () => {
-        (({Width,Height}) => {
-        CanvasManager.setSize(Width,Height);
-        })(Constants.RetroResolution); 
-        CanvasManager.enableBoxFill();
     };
 
     this.SaveCanvas = canvas => {

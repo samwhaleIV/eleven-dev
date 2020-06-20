@@ -1,6 +1,6 @@
 import MessageHelper from "./message-helper.js";
 
-const ROW_SPACING = 2;
+const LINE_SPACING = 2;
 
 function WorldPrompt(dispatchRenderer,question,options,callback) {
 
@@ -31,7 +31,7 @@ function WorldPrompt(dispatchRenderer,question,options,callback) {
         lines.pop();
 
         this.textLayer = MessageHelper.GetTextLayer({
-            text: lines, rowSpacing: ROW_SPACING
+            text: lines, lineSpacing: LINE_SPACING
         });
         this.textLayer.finish();
     };

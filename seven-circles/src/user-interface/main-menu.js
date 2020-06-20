@@ -1,8 +1,3 @@
-import GetSong from "../storage/song-getter.js";
-import Constants from "../constants.js";
-
-const MENU_SONG = Constants.MenuSong;
-
 const PLANET_OVERLAY = "planet-overlay";
 const MENU_BUTTONS = "menu-buttons";
 
@@ -98,9 +93,6 @@ function MainMenu() {
         overlayImage = ResourceManager.getImage(PLANET_OVERLAY);
 
         buttonsImage = ResourceManager.getImage(MENU_BUTTONS);
-
-        const song = await GetSong(MENU_SONG)
-        AudioManager.playMusicLooping(song);
     };
 
     let buttonImageArea = {x:-1,y:-1,width:0,height:0};

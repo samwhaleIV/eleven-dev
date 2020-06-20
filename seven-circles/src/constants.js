@@ -38,11 +38,6 @@ const Constants = Object.freeze({
     MenuSong: "murder",
 
     LogTileUpdates: false,
-    AutoSelectInventory: false,
-
-    RetroResolution: {
-        Width: 900,
-        Height: 700
-    }
+    AutoSelectInventory: false
 });
 export default Constants;

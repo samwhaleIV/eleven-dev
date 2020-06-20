@@ -10,12 +10,12 @@ const WIDTH = 800 * SCALE;
 const HEIGHT = 300 * SCALE;
 const TEXT_SCALE = 4 * SCALE;
 
-const ROW_SPACING = 1;
+const LINE_SPACING = 1;
 const BOX_PADDING = 4;
 const TEXT_SPACING = 0.5;
 
 const textLayerDefaults = Object.freeze({
-    rowSpacing: ROW_SPACING,
+    lineSpacing: LINE_SPACING,
     boxPadding: BOX_PADDING,
     scale: TEXT_SCALE,
     textSpacing: TEXT_SPACING,
