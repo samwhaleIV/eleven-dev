@@ -84,7 +84,7 @@ const SONG_NOT_LOADED = name => {
 };
 
 const fadeOutMusic = () => {
-    AudioManager.fadeOutMusicAsync(FADE_OUT_TIME);
+    return AudioManager.fadeOutMusicAsync(FADE_OUT_TIME);
 };
 const playAndFadeIn = (song,longFade) => {
     const fadeTime = longFade ? LONG_FADE_IN_TIME : FADE_IN_TIME;
