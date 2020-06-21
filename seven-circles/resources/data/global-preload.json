@@ -4,5 +4,8 @@
         "player/default.png",
         "world-tileset.png"
     ],
-    "JSON": ["maps.json"]
+    "JSON": [
+        "maps.json",
+        "suggested-songs.json"
+    ]
 }

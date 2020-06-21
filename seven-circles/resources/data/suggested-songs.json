@@ -1,0 +1,50 @@
+{
+    "HelloWorld": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "TunnelsOfHell": {
+        "song": "out-of-sight.mp3",
+        "preloadSongs": []
+    },
+    "ChocolateHell": {
+        "song": "out-of-sight.mp3",
+        "preloadSongs": []
+    },
+    "HatHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "RiverHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "VoidHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "MazeHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "PaintHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "PondHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "GraveHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "DeadHell": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "SwitchHell": {
+        "song": null,
+        "preloadSongs": []
+    }
+}

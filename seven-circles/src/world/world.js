@@ -17,6 +17,7 @@ import Sprites from "./extensions/sprites.js";
 import TileEditor from "./extensions/tile-editor.js";
 import TriggerHandler from "./extensions/trigger-handler.js";
 import InputProxy from "./extensions/input-proxy.js";
+import PlayerRadio from "./extensions/player-radio.js";
 
 const WORLD_EXTENSIONS = [
     FadeMe,
@@ -27,7 +28,8 @@ const WORLD_EXTENSIONS = [
     Sprites,
     TileEditor,
     TriggerHandler,
-    InputProxy
+    InputProxy,
+    PlayerRadio
 ];
 
 const {
@@ -243,6 +245,9 @@ World.prototype.cacheSuperForeground = function(location) {
 World.prototype.disableSuperForeground = function() {
     this.grid.decacheTop();
 }
+World.prototype.whoAmI = function() {
+    console.log(`The level you are currently on is most likely named '${world.script.constructor.name}'.`);
+}
 
 World.prototype.setLevel = async function(script,data,runStartScript=true) {
     if(this.pendingScriptData) LEVEL_CHANGE_IN_PROGRESS();
@@ -311,6 +316,8 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
     this.pendingScriptData = null;
 
     if(script.load) await script.load();
+    await this.trySongPreload(scriptName);
+    await this.playScriptSong(scriptName);
 
     this.pushTileChanges(); this.dispatchRenderer.resize();
 

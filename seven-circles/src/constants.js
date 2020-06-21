@@ -35,7 +35,7 @@ const Constants = Object.freeze({
     GameStartScript: "HelloWorld",
     ErrorLevel: "ErrorPlace",
 
-    MenuSong: "murder",
+    MenuSong: "menu",
 
     LogTileUpdates: false,
     AutoSelectInventory: false
