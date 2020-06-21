@@ -41,13 +41,11 @@ const logScripts = () => {
 
 const getInputServer = () => {
     const inputServer = new InputServer();
-    const inputWatchID = inputServer.addChangeListener(()=>{
+    inputServer.addChangeListener(()=>{
         const {frame} = CanvasManager;
         if(!frame || !frame.refreshInput) return;
         frame.refreshInput(inputServer.getBinds());
     });
-
-    console.log(`Runtime is watching key bind changes (ID: ${inputWatchID})`);
     return inputServer;
 };
 
@@ -109,7 +107,10 @@ function Runtime() {
 
     this.prompt = CustomPrompt;
 
-    const setFrame = async (frameConstructor,parameters,canvasScale) => {
+    const setFrame = async ({
+        frameConstructor = null, parameters = [], loadPromises = [],
+        canvasScale = 1, fadeStart = null, song = null
+    }) => {
         const faderRenderer = getFaderRenderer();
         const oldFrame = CanvasManager.frame;
 
@@ -122,6 +123,7 @@ function Runtime() {
                 fader.fadeOut(FADER_TIME),
                 AudioManager.fadeOutMusicAsync(FADER_TIME)
             ]);
+            AudioManager.stopMusic();
         }
 
         if(!CanvasManager.paused) {
@@ -130,14 +132,20 @@ function Runtime() {
         }
 
         inputServer.managedGamepad.reset();
+        loadPromises.push(CanvasManager.setFrame(
+            frameConstructor,parameters
+        ));
 
-        AudioManager.stopMusic();
-        const framePromise = await CanvasManager.setFrame(frameConstructor,parameters);
-
-        const loadPromises = [framePromise];
         if(oldFrame) loadPromises.push(delay(MINIMUM_TRANSITION_TIME));
-        CanvasManager.setScale(canvasScale || 1);
+
+        CanvasManager.setScale(canvasScale);
         await Promise.all(loadPromises);
+        if(song) {
+            song = await GetSong(song);
+            const remoteControl = AudioManager.playMusicLooping(song);
+            if(oldFrame) remoteControl.fadeIn(FADER_TIME);
+        }
+        if(fadeStart) await fadeStart();
 
         const frame = CanvasManager.frame;
 
@@ -155,7 +163,11 @@ function Runtime() {
     };
 
     this.LoadWorld = async () => {
-        await setFrame(World,[WorldPreload],WORLD_CANVAS_SCALE);
+        await setFrame({
+            frameConstructor: World,
+            parameters: [WorldPreload],
+            canvasScale: WORLD_CANVAS_SCALE
+        });
         if(DEV) {
             globalThis.world = CanvasManager.frame;
             globalThis.inventory = this.Inventory;
@@ -163,11 +175,10 @@ function Runtime() {
     };
 
     this.LoadMenu = async () => {
-        const hasOldFrame = CanvasManager.frame;
-        await setFrame(MainMenu);
-        const song = await GetSong(Constants.MenuSong);
-        AudioManager.playMusicLooping(song);
-        if(hasOldFrame) AudioManager.musicRadio.fadeIn(Constants.FaderDuration);
+        await setFrame({
+            frameConstructor: MainMenu,
+            song: Constants.MenuSong
+        });
     };
 
     const globalPreload = async () => {
