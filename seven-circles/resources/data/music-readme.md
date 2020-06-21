@@ -31,3 +31,7 @@ Link to music folder: [../audio/music](../audio/music) (seven-circles/resources/
     Example 2, duplicate song names with different extensions:
     - **Good**: `my_song.mp3` and `my_other_song.mp3`
     - **Bad**: `my_song.mp3` and `my_song.ogg` (note the second file is ogg but its name is the same as the previous file!)
+
+8. A level that should be silence should have its song set to `null`. A level will also be musically silent if it is not listed at all.
+
+9. To find the name of the level you are currently on, go to the developer console and enter `world.whoAmI()` while the 2D world is active and a level is loaded. This command will tell you what the level you are on is most likely named. You probably won't ever need to do this as its the namely level designer's responsibility to list new levels in `suggested-songs.json`.
