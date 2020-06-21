@@ -35,7 +35,7 @@ function dispatchMessage(dispatchRenderer,text) {
         lineSpacing: 1,
         boxPadding: 4,
         scale: 4,
-        textSpacing: 0.5,
+        letterSpacing: 0.5,
         width: 790,
         height: 400
     });

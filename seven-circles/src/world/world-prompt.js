@@ -1,6 +1,6 @@
 import MessageHelper from "./message-helper.js";
 
-const LINE_SPACING = 2;
+const LINE_SPACING = 3;
 
 function WorldPrompt(dispatchRenderer,question,options,callback) {
 

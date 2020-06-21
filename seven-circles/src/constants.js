@@ -1,4 +1,5 @@
 const WorldCanvasScale = 1;
+const BaseScreenMargin = 8;
 
 const Constants = Object.freeze({
     Namespace: "SVCC",
@@ -10,8 +11,8 @@ const Constants = Object.freeze({
     FakeLoadingTime: 500,
 
     WorldCanvasScale,
-    DefaultCameraScale: Math.ceil(7 * WorldCanvasScale),
-    WorldUIScreenMargin: 8 * WorldCanvasScale,
+    DefaultCameraScale: Math.ceil(8 * WorldCanvasScale),
+    WorldUIScreenMargin: BaseScreenMargin * WorldCanvasScale,
 
     TriggerTiles: 15,
     DevSaveFile: "dev-save",
