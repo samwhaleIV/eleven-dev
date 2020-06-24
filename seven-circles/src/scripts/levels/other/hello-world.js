@@ -10,7 +10,7 @@ const TEXT_DELAY = 3000;
 
 const FADE_IN_TIME = 4000;
 
-const FADE_OUT_TIME = 3000;
+const FADE_OUT_TIME = 1500;
 
 const TEXT_LINES = [
     "What one may see another may not.",
@@ -19,13 +19,10 @@ const TEXT_LINES = [
     "What must stars think of you?",
 ];
 
-const TARGET_SCRIPT = "TunnelsOfHell";
-
 function Title() {
     this.text = TITLE_TEXT;
 
-    let fadeInStart = null;
-    let fadeOutStart = null;
+    let fadeInStart = null, fadeOutStart = null;
 
     let fadeInResolve, fadeOutResolve;
 
@@ -49,17 +46,23 @@ function Title() {
         });
     };
 
-    this.render = (context,{halfWidth,halfHeight},{now}) => {
+    this.render = (context,{halfWidth,halfHeight},time) => {
         context.translate(halfWidth,halfHeight);
 
         let t = 1;
 
         const isStartFade = fadeInStart !== null;
-        if(isStartFade || fadeOutStart !== null) {
-            const fadeDuration = isStartFade ? TITLE_FADE_IN_DURATION : TITLE_FADE_OUT_DURATION
-            t = (now - fadeInStart) / fadeDuration;
-            if(t < 0) t = 0; else if(t > 1) {
-                t = 1;
+        const isOutFade = fadeOutStart !== null;
+
+        if(isStartFade || isOutFade) {
+            const fadeDuration = isStartFade ?
+                TITLE_FADE_IN_DURATION : TITLE_FADE_OUT_DURATION;
+
+            const startTime = isStartFade ? fadeInStart : fadeOutStart;
+
+            t = (time.now - startTime) / fadeDuration;
+            t = Math.max(Math.min(t,1),0);
+            if(t >= 1) {
                 if(isStartFade) {
                     fadeInStart = null;
                     fadeInResolve();
@@ -68,17 +71,19 @@ function Title() {
                     fadeOutResolve();
                 }
             }
-            if(!fadeInStart) t = 1 - t;
+            if(isOutFade) t = 1 - t;
         }
 
-        context.fillStyle = `rgba(255,255,255,${t})`;
+        context.globalAlpha = t;
 
+        context.fillStyle = "white";
         context.textBaseline = "middle";
         context.textAlign = "center";
         context.font = TITLE_FONT;
         context.fillText(this.text,0,0);
 
         context.translate(-halfWidth,-halfHeight);
+        context.globalAlpha = 1
     }
 }
 
@@ -92,7 +97,8 @@ function HelloWorld({world}) {
     dispatchRenderer.addBackground(starField.render);
     dispatchRenderer.addBackground(title.render);
 
-    this.load = () => {
+    this.start = () => {
+        console.log("Started!");
         (async () => {
             await world.fadeFromBlack(FADE_IN_TIME);
             world.popFader();
@@ -104,8 +110,8 @@ function HelloWorld({world}) {
                 title.text = "";
                 await frameDelay(TEXT_DELAY);
             }
-            world.transition(TARGET_SCRIPT,null,FADE_OUT_TIME);
+            world.transitionNext(null,FADE_OUT_TIME);
         })();
-    };
+    }
 }
 export default HelloWorld;

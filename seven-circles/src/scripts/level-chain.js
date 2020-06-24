@@ -1,6 +1,9 @@
 const LevelBlocks = [
     /* The last instance of a level name is put into the lookup table */
     [
+        "HelloWorld",
+        "TheBeginning",
+        "HelloHell",
         "TunnelsOfHell",
         "ChocolateHell",
         "HatHell",

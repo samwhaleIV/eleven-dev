@@ -102,7 +102,9 @@ function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
             return;
         }
 
-        if(data.value === 16) {
+        if(data.value === 17) {
+            world.sayNamed("We'll never be too far apart. You better watch your back!","Mysterious Lamp","r");
+        } else if(data.value === 16) {
             if(saveState.get("talkedToDevilGuy")) {
                 world.say("You can go now. I don't need the company.");
                 return;
@@ -123,7 +125,11 @@ function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
                 ]);
 
                 await dramaZoom.zoomOut();
-                await world.say("You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.");
+                await MessageChain(world,[
+                    "Before you leave, you might want to interact with that blue stone over there with the S on it.",
+                    "I'm not entirely sure what it does, but management insists I tell everyone about it.",
+                    "You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.",
+                ]);
     
                 world.playerController.unlock();
                 endWallRight.open();
