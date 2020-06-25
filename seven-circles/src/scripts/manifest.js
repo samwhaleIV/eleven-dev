@@ -3,6 +3,7 @@
 import ScriptBook from "./script-book.js";
 
 /* Note that these import aliases might not reflect the real script identifier/function names. */
+import BombHell from "./levels/hell/bomb-hell.js";
 import ChocolateHell from "./levels/hell/chocolate-hell.js";
 import DeadHell from "./levels/hell/dead-hell.js";
 import GraveHell from "./levels/hell/grave-hell.js";
@@ -23,7 +24,7 @@ import TheBeginning from "./levels/other/the-beginning.js";
 import BombTest from "./levels/test/bomb-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
 
-const Scripts = ScriptBook.Import(ChocolateHell,DeadHell,GraveHell,HatHell,HelloHell,MazeHell,PaintHell,PondHell,RiverHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,TheBeginning,BombTest,NpcClTest);
+const Scripts = ScriptBook.Import(BombHell,ChocolateHell,DeadHell,GraveHell,HatHell,HelloHell,MazeHell,PaintHell,PondHell,RiverHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,TheBeginning,BombTest,NpcClTest);
 
 export default Scripts;
 

@@ -1,6 +1,7 @@
 const DELAY = 150;
 
-async function MessageChain(world,messages,[name,color]) {
+async function MessageChain(world,messages,nameData) {
+    const [name,color] = nameData || [];
 
     const {playerController} = world;
 

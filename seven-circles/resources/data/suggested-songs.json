@@ -3,6 +3,14 @@
         "song": null,
         "preloadSongs": []
     },
+    "TheBeginning": {
+        "song": null,
+        "preloadSongs": []
+    },
+    "HelloHell": {
+        "song": "not_pig.mp3",
+        "preloadSongs": []
+    },
     "TunnelsOfHell": {
         "song": null,
         "preloadSongs": []
