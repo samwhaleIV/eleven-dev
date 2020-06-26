@@ -34,7 +34,7 @@ function showMessage(message,instant) {
     });
 }
 
-function sayNamed(message,name,colorCode) {
+function sayNamed(message,name="???",colorCode="p") {
     const lines = message.split(" ");
     lines.unshift(`&%${colorCode}${name}:`);
     lines[1] = `%b` + lines[1];

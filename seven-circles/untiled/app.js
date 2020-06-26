@@ -31,7 +31,8 @@ function App() {
         return table;
     })([
         [71,72,135,136,832,833], //Hell floor
-        [7,8] //Hell wall
+        [7,8], //Hell wall
+        [222,223,286,287]
     ]);
     const isFillSimilar = (a,b) => {
         if(a === b) return true;
@@ -160,9 +161,12 @@ function App() {
         ctrl: {
             KeyZ: "undo",
             KeyY: "redo",
-            KeyR: "reloadTilesets"
+            KeyR: "reloadTilesets",
+            KeyS: "saveAndExport",
+            KeyO: "openMap"
         },
         shift: {
+            KeyQ: "resizeMap",
             Digit1: "toggleBackground",
             Digit2: "toggleForeground",
             Digit3: "toggleSuperForeground",
@@ -552,7 +556,7 @@ function App() {
         maps = ResourceManager.getJSON(MAP_DATA);
     };
 
-    const exportMaps = () => {
+    const exportMaps = (noAlert=false) => {
         const text = JSON.stringify(maps);
         const blob = new Blob([text],{type:"application/json"});
 
@@ -563,8 +567,7 @@ function App() {
             method: "POST",
             body: formData
         });
-
-        alert("Exported!");
+        if(!noAlert) alert("Exported maps!");
     };
 
     let loaded = false;
@@ -802,6 +805,14 @@ function App() {
         return {width, height, layerCount: 6,encoded: false};
     };
 
+    const saveMap = (noAlert=false) => {
+        if(!this.mapName) return;
+        const newMap = world.tileRenderer.exportLayer(true);
+        const mapName = this.mapName;
+        maps[mapName] = newMap;
+        if(!noAlert) alert("Saved map!");
+    };
+
     const actions = {
         selectBackground: getLayerSelect(0),
         selectForeground: getLayerSelect(1),
@@ -877,15 +888,14 @@ function App() {
             }
         },
 
-        saveMap: () => {
-            if(!this.mapName) return;
-            const newMap = world.tileRenderer.exportLayer(true);
-            const mapName = this.mapName;
-            maps[mapName] = newMap;
-            alert("Saved map!");
-        },
+        saveMap,
+        exportMaps,
 
-        exportMaps: exportMaps,
+        saveAndExport: () => {
+            saveMap(true);
+            exportMaps(true);
+            alert("Saved and exported!");
+        },
 
         resizeMap: () => {
             const mapName = this.mapName;
@@ -961,8 +971,7 @@ function App() {
         document.getElementById(`${ID}-button`).onclick = event => 
         event.button === 0 ? sendAction(action) : undefined;
     }))([
-        ["open","openMap"],["save","saveMap"],
-        ["resize","resizeMap"],["export","exportMaps"]
+        ["open","openMap"],["resize","resizeMap"],["save","saveAndExport"]
     ]);
 }
 const app = new App();

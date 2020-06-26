@@ -84,6 +84,7 @@ function World(callback) {
     this.tileSize = BASE_TILE_SIZE;
 
     this.scriptData = null;
+    this.inputDisabled = false;
 
     this.load = async () => {
 
@@ -303,6 +304,7 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
 
     data.lastMap = lastMap;
     data.nextMap = nextMap;
+    data.currentMap = scriptName;
     data.fromNextMap = data.lastScript === data.nextMap;
     data.fromLastMap = data.lastScript === data.lastMap;
     data.world = this;
@@ -357,7 +359,16 @@ World.prototype.transitionLast = function(data,fadeTime) {
 }
 World.prototype.transition = function(script,data,fadeTime) {
     FadeTransition(this,script,data,fadeTime);
-}   
+}
+World.prototype.transitionSelf = function(data,fadeTime) {
+    this.transition(this.scriptData.currentMap,data,fadeTime);
+}
+World.prototype.disableInput = function() {
+    this.inputDisabled = true;
+}
+World.prototype.enableInput = function() {
+    this.inputDisabled = false;
+}
 
 World.prototype.reset = function() {
     this.validateParseOnlyMethod();
@@ -371,6 +382,7 @@ World.prototype.reset = function() {
     this.managedGamepad.keyUp = null;
     this.keyDown = null;
     this.keyUp = null;
+    this.inputDisabled = false;
 
     this.spriteFollower.reset();
 

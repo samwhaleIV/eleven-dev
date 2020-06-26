@@ -1,23 +1,33 @@
 const LevelBlocks = [
     /* The last instance of a level name is put into the lookup table */
     [
+        //Intro sequence
         "HelloWorld",
         "TheBeginning",
         "HelloHell",
+
         "TunnelsOfHell",
         "ChocolateHell",
         "HatHell",
-        "RiverHell",
-        "VoidHell",
-        "MazeHell",
+
         "PaintHell",
-        null, //a saveable level
-        "PondHell",
-        null, //a saveable level
+        "SaveHell",
+        "RiverHell",
+
+        "VoidHell",
+        "BombHell",
+        "MineHell",
+
+        null,
+        "MazeHell",
+        "SwitchHell",
+
+        null,
         "GraveHell",
+        null,
         "DeadHell",
         null,
-        "SwitchHell"
+        "PondHell",
     ],
 ];
 

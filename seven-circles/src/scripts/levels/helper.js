@@ -23,6 +23,7 @@ import SaveStone from "../helper/save-stone.js";
 import WarpGate from "../helper/warp-gate.js";
 import WarpCrystalBox from "../helper/warp-crystal-box.js";
 import ClawMachine from "../helper/claw-machine.js";
+import MapNuke from "../helper/map-nuke.js";
 import {
     InstallLastTrigger,InstallNextTrigger,InstallLevelChainTriggers,GetNextTrigger,GetLastTrigger
 } from "../helper/level-chain-triggers.js";
@@ -33,6 +34,7 @@ import {
     import InvisibileWall from "../helper/doors/invisible-wall.js";
 
 export {
+    MapNuke,
     AddFireSprite,
     AddNamedBackground,
     SaveStone,

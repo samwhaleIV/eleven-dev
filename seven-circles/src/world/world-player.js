@@ -55,9 +55,12 @@ function GetInteractivePlayerController(world,sprite) {
     world.spriteFollower.target = sprite;
     world.spriteFollower.enabled = true;
 
+    const canSendNonDirectionalInput = () => !world.inputDisabled;
+
     const keyUp = input.keyUp;
     const keyDown = event => {
         if(event.impulse === InputCodes.Inventory) {
+            if(!canSendNonDirectionalInput()) return;
             if(event.repeat) return;
             if(playerController.locked) {
                 if(!world.canAdvanceMessage()) return;
@@ -73,6 +76,7 @@ function GetInteractivePlayerController(world,sprite) {
                 });
             }
         } else if(event.impulse === InputCodes.Click) {
+            if(!canSendNonDirectionalInput()) return;
             if(event.repeat) return;
             if(world.directionalMessage) {
                 world.directionalMessage.accept();

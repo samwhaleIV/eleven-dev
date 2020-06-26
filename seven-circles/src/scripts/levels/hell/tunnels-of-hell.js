@@ -121,7 +121,9 @@ function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
                     "Look, I don't have a lot of time so I'll make this brief. You're dead.",
                     "You probably have a lot of questions but we don't have time for them.",
                     "There's all this red tape and it makes my life a living hell. They don't make dying like they used to..",
-                    "So here's the short version: You have a strong soul. If you can make it through each of the Seven Circles, you get to live."
+                    "So here's the short version: You have a strong soul. If you can make it out of here in one piece, you get to live.",
+                    "Different people have different names for here. Hell, the seven circles. I just call it home.",
+                    "So, call it whatever you want. I got to pay my bills either way."
                 ]);
 
                 await dramaZoom.zoomOut();

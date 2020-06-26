@@ -13,19 +13,14 @@ function TheBeginning({world}) {
         },true]
     ]);
 
-    let inputProxy = null;
-
     const lampInteract = async () => {
         objectiveText.close();
         world.playerController.lock();
         world.camera.zoomTo(100,10000);
-        inputProxy = world.getInputProxy({cleanOnOpen:true});
+        world.disableInput();
         world.sayNamed("Oh. You really shouldn't have done that.","???","r");
         await delay(3000);
         world.transitionNext(null,500);
-    };
-    this.unload = () => {
-        if(inputProxy) inputProxy.close();
     };
 
     this.interact = ({value}) => {

@@ -59,7 +59,15 @@ function RiverHell({world,inventory,fromNextMap}) {
         if(pickupField.tryPickup(data)) return;
         if(riverRocks.tryPickup(data)) return;
 
-        if(data.value === 16) {
+        if(data.value === 18) {
+            (async () => {
+                await MessageChain(world,[
+                    "Explosions. Death. Fire. Pain.",
+                    "Sorry, I was just thinking out loud.",
+                    "There might be a faster way to get through this chamber.",
+                ],["Mysterious Lamp","r"]);
+            })();
+        } else if(data.value === 16) {
             if(gotLastBomb) {
                 world.say("You saved my friends! You're a saint!");
             } else {

@@ -85,7 +85,9 @@ function ChocolateHell({
 
         if(riverRocks.tryPickup(data)) return;
         
-        if(data.value === SKELE_ID) {
+        if(data.value === 17) {
+            world.sayNamed("This looks like a fun one kiddo.","Mysterious Lamp","r");
+        } else if(data.value === SKELE_ID) {
             const playerWep = player.getWeapon();
             if(playerWep && playerWep.name === "rock-pickup") {
                 world.say("That isn't chocolate milk. That's a rock.");

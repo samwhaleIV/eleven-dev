@@ -49,7 +49,7 @@ function PondHell({world,fromNextMap}) {
         world.playerController.lock();
         (async ()=>{
             await world.message("You've been spotted!");
-            world.transition("PondHell");
+            world.transitionSelf();
         })();
     };
 
