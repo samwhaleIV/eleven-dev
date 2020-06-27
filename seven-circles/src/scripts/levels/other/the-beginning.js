@@ -3,18 +3,16 @@ import {AddColorBackground,ObjectiveText} from "../helper.js";
 function TheBeginning({world}) {
     world.setMap("the-beginning");
     AddColorBackground(world,"#96DDFF");
-    const player = world.addPlayer(8,12,"down");
+    world.addPlayer(8,12,"down");
     
-    const objectiveText = new ObjectiveText(world);
+    const objective = new ObjectiveText(world);
 
-    world.setTriggers([
-        [1,()=>{
-            objectiveText.set("Inspect the mysterious lamp.","inspect");
-        },true]
-    ]);
+    world.setTriggers([[1,()=>{
+        objective.set("Inspect the mysterious lamp.","inspect");
+    },true]]);
 
     const lampInteract = async () => {
-        objectiveText.close();
+        objective.close();
         world.playerController.lock();
         world.camera.zoomTo(100,10000);
         world.disableInput();

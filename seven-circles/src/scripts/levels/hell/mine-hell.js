@@ -5,12 +5,12 @@ const BOMB_TRIGGER_ID = 15;
 
 function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
     world.setMap("mine-hell");
-    const objectiveText = new ObjectiveText(world);
+    const objective = new ObjectiveText(world);
     if(fromNextMap) {
         world.addPlayer(62,7.5,"left");
     } else {
         world.addPlayer(6,22,"up");
-        objectiveText.set("Look out for landmines!","boom");
+        objective.set("Look out for landmines!","boom");
     }
     const {player} = world;
     world.camera.padding = true;
@@ -39,7 +39,7 @@ function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
         grabbedWep = true;
     };
 
-    const trippedABomb = () => MapNuke(world,objectiveText,{failureCount:failureCount+1,grabbedWepLastTime:grabbedWep});
+    const trippedABomb = () => MapNuke(world,objective,{failureCount:failureCount+1,grabbedWepLastTime:grabbedWep});
 
     const saveStone = new SaveStone(world,8,16);
 

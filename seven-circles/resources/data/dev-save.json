@@ -28,25 +28,6 @@
                 "scriptID": "HelloWorld"
             },
             "Inventory": {}
-        },
-
-        "PillTest": {
-            "Inventory": {
-                "big-pill": 20,
-                "small-pill": 20,
-                "speed-pill": 20
-            }
-        },
-
-        "SerializeExample": {
-            "PlayerPosition": {
-                "_deserialize": true,
-                "x": 0, "y": 0, "scriptID": "HelloWorld",
-                "serializeData": {
-                    "DevData": "Yeeeeeeeeeeeeeeeeeee"
-                },
-                "direction": 0
-            }
         }
 
     }

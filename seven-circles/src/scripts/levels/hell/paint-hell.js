@@ -171,10 +171,10 @@ function PaintHell({world,inventory,fromNextMap}) {
             inventory.take("blueprint-fragment");
             return;
         }
-        if(spriteDoor.tryInteract(data)) {
-            world.message("The door won't open until the canvas is complete.");
-            return;
-        }
+        if(spriteDoor.tryInteract(data,()=>{
+            if(spriteDoor.opened) return;
+            world.message("The door won't open until the canvas is complete!");
+        })) return;
         if(clawMachine.tryInteract(data)) return;
         if(data.value === HOLE_INTERACTION) {
             const {x,y} = data;
