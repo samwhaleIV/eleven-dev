@@ -36,7 +36,7 @@ function App() {
     ]);
     const isFillSimilar = (a,b) => {
         if(a === b) return true;
-        return a in fillSimilars && b in fillSimilars;
+        return a in fillSimilars && b in fillSimilars[a];
     };
 
     const tilesets = {

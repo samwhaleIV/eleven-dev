@@ -19,7 +19,6 @@ const LevelBlocks = [
         "MineHell",
 
         null,
-        "MazeHell",
         "SwitchHell",
 
         null,
@@ -29,6 +28,10 @@ const LevelBlocks = [
         null,
         "PondHell",
     ],
+    [
+        //Removed/unready levels
+        "MazeHell"
+    ]
 ];
 
 const LevelChain = new function LevelChain() {
