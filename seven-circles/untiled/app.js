@@ -1,6 +1,11 @@
 import AddColorBackground from "../src/scripts/helper/backgrounds/color-background.js";
 import TilePicker from "./tile-picker.js";
 import FakeWorld from "./fake-world.js";
+import ActionTable from "./action-table.js";
+import HellFloorPlan from "./scripts/hell-floor-plan.js";
+import FillSimilars from "./fill-similars.js";
+import KnownCollisionTypes from "./known-collision-types.js";
+import ButtonManifest from "./button-manifest.js";
 
 const COLLISION_TILESET = "collision-tileset";
 const INTERACTION_TILESET = "interaction-tileset";
@@ -13,11 +18,11 @@ const MIN_ZOOM = 1;
 const MAX_SCALE = 8;
 const MOUSE_PAN_SPEED = 8;
 
-const { CanvasManager, ResourceManager } = Eleven;
+const {CanvasManager,ResourceManager} = Eleven;
+
+const Scripts = {"floor-plan":HellFloorPlan};
 
 function App() {
-
-    const wallCollisionTypes = {7:1,8:1};
 
     const fillSimilars = (sets=>{
         const table = new Object();
@@ -29,11 +34,8 @@ function App() {
             }
         }
         return table;
-    })([
-        [71,72,135,136,832,833], //Hell floor
-        [7,8], //Hell wall
-        [222,223,286,287]
-    ]);
+    })(FillSimilars);
+
     const isFillSimilar = (a,b) => {
         if(a === b) return true;
         return a in fillSimilars && b in fillSimilars[a];
@@ -148,61 +150,18 @@ function App() {
 
     const tilesetList = [];
 
-    const actionTable = {
-        repeat: {
-            KeyW: "panUp",
-            KeyA: "panLeft",
-            KeyS: "panDown",
-            KeyD: "panRight",
-            KeyZ: "zoomIn",
-            KeyX: "zoomOut",
-            KeyF: "fillSelection",
-        },
-        ctrl: {
-            KeyZ: "undo",
-            KeyY: "redo",
-            KeyR: "reloadTilesets",
-            KeyS: "saveAndExport",
-            KeyO: "openMap"
-        },
-        shift: {
-            KeyQ: "resizeMap",
-            Digit1: "toggleBackground",
-            Digit2: "toggleForeground",
-            Digit3: "toggleSuperForeground",
-            Digit4: "toggleCollision",
-            Digit5: "toggleInteraction",
-            Digit6: "toggleLighting"
-        },
-        noRepeat: {
-            Digit1: "selectBackground",
-            Digit2: "selectForeground",
-            Digit3: "selectSuperForeground",
-            Digit4: "selectCollision",
-            Digit5: "selectInteraction",
-            Digit6: "selectLighting",
-            KeyO: "allVisible",
-            KeyP: "allInvisible",
-            KeyG: "toggleGrid",
-            KeyR: "toggleRandomMode",
-            KeyB: "brushMode",
-            KeyE: "eraserMode",
-            KeyQ: "setLayerOnlyVisible"
-        }
-    };
-
-    Object.assign(actionTable.noRepeat,actionTable.repeat);
+    Object.assign(ActionTable.noRepeat,ActionTable.repeat);
 
     const keyDown = ({repeat,code,shiftKey,ctrlKey}) => {
         let action = null;
         if(ctrlKey) {
-            action = actionTable.ctrl[code];
+            action = ActionTable.ctrl[code];
         } else if(shiftKey) {
-            action = actionTable.shift[code];
+            action = ActionTable.shift[code];
         } else if(repeat) {
-            action = actionTable.repeat[code];
+            action = ActionTable.repeat[code];
         } else {
-            action = actionTable.noRepeat[code];
+            action = ActionTable.noRepeat[code];
         }
         if(action) this.sendAction(action);
     };
@@ -249,13 +208,13 @@ function App() {
         }
     };
 
-    const wallCollisionFill = () => {
+    const autoCollisionFill = () => {
         const {width,height} = world.grid;
         for(let x = 0;x<width;x++) {
             for(let y = 0;y<height;y++) {
                 const value = world.get(x,y,0)
-                if(value in wallCollisionTypes) {
-                    const collisionValue = wallCollisionTypes[value];
+                if(value in KnownCollisionTypes) {
+                    const collisionValue = KnownCollisionTypes[value];
                     historyBuffer.push({
                         x,y,layer:3,value:collisionValue,oldValue:world.get(x,y,3)
                     });
@@ -882,7 +841,7 @@ function App() {
         fillSelection: () => {
             const visibleLayers = world.getVisibleLayers();
             if(activeLayer === 3 && visibleLayers[3] && visibleLayers[0]) {
-                wallCollisionFill();
+                autoCollisionFill();
             } else {
                 fill();
             }
@@ -890,6 +849,24 @@ function App() {
 
         saveMap,
         exportMaps,
+        clearLayer: () => {
+            const {width,height} = world.grid;
+            for(let x = 0;x < width;x++) {
+                for(let y = 0;y<height;y++) {
+                    world.set(x,y,0,activeLayer);
+                }
+            }
+        },
+
+        runScript: () => {
+            const scriptName = prompt("Enter script name:");
+            if(scriptName === null) return;
+            if(scriptName in Scripts) {
+                Scripts[scriptName](world);
+            } else {
+                alert("Unknown script!");
+            }
+        },
 
         saveAndExport: () => {
             saveMap(true);
@@ -970,9 +947,7 @@ function App() {
     (buttons => buttons.forEach(([ID,action])=>{
         document.getElementById(`${ID}-button`).onclick = event => 
         event.button === 0 ? sendAction(action) : undefined;
-    }))([
-        ["open","openMap"],["resize","resizeMap"],["save","saveAndExport"]
-    ]);
+    }))(ButtonManifest);
 }
 const app = new App();
 globalThis.Untiled = app;
