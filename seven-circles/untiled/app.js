@@ -6,6 +6,7 @@ import HellFloorPlan from "./scripts/hell-floor-plan.js";
 import FillSimilars from "./fill-similars.js";
 import KnownCollisionTypes from "./known-collision-types.js";
 import ButtonManifest from "./button-manifest.js";
+import RepairFloorPlan from "./scripts/bg-sfg-transfer.js";
 
 const COLLISION_TILESET = "collision-tileset";
 const INTERACTION_TILESET = "interaction-tileset";
@@ -20,7 +21,10 @@ const MOUSE_PAN_SPEED = 8;
 
 const {CanvasManager,ResourceManager} = Eleven;
 
-const Scripts = {"floor-plan":HellFloorPlan};
+const Scripts = {
+    "floor-plan": HellFloorPlan,
+    "repair-floor-plan": RepairFloorPlan
+};
 
 function App() {
 
@@ -383,9 +387,19 @@ function App() {
         }
     };
 
+    const installGlobalFunctions = () => {
+        for(const script of Object.values(Scripts)) {
+            globalThis[script.name] = () => script(world);
+        };
+        globalThis.openMap = openMap;
+        console.log("Scripts:",Scripts);
+    };
+
     const loadWorld = async() => {
         await CanvasManager.setFrame(FakeWorld,[tilesetList]);
         world = CanvasManager.frame;
+        installGlobalFunctions();
+
         world.keyDown = keyDown;
         world.pointerScroll = pointerScroll;
         world.pointerMove = pointerMove;
@@ -772,6 +786,22 @@ function App() {
         if(!noAlert) alert("Saved map!");
     };
 
+    const openMap = mapName => {
+        mapName = mapName.toLowerCase();
+
+        if(!(mapName in maps)) {
+            let i = 1, testName = mapName;
+            while((!testName in maps)) {
+                testName = `Untitled Map ${i}`;
+                i++;
+            }
+            maps[testName] = getNewMap();
+            setMap(testName);
+        } else {
+            setMap(mapName);
+        }
+    };
+
     const actions = {
         selectBackground: getLayerSelect(0),
         selectForeground: getLayerSelect(1),
@@ -825,19 +855,9 @@ function App() {
         openMap: () => {
             const mapName = prompt("Map name");
             if(!mapName) return;
-
-            if(!(mapName in maps)) {
-                let i = 1, testName = mapName;
-                while((!testName in maps)) {
-                    testName = `Untitled Map ${i}`;
-                    i++;
-                }
-                maps[testName] = getNewMap();
-                setMap(testName);
-            } else {
-                setMap(mapName);
-            }
+            openMap(mapName);
         },
+
         fillSelection: () => {
             const visibleLayers = world.getVisibleLayers();
             if(activeLayer === 3 && visibleLayers[3] && visibleLayers[0]) {

@@ -19,6 +19,7 @@ const LevelBlocks = [
         "MineHell",
 
         null,
+        "MazeHell",
         "SwitchHell",
 
         null,
@@ -27,10 +28,6 @@ const LevelBlocks = [
         "DeadHell",
         null,
         "PondHell",
-    ],
-    [
-        //Removed/unready levels
-        "MazeHell"
     ]
 ];
 

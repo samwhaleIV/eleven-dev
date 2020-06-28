@@ -1,0 +1,8 @@
+-Add parameters to floor plan.
+    -Add parameter to hell floor plan for backgroundless fancy corners.
+
+-Allow for thick walls in floor plan.
+
+-Add a command that lists all of the maps
+
+-Store maps in FILO delimited by new lines so version control can kick in for map data
