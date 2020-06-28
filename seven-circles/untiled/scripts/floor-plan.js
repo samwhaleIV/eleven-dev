@@ -1,4 +1,16 @@
-const WildCard = "*";
+import {
+    getOuterWallPattern,
+    getInnerWallPattern,
+    getFloorShadowPattern
+} from "./floor-plan-matrices.js";
+
+const WILD_CARD = "*";
+
+const threeByThreeMatrix = [
+    [[-1,-1],[0,-1],[1,-1]],
+    [[-1,0],[0,0],[1,0]],
+    [[-1,1],[0,1],[1,1]]
+];
 
 const arrayTo9Grid = array => {
     return {
@@ -30,289 +42,166 @@ const hash9Grid = nineGrid => {
     ].join(",");
 };
 
+const nineGridCenter = 4;
+
 const scorePattern = (a,b) => {
     a = a.split(","), b = b.split(",");
-    let matches = 0;
+    let matchCount = 0;
     for(let i = 0;i<a.length;i++) {
         const av = a[i], bv = b[i];
         const isEqual = av === bv;
-        if(isEqual || av === WildCard || bv === WildCard) {
-            if(isEqual && i !== 4) matches += 1; //might need to remove i !== 4
+        if(isEqual || av === WILD_CARD || bv === WILD_CARD) {
+            if(isEqual && i !== nineGridCenter) {
+                matchCount += 1;
+            }
             continue;
         } else {
             return 0;
         }
     }
-    return matches;
+    return matchCount;
 };
+
+const formatMatrices = (matrices,floor,wall) => {
+    const valueTable = {[WILD_CARD]: WILD_CARD, "w": wall, "f": floor};
+    const formatted = new Object();
+    Object.entries(matrices).forEach(([key,change])=>{
+        const proto9Grid = [[],[],[]];
+        const value = key.split("");
+        for(let i = 0;i < 9 && value.length >= 1;i++) {
+            let character = " ";
+            while(character === " ") {
+                character = value.shift();
+            }
+            if(character in valueTable) {
+                character = valueTable[character];
+            } else {
+                character = WILD_CARD;
+            }
+            proto9Grid[Math.floor(i/3)].push(character);
+        }
+        formatted[hash9Grid(proto9Grid)] = change;
+    });
+    return formatted;
+};
+
+const patternMatch = (x,y,hash,hashSet,painter) => {
+    let bestResultValue = 0, bestChange = null;
+    for(const [targetHash,change] of hashSet) {
+        const score = scorePattern(hash,targetHash);
+        if(score > bestResultValue) {
+            bestResultValue = score;
+            bestChange = change;
+        }
+    }
+    const hasChange = bestChange !== null;
+    if(hasChange) painter(x,y,bestChange);
+    return hasChange;
+};
+
+const selectRandom = set => set[Math.floor(Math.random()*set.length)];
 
 function FloorPlan({
     world,protoFloor,protoWall,background,
     shadowMatrix,wallMatrix,floorValues
 }) {
-    const floorMatrices = Object.entries({
-        [hash9Grid([
-            //Left wall
-            [WildCard,WildCard,WildCard],
-            [protoWall,protoFloor,WildCard],
-            [WildCard,WildCard,WildCard]
-        ])]: [[0,0,shadowMatrix[1][0]]],
-        [hash9Grid([
-            //L corner
-            [protoWall,protoWall,WildCard],
-            [protoWall,protoFloor,WildCard],
-            [WildCard,WildCard,WildCard]
-        ])]: [[0,0,shadowMatrix[0][0]]],
-        [hash9Grid([
-            //Top wall
-            [WildCard,protoWall,WildCard],
-            [WildCard,protoFloor,WildCard],
-            [WildCard,WildCard,WildCard]
-        ])]: [[0,0,shadowMatrix[0][1]]],
-        [hash9Grid([
-            //Inverse corner
-            [protoWall,protoFloor,WildCard],
-            [protoFloor,protoFloor,WildCard],
-            [WildCard,WildCard,WildCard]
-        ])]: [[0,0,shadowMatrix[1][1]]],
-    });
 
-    const WildCardRow = new Array(3).fill(WildCard);
+    const listifyMatrices = matrices => Object.entries(
+        formatMatrices(matrices,protoFloor,protoWall)
+    );
 
-    const wallMatricesInner = Object.entries({
-        //Simple walls
-        [hash9Grid([ //Right
-            WildCardRow,
-            [WildCard,protoFloor,protoWall],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.full[1][2]]],
-        [hash9Grid([ //Left
-            WildCardRow,
-            [protoWall,protoFloor,WildCard],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.full[1][0]]],
-        [hash9Grid([ //Top
-            WildCardRow,
-            [WildCard,protoFloor,WildCard],
-            [WildCard,protoWall,WildCard],
-        ])]: [[0,0,wallMatrix.inner.full[2][1]]],
-        [hash9Grid([ //Bottom
-            [WildCard,protoWall,WildCard],
-            [WildCard,protoFloor,WildCard],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.full[0][1]]],
-
-        //Corner pieces
-        [hash9Grid([
-            //Top left corner
-            [protoWall,protoWall,WildCard],
-            [protoWall,protoFloor,WildCard],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.full[0][0]]],
-        [hash9Grid([
-            //Top right corner
-            [WildCard,protoWall,protoWall],
-            [WildCard,protoFloor,protoWall],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.full[0][2]]],
-        [hash9Grid([
-            //Bottom left corner
-            WildCardRow,
-            [protoWall,protoFloor,WildCard],
-            [protoWall,protoWall,WildCard]
-        ])]: [[0,0,wallMatrix.inner.full[2][0]]],
-        [hash9Grid([
-            //Bottom right corner
-            WildCardRow,
-            [WildCard,protoFloor,protoWall],
-            [WildCard,protoWall,protoWall]
-        ])]:[[0,0,wallMatrix.inner.full[2][2]]],
-    
-        //Inverse corners
-        [hash9Grid([
-            //Top left corner
-            [protoWall,protoFloor,WildCard],
-            [protoFloor,protoFloor,WildCard],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.inverse[1][1]]],
-        [hash9Grid([
-            //Top right corner
-            [WildCard,protoFloor,protoWall],
-            [WildCard,protoFloor,protoFloor],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.inner.inverse[1][0]]],
-        [hash9Grid([
-            //Bottom left corner
-            WildCardRow,
-            [protoFloor,protoFloor,WildCard],
-            [protoWall,protoFloor,WildCard],
-        ])]: [[0,0,wallMatrix.inner.inverse[0][1]]],
-        [hash9Grid([
-            //Bottom right corner
-            WildCardRow,
-            [WildCard,protoFloor,protoFloor],
-            [WildCard,protoFloor,protoWall]
-        ])]: [[0,0,wallMatrix.inner.inverse[0][0]]]
-    });
-
-    const wallMatricesOuter = Object.entries({
-        //Simple walls
-        [hash9Grid([ //Right
-            WildCardRow,
-            [0,protoWall,protoFloor],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.outer.full[1][2]]],
-        [hash9Grid([ //Left
-            WildCardRow,
-            [protoFloor,protoWall,0],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.outer.full[1][0]]],
-
-        [hash9Grid([ //Top
-            [WildCard,0,WildCard],
-            [WildCard,protoWall,WildCard],
-            [WildCard,protoFloor,WildCard],
-
-        ])]: [[0,0,wallMatrix.outer.full[2][1]]],
-        [hash9Grid([ //Bottom
-            [WildCard,protoFloor,WildCard],
-            [WildCard,protoWall,WildCard],
-            [WildCard,0,WildCard]
-        ])]: [[0,0,wallMatrix.outer.full[0][1]]],
-
-        //Corner pieces
-        [hash9Grid([
-            //Top left corner
-            [0,protoWall,WildCard],
-            [protoWall,protoWall,protoFloor],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.outer.full[2][2]]],
-        [hash9Grid([
-            //Top right corner
-            [WildCard,protoWall,0],
-            [protoFloor,protoWall,protoWall],
-            WildCardRow
-        ])]: [[0,0,wallMatrix.outer.full[2][0]]],
-        [hash9Grid([
-            //Bottom left corner
-            WildCardRow,
-            [protoWall,protoWall,protoFloor],
-            [0,protoWall,WildCard]
-        ])]: [[0,0,wallMatrix.outer.full[0][2]]],
-        [hash9Grid([
-            //Bottom right corner
-            WildCardRow,
-            [protoFloor,protoWall,protoWall],
-            [WildCard,protoWall,0]
-        ])]: [[0,0,wallMatrix.outer.full[0][0]]],
-
-        //Inverse corners
-        [hash9Grid([
-            //Top left corner
-            WildCardRow,
-            [WildCard,protoWall,protoWall],
-            [WildCard,protoWall,WildCard]
-        ])]: [[0,0,wallMatrix.outer.inverse[0][0]]],
-        [hash9Grid([
-            //Top right corner
-            [WildCard,protoWall,WildCard],
-            [WildCard,protoWall,protoWall],
-            WildCardRow,
-        ])]: [[0,0,wallMatrix.outer.inverse[1][0]]],
-        [hash9Grid([
-            //Bottom left corner
-            WildCardRow,
-            [protoWall,protoWall,WildCard],
-            [WildCardRow,protoWall,WildCard],
-        ])]: [[0,0,wallMatrix.outer.inverse[0][1]]],
-        [hash9Grid([
-            //Bottom right corner
-            [WildCard,protoWall,WildCard],
-            [protoWall,protoWall,WildCard],
-            WildCardRow,
-        ])]: [[0,0,wallMatrix.outer.inverse[1][1]]],
-    });
-
-    const {grid} = world;
-    const {width,height} = grid;
-
-    const getBackground = (x,y) => world.get(x,y,0);
+    const shadowPattern = listifyMatrices(
+        getFloorShadowPattern(shadowMatrix)
+    );
+    const innerWallPattern = listifyMatrices(
+        getInnerWallPattern(wallMatrix.inner)
+    );
+    const outerWallPattern = listifyMatrices(
+        getOuterWallPattern(wallMatrix.outer)
+    );
 
     const changeBuffer = new Array();
 
+    const getBackground = (x,y) => {
+        return world.get(x,y,0);
+    };
+
+    const backgroundLayer = 0;
+    const superForegroundLayer = 2;
+    const collisionLayer = 3;
+
+    const setBackground = (x,y,value) => {
+        changeBuffer.push([x,y,value,backgroundLayer]);
+    };
+    const setSuperForeground = (x,y,value) => {
+        changeBuffer.push([x,y,value,superForegroundLayer]);
+    };
+    const setCollision = (x,y,value) => {
+        changeBuffer.push([x,y,value,collisionLayer]);
+    };
+
     const get9Grid = (x,y) => {
-        return {
-            topLeft: getBackground(x-1,y-1),
-            top: getBackground(x,y-1),
-            topRight: getBackground(x+1,y-1),
-
-            left: getBackground(x-1,y),
-            middle: getBackground(x,y),
-            right: getBackground(x+1,y),
-
-            bottomLeft: getBackground(x-1,y+1),
-            bottom: getBackground(x,y+1),
-            bottomRight: getBackground(x+1,y+1)
-        }
+        const getValue = ([xOffset,yOffset]) => {
+            return getBackground(x+xOffset,y+yOffset);
+        };
+        const getRow = row => {
+            return row.map(getValue);
+        };
+        const proto9Grid = threeByThreeMatrix.map(getRow);
+        return arrayTo9Grid(proto9Grid);
     };
-
-    const setBackground = (x,y,value) => changeBuffer.push([x,y,value,0]);
-    const setSuperForeground = (x,y,value) => changeBuffer.push([x,y,value,2]);
-    const setCollision = (x,y,value) => changeBuffer.push([x,y,value,3]);
-
-    const patternMatch = (x,y,hash,hashSet,painter) => {
-        let bestResultValue = 0, bestChangeSet = [];
-        for(const [targetHash,changeSet] of hashSet) {
-            const score = scorePattern(hash,targetHash);
-            if(score > bestResultValue) {
-                bestResultValue = score;
-                bestChangeSet = changeSet;
-            }
-        }
-        for(const [xOffset,yOffset,value] of bestChangeSet) {
-            painter(x+xOffset,y+yOffset,value);
-        }
-        return bestChangeSet.length >= 1;
-    };
-
-    const selectRandom = set => set[Math.floor(Math.random()*set.length)];
 
     const paintFloor = (x,y) => {
         const nineGrid = get9Grid(x,y);
         const hash = hash9Grid(nineGrid);
-        if(!patternMatch(x,y,hash,floorMatrices,setBackground)) {
+        if(!patternMatch(x,y,hash,shadowPattern,setBackground)) {
             setBackground(x,y,selectRandom(floorValues));
         }
-        patternMatch(x,y,hash,wallMatricesInner,setSuperForeground);
+        patternMatch(x,y,hash,innerWallPattern,setSuperForeground);
     };
 
     const paintWall = (x,y) => {
         const nineGrid = get9Grid(x,y);
         const hash = hash9Grid(nineGrid);
-        patternMatch(x,y,hash,wallMatricesOuter,setSuperForeground);
+        patternMatch(x,y,hash,outerWallPattern,setSuperForeground);
         setCollision(x,y,1);
     };
 
-    for(let x = 0;x < width;x++) {
-        for(let y = 0;y < height;y++) {
-            if(getBackground(x,y) === 0) setBackground(x,y,background);
-        }
-    }
-
-    for(let x = 0;x < width;x++) {
-        for(let y = 0;y < height;y++) {
-            const value = getBackground(x,y);
-            if(value === protoFloor) {
-                paintFloor(x,y);
-            } else if(value === protoWall) {
-                paintWall(x,y);
+    const applyBackgroundTiles = () => {
+        if(isNaN(background)) return;
+        const {width,height} = world.grid;
+        for(let x=0;x<width;x++) {
+            for(let y=0;y<height;y++) {
+                if(!getBackground(x,y)) {
+                    setBackground(x,y,background);
+                }
             }
         }
-    }
+    };
 
-    console.log("The floor plan has " + changeBuffer.length + " tile changes.");
-    for(const [x,y,value,layer] of changeBuffer) {
-        world.set(x,y,value,layer);
-    }
+    const iterateWorldTiles = () => {
+        const paintResponseTable = {
+            [protoWall]: paintWall,
+            [protoFloor]: paintFloor
+        };
+        const {width,height} = world.grid;
+        for(let x=0;x<width;x++) {
+            for(let y=0;y<height;y++) {
+                const value = getBackground(x,y);
+                const response = paintResponseTable[value];
+                if(!response) continue;
+                response(x,y);
+            }
+        }
+    };
+
+    const pushTileChanges = () => {
+        console.log(`The floor plan has ${changeBuffer.length} tile changes.`);
+        for(const [x,y,value,layer] of changeBuffer) world.set(x,y,value,layer);
+    };
+
+    applyBackgroundTiles();
+    iterateWorldTiles();
+    pushTileChanges();
 }
 export default FloorPlan;
