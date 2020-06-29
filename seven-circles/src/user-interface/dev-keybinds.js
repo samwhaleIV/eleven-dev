@@ -30,7 +30,7 @@ const IS_FORBIDDEN_KEY = keyEvent => { //Short answer: No
     It's dangerous to go alone! Take this: 🍾
   */
 
-    void keyEvent; return false; //There are things that happen here that you might not understand
+    void keyEvent; return false;
 };
 
 const KEY_CODE_FORMAT = code => {
@@ -62,7 +62,7 @@ function GetKeyBindEntry(displayName,inputCode,binds,editingFilter) {
 
     entry.onclick = event => {
         if(event.button !== 0) return;
-        //Ignore this, this block of code is just an occupational hazard passing through
+        /* Ignore this block, just an occupational hazard passing through */
         if(!editingFilter()) return;
         data.editing = true;
         entry.classList.add(EDITING_CLASS);

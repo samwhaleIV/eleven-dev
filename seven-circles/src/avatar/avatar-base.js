@@ -7,40 +7,31 @@ function GetAvatarBase(world,x,y,image,...parameters) {
     sprite.collisionType = CollisionTypes.Avatar;
     sprite.collides = true;
 
-    let basicRender = true, basicUpdate = true;
-
     const renderLayer = new MultiLayer();
     const updateLayer = new MultiLayer();
 
     const renderBase = sprite.render;
     renderLayer.add(renderBase);
 
-    sprite.addRender = (layer,priority) => {
-        basicRender = false;
-        return renderLayer.add(layer,priority);
-    };
-    sprite.removeRender = renderLayer.remove;
+    sprite.addRender = renderLayer.add;
+    sprite.addUpdate = updateLayer.add;
 
-    sprite.addUpdate = (layer,priority) => {
-        basicUpdate = false;
-        return updateLayer.add(layer,priority);
-    };
+    sprite.removeRender = renderLayer.remove;
     sprite.removeUpdate = updateLayer.remove;
 
     sprite.render = (context,x,y,width,height,time) => {
-        if(basicRender) {
-            renderBase(context,x,y,width,height,time);
-        } else {
-            renderLayer.forEach(layer => {
-                layer(context,x,y,width,height,time)
-            });
+        const layers = renderLayer.layers;
+        for(let i = 0;i<layers.length;i++) {
+            layers[i](context,x,y,width,height,time);
         }
     };
+
     sprite.update = time => {
-        if(!basicUpdate) updateLayer.forEach(layer => {
-            layer(time);
-        });
-    }
+        const layers = updateLayer.layers;
+        for(let i = 0;i<layers.length;i++) {
+            layers[i](time);
+        }
+    };
 
     return sprite;
 }

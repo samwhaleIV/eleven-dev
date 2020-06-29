@@ -15,7 +15,7 @@ function AddFixedWaterBackground(world,x,y,width,height,topLayer) {
     const background = GetWaterBackground(world);
     background.useCameraOffset = false;
     AddPositionBackground(
-        world,background,x,y,width,height,topLayer
+        world,background.render,x,y,width,height,topLayer
     );
 }
 export default AddWaterBackground;

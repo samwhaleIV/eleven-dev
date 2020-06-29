@@ -1,9 +1,16 @@
 /* Script helpers */
-import ObjectiveText from "../helper/objective-text.js"
-    /* Render helpers */
-    import {AddWaterBackground,AddFixedWaterBackground} from "../helper/backgrounds/water-background.js";
-    import {AddNamedBackground,AddColorBackground} from "../helper/backgrounds/color-background.js";
-    import DarkRoom from "../helper/dark-room.js";
+import ObjectiveText from "../helper/objective-text.js";
+import GetTransitionTrigger from "../helper/transition-trigger.js";
+import MapNuke from "../helper/map-nuke.js";
+import {
+    InstallLastTrigger,InstallNextTrigger,InstallLevelChainTriggers,GetNextTrigger,GetLastTrigger
+} from "../helper/level-chain-triggers.js";
+
+/* Render helpers */
+import {AddWaterBackground,AddFixedWaterBackground} from "../helper/backgrounds/water-background.js";
+import {AddNamedBackground,AddColorBackground} from "../helper/backgrounds/color-background.js";
+import DarkRoom from "../helper/dark-room.js";
+import AddPalaceFloor from "../helper/backgrounds/palace-floor.js";
 
 /* Director functions */
 import MessageChain from "../helper/message-chain.js";
@@ -14,7 +21,6 @@ import Teleporter from "../helper/teleporter.js";
 
 /* World functions */
 import AddFireSprite from "../helper/fire-sprite.js";
-import GetTransitionTrigger from "../helper/transition-trigger.js";
 import InstallBombAreas from "../helper/bomb-areas.js";
 import PickupField from "../helper/pickup-field.js";
 import RiverRocks from "../helper/river-rocks.js";
@@ -23,17 +29,15 @@ import SaveStone from "../helper/save-stone.js";
 import WarpGate from "../helper/warp-gate.js";
 import WarpCrystalBox from "../helper/warp-crystal-box.js";
 import ClawMachine from "../helper/claw-machine.js";
-import MapNuke from "../helper/map-nuke.js";
-import {
-    InstallLastTrigger,InstallNextTrigger,InstallLevelChainTriggers,GetNextTrigger,GetLastTrigger
-} from "../helper/level-chain-triggers.js";
-    /* Doors */
-    import GetSwitchDoors from "../helper/doors/switch-doors.js";
-    import KeyDoor from "../helper/doors/key-door.js";
-    import SpriteDoor from "../helper/doors/sprite-door.js";
-    import InvisibileWall from "../helper/doors/invisible-wall.js";
+
+/* Doors */
+import GetSwitchDoors from "../helper/doors/switch-doors.js";
+import KeyDoor from "../helper/doors/key-door.js";
+import SpriteDoor from "../helper/doors/sprite-door.js";
+import InvisibileWall from "../helper/doors/invisible-wall.js";
 
 export {
+    AddPalaceFloor,
     MapNuke,
     AddFireSprite,
     AddNamedBackground,

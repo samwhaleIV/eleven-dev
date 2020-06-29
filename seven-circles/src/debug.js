@@ -27,6 +27,17 @@ function Debug() {
         });
     };
 
+    this.WorldBenchmark = async () => {
+        await SVCC.Runtime.LoadWorld();
+        const world = CanvasManager.frame;
+        await world.setLevel("PondHell");
+        world.spriteFollower.disable();
+        const {camera} = world;
+        camera.y = 8.682142857142857;
+        camera.x = 23.07142857142857;
+        camera.scale = 5;
+    };
+
     Object.freeze(this);
 }
 

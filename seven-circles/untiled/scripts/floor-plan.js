@@ -101,24 +101,32 @@ const patternMatch = (x,y,hash,hashSet,painter) => {
 
 const selectRandom = set => set[Math.floor(Math.random()*set.length)];
 
+const superForegroundLayer = 2;
+
 function FloorPlan({
     world,protoFloor,protoWall,background,
-    shadowMatrix,wallMatrix,floorValues
+    shadowMatrix,wallMatrix,floorValues,eraseProtoWall,
+    useShadowMatrix = true,
+    useInnerWallMatrix = true,
+    useOuterWallMatrix = true,
+    wallTargetLayer = superForegroundLayer
 }) {
+
+    if(!Array.isArray(floorValues)) floorValues = [floorValues];
 
     const listifyMatrices = matrices => Object.entries(
         formatMatrices(matrices,protoFloor,protoWall)
     );
 
-    const shadowPattern = listifyMatrices(
+    const shadowPattern = shadowMatrix && useShadowMatrix ? listifyMatrices(
         getFloorShadowPattern(shadowMatrix)
-    );
-    const innerWallPattern = listifyMatrices(
+    ) : null;
+    const innerWallPattern = wallMatrix && useInnerWallMatrix ? listifyMatrices(
         getInnerWallPattern(wallMatrix.inner)
-    );
-    const outerWallPattern = listifyMatrices(
+    ): null;
+    const outerWallPattern = wallMatrix && useOuterWallMatrix ? listifyMatrices(
         getOuterWallPattern(wallMatrix.outer)
-    );
+    ) : null;
 
     const changeBuffer = new Array();
 
@@ -127,14 +135,13 @@ function FloorPlan({
     };
 
     const backgroundLayer = 0;
-    const superForegroundLayer = 2;
     const collisionLayer = 3;
 
     const setBackground = (x,y,value) => {
         changeBuffer.push([x,y,value,backgroundLayer]);
     };
-    const setSuperForeground = (x,y,value) => {
-        changeBuffer.push([x,y,value,superForegroundLayer]);
+    const setWall = (x,y,value) => {
+        changeBuffer.push([x,y,value,wallTargetLayer]);
     };
     const setCollision = (x,y,value) => {
         changeBuffer.push([x,y,value,collisionLayer]);
@@ -154,17 +161,24 @@ function FloorPlan({
     const paintFloor = (x,y) => {
         const nineGrid = get9Grid(x,y);
         const hash = hash9Grid(nineGrid);
-        if(!patternMatch(x,y,hash,shadowPattern,setBackground)) {
+
+        const patternMatched = shadowPattern && patternMatch(x,y,hash,shadowPattern,setBackground);
+        if(!patternMatched) {
             setBackground(x,y,selectRandom(floorValues));
         }
-        patternMatch(x,y,hash,innerWallPattern,setSuperForeground);
+        if(innerWallPattern) {
+            patternMatch(x,y,hash,innerWallPattern,setWall);
+        }
     };
 
     const paintWall = (x,y) => {
         const nineGrid = get9Grid(x,y);
         const hash = hash9Grid(nineGrid);
-        patternMatch(x,y,hash,outerWallPattern,setSuperForeground);
+        if(outerWallPattern) {
+            patternMatch(x,y,hash,outerWallPattern,setWall);
+        }
         setCollision(x,y,1);
+        if(eraseProtoWall) setBackground(x,y,background);
     };
 
     const applyBackgroundTiles = () => {

@@ -7,6 +7,7 @@ import FillSimilars from "./fill-similars.js";
 import KnownCollisionTypes from "./known-collision-types.js";
 import ButtonManifest from "./button-manifest.js";
 import RepairFloorPlan from "./scripts/bg-sfg-transfer.js";
+import PalaceFloorPlan from "./scripts/palace-floor-plan.js";
 
 const COLLISION_TILESET = "collision-tileset";
 const INTERACTION_TILESET = "interaction-tileset";
@@ -22,7 +23,8 @@ const MOUSE_PAN_SPEED = 8;
 const {CanvasManager,ResourceManager} = Eleven;
 
 const Scripts = {
-    "floor-plan": HellFloorPlan,
+    "floor-plan-hell": HellFloorPlan,
+    "floor-plan-palace": PalaceFloorPlan,
     "repair-floor-plan": RepairFloorPlan
 };
 
@@ -54,6 +56,15 @@ function App() {
     let world = null;
     let maps = null;
     let tilePicker = null;
+
+    const listMaps = () => {
+        console.log("Maps:",Object.keys(maps));
+    };
+    const dropMap = name => {
+        if(delete maps[name]) {
+            console.log(`Removed map '${name}' from map cache!`);
+        }
+    };
 
     const eventStack = [];
     const redoStack = [];
@@ -387,18 +398,70 @@ function App() {
         }
     };
 
+    const exportMaps = (noAlert=false) => {
+        const text = JSON.stringify(maps);
+        const blob = new Blob([text],{type:"application/json"});
+
+        const formData = new FormData();
+        formData.append("mapData",blob);
+
+        fetch("/upload-map-data",{
+            method: "POST",
+            body: formData
+        });
+        if(!noAlert) alert("Exported maps!");
+    };
+
+    const getNewMap = (width=100,height=100) => {
+        return {width, height, layerCount: 6,encoded: false};
+    };
+
+    const saveMap = (noAlert=false) => {
+        if(!this.mapName) return;
+        const newMap = world.tileRenderer.exportLayer(true);
+        const mapName = this.mapName;
+        maps[mapName] = newMap;
+        if(!noAlert) alert("Saved map!");
+    };
+
+    const openMap = mapName => {
+        mapName = mapName.toLowerCase();
+
+        if(!(mapName in maps)) {
+            let i = 1, testName = mapName;
+            while((!testName in maps)) {
+                testName = `Untitled Map ${i}`;
+                i++;
+            }
+            maps[testName] = getNewMap();
+            setMap(testName);
+        } else {
+            setMap(mapName);
+        }
+    };
+
+    const consoleActions = {listMaps,dropMap,exportMaps,openMap,saveMap,openMap};
+
     const installGlobalFunctions = () => {
+        const commands = [];
         for(const script of Object.values(Scripts)) {
-            globalThis[script.name] = () => script(world);
+            const key = script.name;
+            globalThis[key] = () => script(world);
+            commands.push(key);
         };
-        globalThis.openMap = openMap;
+        for(const [key,value] of Object.entries(consoleActions)) {
+            globalThis[key] = value;
+            commands.push(key);
+        }
         console.log("Scripts:",Scripts);
+        console.log("Commands:",commands);
     };
 
     const loadWorld = async() => {
         await CanvasManager.setFrame(FakeWorld,[tilesetList]);
         world = CanvasManager.frame;
         installGlobalFunctions();
+        listMaps();
 
         world.keyDown = keyDown;
         world.pointerScroll = pointerScroll;
@@ -527,20 +590,6 @@ function App() {
     const importMaps = async () => {
         await ResourceManager.queueJSON(MAP_DATA).load();
         maps = ResourceManager.getJSON(MAP_DATA);
-    };
-
-    const exportMaps = (noAlert=false) => {
-        const text = JSON.stringify(maps);
-        const blob = new Blob([text],{type:"application/json"});
-
-        const formData = new FormData();
-        formData.append("mapData",blob);
-
-        fetch("/upload-map-data",{
-            method: "POST",
-            body: formData
-        });
-        if(!noAlert) alert("Exported maps!");
     };
 
     let loaded = false;
@@ -772,34 +821,6 @@ function App() {
         await loadTilesetImages();
         tilePicker.setTileset(tilesetList[activeLayer]);
         if(this.mapName) world.resumeCache();
-    };
-
-    const getNewMap = (width=100,height=100) => {
-        return {width, height, layerCount: 6,encoded: false};
-    };
-
-    const saveMap = (noAlert=false) => {
-        if(!this.mapName) return;
-        const newMap = world.tileRenderer.exportLayer(true);
-        const mapName = this.mapName;
-        maps[mapName] = newMap;
-        if(!noAlert) alert("Saved map!");
-    };
-
-    const openMap = mapName => {
-        mapName = mapName.toLowerCase();
-
-        if(!(mapName in maps)) {
-            let i = 1, testName = mapName;
-            while((!testName in maps)) {
-                testName = `Untitled Map ${i}`;
-                i++;
-            }
-            maps[testName] = getNewMap();
-            setMap(testName);
-        } else {
-            setMap(mapName);
-        }
     };
 
     const actions = {

@@ -411,8 +411,9 @@ World.prototype.setMap = function(mapName) {
         setRenderer: false, setSize: true,
         map: maps[mapName],
         uvtcDecoding: true,
-        fillEmpty: true
+        fillEmpty: [1,1,1,1,1,0]
     });
+
     tileRenderer.paused = true;
     this.tileRenderer = tileRenderer;
 

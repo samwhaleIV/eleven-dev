@@ -1,6 +1,6 @@
 import ZIndexBook from "../../../world/z-indices.js";
 
-function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
+function AddPositionBackground(world,renderBackground,x,y,width,height,topLayer) {
     const {grid} = world;
 
     let tileSize = 0;
@@ -37,7 +37,7 @@ function AddPositionBackground(world,renderer,x,y,width,height,topLayer) {
         buffer.width = renderWidth;
         buffer.height = renderHeight;
 
-        renderer.render(bufferContext,{
+        renderBackground(bufferContext,{
             width: renderWidth,
             height: renderHeight
         },time);
