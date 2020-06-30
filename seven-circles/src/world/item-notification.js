@@ -1,13 +1,9 @@
-import Constants from "../constants.js";
-
 const TIMEOUT = 1000;
 const LABEL_OFFSET = -10.25 / 16;
 
-const SCALE = Constants.WorldCanvasScale;
-
 const LETTER_SPACING = 0;
-const WORD_SPACING = SCALE < 1 ? 2 * SCALE : 1;
-const TEXT_SCALE = SCALE < 1 ? SCALE < 0.5 ? 1 : 2 : 3;
+const WORD_SPACING = 2;
+const TEXT_SCALE = 3;
 
 function ItemNotification(world,itemName,amount) {
 

@@ -24,12 +24,13 @@ import ErrorPlace from "./levels/other/error-place.js";
 import HelloWorld from "./levels/other/hello-world.js";
 import TheBeginning from "./levels/other/the-beginning.js";
 
-import PalaceLobby from "./levels/palace/palace-lobby.js";
+import AlicePalace from "./levels/palace/alice-palace.js";
+import CheckerPalace from "./levels/palace/checker-palace.js";
 
 import BombTest from "./levels/test/bomb-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
 
-const Scripts = ScriptBook.Import(BombHell,ChocolateHell,DeadHell,GraveHell,HatHell,HelloHell,MazeHell,MineHell,PaintHell,PondHell,RiverHell,SaveHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,TheBeginning,PalaceLobby,BombTest,NpcClTest);
+const Scripts = ScriptBook.Import(BombHell,ChocolateHell,DeadHell,GraveHell,HatHell,HelloHell,MazeHell,MineHell,PaintHell,PondHell,RiverHell,SaveHell,SwitchHell,TunnelsOfHell,VoidHell,ErrorPlace,HelloWorld,TheBeginning,AlicePalace,CheckerPalace,BombTest,NpcClTest);
 
 export default Scripts;
 

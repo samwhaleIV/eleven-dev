@@ -7,12 +7,12 @@ const LevelBlocks = [
         "HelloHell",
 
         "TunnelsOfHell",
-        "ChocolateHell",
-        "HatHell",
-
         "PaintHell",
-        "SaveHell",
+        "ChocolateHell",
+
+        "HatHell",
         "RiverHell",
+        "SaveHell",
 
         "VoidHell",
         "BombHell",
@@ -20,7 +20,10 @@ const LevelBlocks = [
 
         null,
         "MazeHell",
+        null,
         "SwitchHell",
+        "CheckerPalace",
+        "AlicePalace",
 
         null,
         "GraveHell",

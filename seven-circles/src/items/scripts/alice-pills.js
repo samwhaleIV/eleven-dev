@@ -45,7 +45,8 @@ const scale = (player,scale) => {
         endData.width = scale;
         endData.height = scale;
 
-        hitBox.width = scale; hitBox.height = scale;
+        hitBox.width = scale;
+        hitBox.height = scale;
     }
 
     if(endData.width === 2) hitBox.width = 1.25;

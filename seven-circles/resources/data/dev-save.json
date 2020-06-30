@@ -8,7 +8,7 @@
 
         "Named": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "PalaceLobby",
+                "x": 0, "y": 0, "scriptID": "AlicePalace",
                 "direction": 0,
                 "_deserialize": true
             }
