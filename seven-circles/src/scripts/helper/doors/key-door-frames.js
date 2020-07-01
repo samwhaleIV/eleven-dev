@@ -5,6 +5,21 @@ const betterVerticalDoorCollision = {
 };
 
 const KeyDoorFrames = {
+    jumboIce: {
+        jumbo: true,
+        color: "ice",
+        closed: 1435,
+        open: 1563
+    },
+    horizontalWhite: {
+        vertical: false,
+        color: "white",
+        left: 1371,
+        middle: 1372,
+        right: 1373,
+        leftOpen: 1309,
+        rightOpen: 1310
+    },
     grayDoor: {
         vertical: true,
         color: "gray",

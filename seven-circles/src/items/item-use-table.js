@@ -24,12 +24,16 @@ const ItemUseTable = {
     "big-pill": BigPill,
     "small-pill": SmallPill,
     "blaster": Blaster,
+
     "red-key": [Key,"red"],
     "blue-key": [Key,"blue"],
     "yellow-key": [Key,"yellow"],
     "green-key": [Key,"green"],
     "pink-key": [Key,"pink"],
+    "white-key": [Key,"white"],
+    "ice-key": [Key,"ice"],
     "chocolate-key": [Key,"chocolate"],
+
     "bomb": Bomb,
     "speed-pill": SpeedPill,
 
@@ -37,7 +41,7 @@ const ItemUseTable = {
     "chocolate-milk": ImpulsePassthrough,
     "warp-crystal": ImpulsePassthrough,
     "power-cell": ImpulsePassthrough,
-    "blueprint-fragment": ImpulsePassthrough
+    "blueprint-fragment": ImpulsePassthrough,
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

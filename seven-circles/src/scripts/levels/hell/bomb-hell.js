@@ -87,9 +87,18 @@ function BombHell({world,fromNextMap}) {
 
     const dayIsSaved = () => snippedCount >= SNIP_COUNT;
 
+    const animateButtonPress = async (x,y) => {
+        const startTile = world.getForegroundTile(x,y);
+        world.setForegroundTile(x,y,547);
+        await delay(500);
+        if(terminated) return;
+        world.setForegroundTile(x,y,startTile);
+    };
+
     this.interact = data => {
         const {value,x,y} = data;
         if(value === 19) {
+            animateButtonPress(x,y);
             if(dayIsSaved()) {
                 world.message("The button is no longer operational.");
                 return;

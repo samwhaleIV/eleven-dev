@@ -17,7 +17,9 @@ const ITEM_DATA = [
     ["Speed Pill","speed-pill"],
     ["Power Cell","power-cell"],
     ["Warp Crystal","warp-crystal"],
-    ["Blueprint","blueprint-fragment"]
+    ["Blueprint","blueprint-fragment"],
+    ["White Key","white-key"],
+    ["Ice Key","ice-key"]
 ];
 
 const ItemLookup = new Object();

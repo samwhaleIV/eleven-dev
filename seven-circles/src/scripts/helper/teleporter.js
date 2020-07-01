@@ -1,9 +1,9 @@
 import GetInteractionStart from "./get-interaction-start.js";
+import PlayerSizeLoop from "./player-size-loop.js";
 
 const INTERACTION_START = GetInteractionStart();
 
 const TRAVEL_TIME = 300;
-const SIZE_DURATION = 100;
 
 const NO_PLAYER = () => {
     throw Error("No player or player controller! Initialize the teleporters after adding the player to the level!");
@@ -34,30 +34,11 @@ function Teleporter(world,beacons) {
         world.setCollisionTile(x2,y2,1);
     }
 
-    const sizeLoop = newWidth => new Promise(resolve => {
-        const {dispatchRenderer} = world;
-        const startWidth = player.width;
-        const distance = newWidth - startWidth;
-        const startTime = performance.now();
-        const updateID = dispatchRenderer.addUpdate((context,size,time)=>{
-            let t = (time.now - startTime) / SIZE_DURATION;
-            if(t > 1) {
-                dispatchRenderer.removeUpdate(updateID);
-                player.width = newWidth;
-                player.xOffset = 0;
-                resolve();
-                return;
-            } else if(t < 0) t = 0;
-            player.width = startWidth + distance * t;
-            player.xOffset = (1-player.width) / 2;
-        },player.zIndex-1);
-    });
-
     const teleportPlayer = async (x,y) => {
         const startWidth = player.width;
         spriteFollower.disable();
 
-        await sizeLoop(0);
+        await PlayerSizeLoop(world,0);
 
         player.x = x - (player.hitBox.width / 2) - 0.5;
         player.y = y - player.yOffset;
@@ -66,7 +47,7 @@ function Teleporter(world,beacons) {
 
         await camera.moveTo(player,TRAVEL_TIME);
 
-        await sizeLoop(startWidth);
+        await PlayerSizeLoop(world,startWidth);
 
         spriteFollower.enable();
         playerController.unlock();

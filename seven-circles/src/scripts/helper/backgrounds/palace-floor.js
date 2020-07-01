@@ -1,4 +1,5 @@
 import {AddNamedBackground} from "./color-background.js";
+import NamedColors from "./named-colors.js";
 
 const COLOR_ONE = "#EF0067";
 const COLOR_TWO = "#B7004F";
@@ -78,11 +79,11 @@ function AddPalaceFloor(world) {
 
     const getParallax = value => value * BACKGROUND_PARALLAX;
 
+    const backgroundColor = NamedColors.palace;
+
     const render = (context,{width,height}) => {
         const parallaxX = getParallax(camera.x);
         const parallaxY = getParallax(camera.y);
-
-        context.fillStyle = pattern(parallaxX,parallaxY);
 
         const topLeft = grid.getLocation(0,0);
         const bottomRight = grid.getLocation(grid.width,grid.height);
@@ -94,10 +95,14 @@ function AddPalaceFloor(world) {
             topLeft.y,bottomRight.y,height
         );
 
+        if(x > 0 || renderWidth < width || y > 0 || renderHeight < height) {
+            context.fillStyle = backgroundColor;
+            context.fillRect(0,0,width,height);
+        }
+
+        context.fillStyle = pattern(parallaxX,parallaxY);
         context.fillRect(x,y,renderWidth,renderHeight);
     };
-
-    AddNamedBackground(world,"palace");
     dispatchRenderer.addBackground(render);
 }
 export default AddPalaceFloor;

@@ -2,16 +2,18 @@ const NAME = "key-weapon";
 
 const colorTable = {
     red: 0,
-    blue: 16,
-    yellow: 32,
-    green: 48,
-    pink: 64,
-    chocolate: 80
+    blue: 1,
+    yellow: 2,
+    green: 3,
+    pink: 4,
+    chocolate: 5,
+    white: 6,
+    ice: 7
 };
 
 function KeyWeapon(type,script) {
 
-    const textureY = colorTable[type] || 0;
+    const textureY = (colorTable[type] || 0) * 16;
     this.color = type;
 
     const image = Eleven.ResourceManager.getImage("weapon/keys");
