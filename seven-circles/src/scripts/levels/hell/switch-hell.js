@@ -43,22 +43,25 @@ function SwitchHell({world,inventory}) {
     ]);
 
     InstallBombAreas(world,this);
+    
+    const askTheHole = async () => {
+        if(await world.prompt(
+            "Do you want to crawl into the odd looking hole?",
+            ["Yes, get me out of here!","No. I want to stay here forever."]
+        ) === 0) {
+            world.transitionNext(null,2000);
+        }
+    };
 
     this.interact = data => {
         if(pickupField.tryPickup(data)) return;
         if(switchDoors.tryInteract(data)) return;
+        if(data.value === 16) {
+            askTheHole();
+            return;
+        }
     };
 
-    world.setTriggers([
-        [1,()=>{world.transitionLast()},true],
-        [2,async ()=>{
-            if(await world.prompt(
-                "Do you want to crawl into the odd looking hole?",
-                ["Yes, get me out of here!","No. I want to stay here forever."]
-            ) === 0) {
-                world.transitionNext(null,2000);
-            }
-        }]
-    ]);
+    world.setTriggers([[1,()=>{world.transitionLast()},true]]);
 }
 export default SwitchHell;

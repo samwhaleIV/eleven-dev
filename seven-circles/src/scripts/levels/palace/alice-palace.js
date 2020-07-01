@@ -19,7 +19,9 @@ function AlicePalace({world,inventory,fromNextMap}) {
     };
     this.unload();
 
-    const keyDoors = KeyDoor.getDoors(world,this,[[8,22,"horizontalWhite"],[6,38,"jumboIce"]]);
+    const keyDoors = KeyDoor.getDoors(
+        world,this,[[8,29,"horizontalWhite"],[6,38,"jumboIce"]]
+    );
     const saveStone = new SaveStone(world,10,6);
 
     const startGate = new HellGate(world,8,0,true,0,()=>{
