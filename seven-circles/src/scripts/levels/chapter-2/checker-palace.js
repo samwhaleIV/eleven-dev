@@ -7,7 +7,7 @@ function CheckerPalace({world,fromNextLevel}) {
     } else {
         world.addPlayer(9,3.5,"down");
     }
-    const endGate = new HellGate(world,34,14,true,0,()=>{
+    const endGate = new HellGate(world,34,14,false,0,()=>{
         world.transitionNext();
     });
     AddPalaceFloor(world);
