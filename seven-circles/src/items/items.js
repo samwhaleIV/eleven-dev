@@ -20,7 +20,8 @@ const ITEM_DATA = [
     ["Blueprint","blueprint-fragment"],
     ["White Key","white-key"],
     ["Ice Key","ice-key"],
-    ["Fissure Token","fissure-token"]
+    ["Fissure Token","fissure-token"],
+    ["Cleaver","cleaver"]
 ];
 
 const ItemLookup = new Object();

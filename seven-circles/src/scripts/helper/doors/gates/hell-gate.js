@@ -46,7 +46,7 @@ function HellGate(world,x,y,startOpen,ID,callback) {
 
     let animating = false;
 
-    const animateGateChange = toOpen => {
+    const animateGateChange = (toOpen,callback) => {
         if(animating) return;
         animating = true;
         const startTime = performance.now();
@@ -54,17 +54,17 @@ function HellGate(world,x,y,startOpen,ID,callback) {
         const renderID = dispatchRenderer.addRender((context,_,time) => {
             let t = (time.now - startTime) / PLASMA_SHIFT_DURATION;
             if(t > 1) {
+                t = 1;
                 dispatchRenderer.removeRender(renderID);
                 animating = false;
-                return;
+                if(callback) callback();
             } else if(t < 0) t = 0;
             drawGatePlasma(context,toOpen ? t : 1 - t);
         },-1);
     };
 
     const animateGateOpen = () => {
-        setOpenTiles();
-        animateGateChange(true);
+        animateGateChange(true,setOpenTiles);
     };
     const animateGateClose = () => {
         setClosedTiles();
@@ -87,6 +87,18 @@ function HellGate(world,x,y,startOpen,ID,callback) {
         this.close();
         setClosedTiles();
     }
+
+    Object.defineProperty(this,"isOpen",{
+        get: () => open,
+        set: value => {
+            if(value) {
+                this.open();
+            } else {
+                this.close();
+            }
+        },
+        enumerable: true
+    });
 
     this.tryInteract = ({value}) => {
         if(value !== ID) return;

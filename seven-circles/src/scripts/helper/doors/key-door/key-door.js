@@ -16,15 +16,28 @@ const defaultVerticalCollision = {
     bottom: VERTICAL_COLLISION_VALUE
 };
 
+const jumboCollision = {
+    top: 34,
+    bottom: 35
+};
+const getJumboCollision = yOffset => {
+    return yOffset === 0 ?  jumboCollision.top : jumboCollision.bottom;
+};
+
 const jumboClose = (x,y,world,frame) => {
     const rowAmount = world.tileRenderer.textureColumns;
-    const {close} = frame;
-    for(let xOffset = 0;xOffset<JUMBO_WIDTH;xOffset++) {
-        const worldX = x + xOffset;
-        for(let yOffset = 0;yOffset<JUMBO_HEIGHT;yOffset++) {
-            const worldY = y + yOffset;
-            world.setForegroundTile(worldX,worldY,close+xOffset+yOffset*rowAmount);
-            world.setCollisionTile(worldX,worldY,1);
+    const {closed} = frame;
+    for(let yOffset = 0;yOffset<JUMBO_HEIGHT;yOffset++) {
+
+        const worldY = y + yOffset;
+        const collisionValue = getJumboCollision(yOffset);
+
+        for(let xOffset = 0;xOffset<JUMBO_WIDTH;xOffset++) {
+            const worldX = x + xOffset;
+            const tileID = closed+xOffset+yOffset*rowAmount;
+
+            world.setForegroundTile(worldX,worldY,tileID);
+            world.setCollisionTile(worldX,worldY,collisionValue);
         }
     }
 };
@@ -34,20 +47,33 @@ const jumboOpen = (x,y,world,frame) => {
     for(let yOffset = 0;yOffset<JUMBO_HEIGHT;yOffset++) {
         const worldY = y + yOffset;
         const tileYOffset = yOffset * rowAmount;
+        
+        const collisionValue = getJumboCollision(yOffset);
+
         for(let xOffset = 0;xOffset<2;xOffset++) {
             const worldX = x + xOffset;
+
             world.setForegroundTile(worldX,worldY,open+xOffset+tileYOffset);
             world.setForegroundTile(worldX+4,worldY,open+xOffset+tileYOffset+2);
 
-            world.setCollisionTile(worldX,worldY,1);
-            world.setCollisionTile(worldX+4,worldY,1);
+            world.setCollisionTile(worldX,worldY,collisionValue);
+            world.setCollisionTile(worldX+4,worldY,collisionValue);
         }
+        world.setForegroundTile(x + 2,worldY,0);
+        world.setForegroundTile(x + 3,worldY,0);
+
         world.setCollisionTile(x + 2,worldY,0);
         world.setCollisionTile(x + 3,worldY,0);
     }
 };
 const installJumboInteraction = (x,y,world,type) => {
-    //todo
+    for(let yOffset = 0;yOffset<JUMBO_HEIGHT;yOffset++) {
+        const worldY = y + yOffset;
+        for(let xOffset = 0;xOffset<JUMBO_WIDTH;xOffset++) {
+            const worldX = x + xOffset;
+            world.setInteractionTile(worldX,worldY,type);
+        }
+    }
 };
 
 const verticalOpen = (x,y,world,frame) => {
@@ -118,7 +144,7 @@ const open = (x,y,world,frame) => {
 const close = (x,y,world,frame) => {
     if(frame.jumbo) {
         jumboClose(x,y,world,frame);
-    } if(frame.vertical) {
+    } else if(frame.vertical) {
         verticalClose(x,y,world,frame);
     } else {
         horizontalClose(x,y,world,frame);

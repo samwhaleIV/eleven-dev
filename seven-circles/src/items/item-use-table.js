@@ -5,7 +5,7 @@ import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
 
-function ImpulsePassthrough() {
+function Impulse() {
     this.retain = true;
     this.action = ({world}) => {
         if(world.playerController && world.playerController.locked) {
@@ -37,11 +37,12 @@ const ItemUseTable = {
     "speed-pill": SpeedPill,
 
     /* Impulse passthroughs... */
-    "chocolate-milk": ImpulsePassthrough,
-    "warp-crystal": ImpulsePassthrough,
-    "power-cell": ImpulsePassthrough,
-    "blueprint-fragment": ImpulsePassthrough,
-    "fissure-token": ImpulsePassthrough
+    "chocolate-milk": Impulse,
+    "warp-crystal": Impulse,
+    "power-cell": Impulse,
+    "blueprint-fragment": Impulse,
+    "fissure-token": Impulse,
+    "cleaver": Impulse
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

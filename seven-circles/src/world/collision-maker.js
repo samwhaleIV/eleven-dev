@@ -205,6 +205,18 @@ const CollisionTable = Object.freeze([
         width: 10.5/16,
         y: 0,
         height: 1
+    },
+    {
+        x: 0,
+        width: 1,
+        y: 7/16,
+        height: 9/16
+    },
+    {
+        x: 0,
+        width: 1,
+        y: 0,
+        height: 9/16
     }
 ]);
 

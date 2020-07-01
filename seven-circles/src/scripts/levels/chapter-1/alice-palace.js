@@ -1,4 +1,4 @@
-import {AddPalaceFloor,KeyDoor,SaveStone,HellGate} from "../helper.js";
+import {AddPalaceFloor,KeyDoor,SaveStone,HellGate,MakePlayerBig,MakePlayerSmall} from "../helper.js";
 
 function AlicePalace({world,inventory,fromNextMap}) {
     world.setMap("alice-palace");
@@ -32,29 +32,118 @@ function AlicePalace({world,inventory,fromNextMap}) {
     });
 
     this.start = () => {
-        if(startGate.open) {
-            (async () => {
-                if(startGate.open) startGate.close();
-                world.playerController.unlock();
-            })();
-            return true;
-        }
+        startGate.close();
         return false;
     };
 
+    this.endGate = endGate;
+
+    const tooSmallTooRideThisRide = () => {
+        world.message("You're too small to pick up the key!");
+    };
+
+    const clearTileLocation = (x,y) => {
+        world.setForegroundTile(x,y,0);
+        world.setCollisionTile(x,y,0);
+        world.setInteractionTile(x,y,0);
+    };
+
+    const eatSmallMushroom = (x,y) => {
+        world.setForegroundTile(x,y,1444);
+        world.setInteractionTile(x,y,0);
+        world.pushInteractionChanges();
+        MakePlayerSmall(world);
+    };
+
+    const valueResponseTable = {
+        21: eatSmallMushroom,
+        19: (x,y) => {
+            if(world.player.scale < 1) {
+                tooSmallTooRideThisRide();
+                return;
+            }
+            clearTileLocation(x,y);
+            world.pushTileChanges();
+            inventory.give("white-key");
+        },
+        20: (x,y) => {
+            world.setForegroundTile(x,y,1445);
+            world.setInteractionTile(x,y,0);
+            world.pushInteractionChanges();
+            MakePlayerBig(world);
+        },
+        16: () => {
+            world.setInteractionTile(13,34,0);
+            world.setInteractionTile(14,34,0);
+            world.setInteractionTile(13,35,0);
+            world.setInteractionTile(14,35,0);
+            world.pushInteractionChanges();
+            inventory.give("cleaver");
+            world.setForegroundTile(13,34,1443);
+        },
+        17: x => {
+            if(!inventory.has("cleaver")) {
+                world.message("The mushroom is too thick to break with your hands!");
+                return;
+            }
+            world.setInteractionTile(8,34,0);
+            world.setInteractionTile(9,34,0);
+            world.setInteractionTile(8,35,0);
+            world.setInteractionTile(9,35,0);
+
+            if(x === 8) {
+                world.setForegroundTile(8,34,1507)
+            } else {
+                world.setForegroundTile(9,34,1315)
+            }
+
+            world.pushInteractionChanges();
+
+            inventory.take("cleaver",1);
+            MakePlayerBig(world);
+        },
+        18: () => {
+            if(world.player.scale <= 1) {
+                tooSmallTooRideThisRide();
+                return;
+            }
+            [[4,34],[5,34]].forEach(([x,y])=>{
+                clearTileLocation(x,y);
+            });
+            world.pushTileChanges();
+            inventory.give("ice-key");
+        },
+        22: eatSmallMushroom,
+        25: (x,y) => {
+            if(endGate.isOpen) {
+                world.message("This is a button that can only be pressed once.");
+                return;
+            }
+            world.setForegroundTile(x,y,1254);
+            endGate.open();
+            world.message("The nearby gate was activated!");
+        }
+    };
+
+    this.keyDoorOpened = door => {
+        const weapon = world.player.getWeapon();
+        if(weapon && weapon.name === "key-weapon") {
+            if(door.color !== weapon.color) return;
+            world.player.clearWeapon();
+            inventory.clear(`${weapon.color}-key`);
+        }
+    };
+
     this.interact = data => {
+        const {value,x,y} = data;
+        if(value in valueResponseTable) {
+            valueResponseTable[value](x,y);
+            return;
+        };
         if(startGate.tryInteract(data)) return;
         if(endGate.tryInteract(data)) return;
-        if(keyDoors.tryInteract(data)) {
-            const weapon = world.player.getWeapon();
-            if(weapon && weapon.name === "key-weapon") {
-                world.player.clearWeapon();
-                inventory.clear(`${weapon.color}-key`);
-            }
-            return;
-        }
-        if(saveStone.tryInteract(data)) return;
-        const {value,x,y} = data;
+        if(keyDoors.tryInteract(data)) return;
+        if(saveStone.tryInteract(data)) return;   
     };
 
 }

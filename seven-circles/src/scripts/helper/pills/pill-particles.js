@@ -1,10 +1,10 @@
 const {ParticleSystem} = Eleven;
 
 const PARTICLE_DURATION = 500;
-const PARTICLE_COUNT = 10;
+const PARTICLE_COUNT = 6;
 
 const PARTICLE_VELOCITY = 80;
-const PARTICLE_SIZE = 12;
+const PARTICLE_SIZE = 20;
 
 const particleBase = ParticleSystem.getType("Jitter",{
     duration: PARTICLE_DURATION,
@@ -25,7 +25,7 @@ const shrinkEffect = getEffect("#FFA03A");
 const speedEffect = getEffect("#FF1E1E");
 
 const emit = (world,player,effect,scale) => {
-    const effectScale = scale || player.scale || 1;
+    const effectScale = 1;
     effect.size = PARTICLE_SIZE * effectScale;
 
     const emitter = ParticleSystem.getEmitter(effect);
