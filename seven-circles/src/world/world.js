@@ -4,8 +4,8 @@ import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import FaderList from "./fader-list.js";
 
-import FadeTransition from "../scripts/helper/fade-transition.js";
-import Lifetime from "../scripts/helper/lifetime.js";
+import FadeTransition from "../scripts/helper/other/fade-transition.js";
+import Lifetime from "../scripts/lifetime.js";
 import LevelChain from "../scripts/level-chain.js";
 
 import FadeMe from "./extensions/fade-me.js";

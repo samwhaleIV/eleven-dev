@@ -1,6 +1,6 @@
 import KeyDoorHandler from "./key-door-handler.js"
-import GetInteractionStart from "../get-interaction-start.js";
-import DoorBase from "./door-base.js";
+import GetInteractionStart from "../../self/get-interaction-start.js";
+import DoorBase from "../door-base.js";
 import KeyDoorFrames from "./key-door-frames.js";
 
 const INTERACTION_ID_START = GetInteractionStart();

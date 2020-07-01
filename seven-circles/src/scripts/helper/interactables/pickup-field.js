@@ -1,4 +1,4 @@
-import GetInteractionStart from "./get-interaction-start.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
 import StaticPickup from "./static-pickup.js";
 
 const INTERACTION_ID_START = GetInteractionStart();

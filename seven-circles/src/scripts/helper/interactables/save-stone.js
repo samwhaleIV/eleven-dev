@@ -1,5 +1,5 @@
-import Constants from "../../constants.js";
-import GetInteractionStart from "./get-interaction-start.js";
+import Constants from "../../../constants.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
 
 const INTERACTION_ID = GetInteractionStart();
 

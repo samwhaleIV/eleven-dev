@@ -1,5 +1,4 @@
-import {SaveStone,Teleporter,InstallLevelChainTriggers} from "../helper.js";
-import ObjectiveText from "../../helper/objective-text.js";
+import {SaveStone,Teleporter,InstallLevelChainTriggers,ObjectiveText} from "../helper.js";
 
 function MazeHell({world,fromNextMap}) {
     world.setMap("maze-hell");

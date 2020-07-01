@@ -1,4 +1,4 @@
-import PickupRock from "../../weapons/pickup-rock.js";
+import PickupRock from "../../../weapons/pickup-rock.js";
 
 const WATER_ROCK_SPOT_ID = 32;
 const ROCK_FOREGROUND_ID = 533;

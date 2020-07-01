@@ -1,4 +1,4 @@
-import GetInteractionStart from "./get-interaction-start.js";
+import GetInteractionStart from "../../self/get-interaction-start.js";
 import GateTeleport from "./gate-teleport.js";
 
 const INTERACTION_ID = GetInteractionStart();

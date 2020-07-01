@@ -1,5 +1,5 @@
-import GetInteractionStart from "./get-interaction-start.js";
-import PlayerSizeLoop from "./player-size-loop.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
+import PlayerSizeLoop from "../self/player-size-loop.js";
 
 const INTERACTION_START = GetInteractionStart();
 

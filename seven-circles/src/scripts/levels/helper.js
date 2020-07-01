@@ -1,41 +1,31 @@
-/* Script helpers */
-import ObjectiveText from "../helper/objective-text.js";
-import GetTransitionTrigger from "../helper/transition-trigger.js";
-import MapNuke from "../helper/map-nuke.js";
+import ObjectiveText from "../helper/other/objective-text.js";
+import GetTransitionTrigger from "../helper/triggers/transition-trigger.js";
+import MapNuke from "../helper/director/map-nuke.js";
 import {
     InstallLastTrigger,InstallNextTrigger,InstallLevelChainTriggers,GetNextTrigger,GetLastTrigger
-} from "../helper/level-chain-triggers.js";
-
-/* Render helpers */
+} from "../helper/triggers/level-chain-triggers.js";
 import {AddWaterBackground,AddFixedWaterBackground} from "../helper/backgrounds/water-background.js";
 import {AddNamedBackground,AddColorBackground} from "../helper/backgrounds/color-background.js";
-import DarkRoom from "../helper/dark-room.js";
+import DarkRoom from "../helper/systems/dark-room.js";
 import AddPalaceFloor from "../helper/backgrounds/palace-floor.js";
-
-/* Director functions */
-import MessageChain from "../helper/message-chain.js";
-import DramaZoom from "../helper/drama-zoom.js";
-import PanPreview from "../helper/pan-preview.js";
-
-import Teleporter from "../helper/teleporter.js";
-
-/* World functions */
-import AddFireSprite from "../helper/fire-sprite.js";
-import InstallBombAreas from "../helper/bomb-areas.js";
-import PickupField from "../helper/pickup-field.js";
-import RiverRocks from "../helper/river-rocks.js";
-import StaticPickup from "../helper/static-pickup.js";
-import SaveStone from "../helper/save-stone.js";
-import WarpCrystalBox from "../helper/warp-crystal-box.js";
-import ClawMachine from "../helper/claw-machine.js";
-
-/* Doors */
+import MessageChain from "../helper/director/message-chain.js";
+import DramaZoom from "../helper/director/drama-zoom.js";
+import PanPreview from "../helper/director/pan-preview.js";
+import Teleporter from "../helper/interactables/teleporter.js";
+import AddFireSprite from "../helper/sprites/fire-sprite.js";
+import InstallBombAreas from "../helper/systems/bomb-areas.js";
+import PickupField from "../helper/interactables/pickup-field.js";
+import RiverRocks from "../helper/systems/river-rocks.js";
+import StaticPickup from "../helper/interactables/static-pickup.js";
+import SaveStone from "../helper/interactables/save-stone.js";
+import WarpCrystalBox from "../helper/interactables/warp-crystal-box.js";
+import ClawMachine from "../helper/systems/claw-machine.js";
 import GetSwitchDoors from "../helper/doors/switch-doors.js";
-import KeyDoor from "../helper/doors/key-door.js";
-import SpriteDoor from "../helper/doors/sprite-door.js";
+import KeyDoor from "../helper/doors/key-door/key-door.js";
+import SpriteDoor from "../helper/doors/sprite-door/sprite-door.js";
 import InvisibileWall from "../helper/doors/invisible-wall.js";
-import HellGate from "../helper/hell-gate.js";
-import WarpGate from "../helper/warp-gate.js";
+import HellGate from "../helper/doors/gates/hell-gate.js";
+import WarpGate from "../helper/doors/gates/warp-gate.js";
 
 export {
     HellGate,

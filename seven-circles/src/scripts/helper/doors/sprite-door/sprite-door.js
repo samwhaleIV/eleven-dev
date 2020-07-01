@@ -1,5 +1,5 @@
-import ZIndexBook from "../../../world/z-indices.js";
-import DoorBase from "./door-base.js";
+import ZIndexBook from "../../../../world/z-indices.js";
+import DoorBase from "../door-base.js";
 import SpriteDoorFrames from "./sprite-door-frames.js";
 import DoorRenderer from "./door-renderer.js";
 

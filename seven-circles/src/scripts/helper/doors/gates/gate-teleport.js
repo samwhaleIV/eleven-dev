@@ -1,4 +1,4 @@
-import PlayerSizeLoop from "./player-size-loop.js";
+import PlayerSizeLoop from "../../self/player-size-loop.js";
 
 const {ParticleSystem} = Eleven;
 

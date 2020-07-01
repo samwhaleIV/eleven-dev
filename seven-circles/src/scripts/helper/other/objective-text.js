@@ -1,5 +1,5 @@
-import ZIndexBook from "../../world/z-indices.js";
-import Constants from "../../constants.js";
+import ZIndexBook from "../../../world/z-indices.js";
+import Constants from "../../../constants.js";
 
 const SCALE = Constants.WorldCanvasScale
 

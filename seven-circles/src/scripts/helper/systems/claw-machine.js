@@ -1,4 +1,4 @@
-import GetInteractionStart from "./get-interaction-start.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
 
 const HORIZONTAL_ROPE = 858;
 const VERTICAL_ROPE = 859;

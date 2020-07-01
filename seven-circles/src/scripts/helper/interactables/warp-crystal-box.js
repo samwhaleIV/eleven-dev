@@ -1,4 +1,4 @@
-import GetInteractionStart from "./get-interaction-start.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
 const INTERACTION_START = GetInteractionStart();
 
 const POWERED_HOLDER = 1229;

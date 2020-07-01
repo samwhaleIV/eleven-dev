@@ -1,6 +1,6 @@
-import SaveState from "../../storage/save-state.js";
-import Scripts from "../manifest.js";
-import Constants from "../../constants.js";
+import SaveState from "../storage/save-state.js";
+import Scripts from "./manifest.js";
+import Constants from "../constants.js";
 
 const POSITION_CONTAINER = "PlayerPosition";
 const NO_SCRIPT_HANDLE = "_none";

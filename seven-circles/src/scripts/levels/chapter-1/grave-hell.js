@@ -1,5 +1,4 @@
-import {AddFixedWaterBackground,Teleporter, GetSwitchDoors,KeyDoor} from "../helper.js";
-import PickupField from "../../helper/pickup-field.js";
+import {AddFixedWaterBackground,Teleporter,GetSwitchDoors,KeyDoor,PickupField} from "../helper.js";
 
 function GraveHell({world,inventory}) {
     world.setMap("grave-hell");

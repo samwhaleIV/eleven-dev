@@ -1,5 +1,5 @@
-import GetInteractionStart from "../get-interaction-start.js";
-import SpriteDoor from "./sprite-door.js";
+import GetInteractionStart from "../self/get-interaction-start.js";
+import SpriteDoor from "./sprite-door/sprite-door.js";
 
 const INCONSPICUOUS_ERROR_MESSAGE = "Try to keep your doors in sync ;)";
 

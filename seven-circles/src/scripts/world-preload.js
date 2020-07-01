@@ -1,5 +1,5 @@
 import Constants from "../constants.js";
-import Lifetime from "./helper/lifetime.js";
+import Lifetime from "./lifetime.js";
 const PRELOAD_FILES = Constants.WorldPreloadFile;
 
 const {ResourceManager} = Eleven;

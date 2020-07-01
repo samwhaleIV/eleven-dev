@@ -1,4 +1,4 @@
-import AnimationPlayer from "../../animation-player.js";
+import AnimationPlayer from "../../../animation-player.js";
 
 const FIRE_TYPES = {
     Red: {

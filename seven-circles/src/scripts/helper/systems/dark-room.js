@@ -1,4 +1,4 @@
-import ZIndexBook from "../../world/z-indices.js";
+import ZIndexBook from "../../../world/z-indices.js";
 
 const SPOT_SIZE = 32;
 const SPOT_RADIUS = SPOT_SIZE * (40 / 100);
