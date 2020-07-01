@@ -1,10 +1,9 @@
 import Pickup from "./scripts/pickup.js";
 import Present from "./scripts/present.js";
-import {BigPill,SmallPill} from "./scripts/alice-pills.js";
+import {BigPill,SmallPill,SpeedPill} from "./scripts/pills.js";
 import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
 import Bomb from "./scripts/bomb.js";
-import SpeedPill from "./scripts/speed-pill.js";
 
 function ImpulsePassthrough() {
     this.retain = true;

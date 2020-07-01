@@ -4,9 +4,9 @@ const PARTICLE_DURATION = 500;
 const PARTICLE_COUNT = 10;
 
 const PARTICLE_VELOCITY = 80;
-const PARTICLE_SIZE = 9;
+const PARTICLE_SIZE = 12;
 
-const particleBase = ParticleSystem.getType("Base",{
+const particleBase = ParticleSystem.getType("Jitter",{
     duration: PARTICLE_DURATION,
     size: PARTICLE_SIZE,
     count: PARTICLE_COUNT,

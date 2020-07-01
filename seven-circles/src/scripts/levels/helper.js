@@ -27,9 +27,14 @@ import InvisibileWall from "../helper/doors/invisible-wall.js";
 import HellGate from "../helper/doors/gates/hell-gate.js";
 import WarpGate from "../helper/doors/gates/warp-gate.js";
 import Fissure from "../helper/doors/fissure.js";
+import {MakePlayerBig,MakePlayerSmall} from "../helper/pills/size-drugs.js";
+import IAmSpeed from "../helper/pills/i-am-speed.js";
 
 export {
     Fissure,
+    MakePlayerSmall,
+    MakePlayerBig,
+    IAmSpeed,
     HellGate,
     AddPalaceFloor,
     MapNuke,

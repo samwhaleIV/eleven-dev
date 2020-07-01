@@ -1,4 +1,4 @@
-import {Items, ItemLookup} from "./items.js";
+import {Items,ItemLookup} from "./items.js";
 import SaveState from "../storage/save-state.js";
 import InventoryMenu from "../user-interface/inventory-menu.js";
 

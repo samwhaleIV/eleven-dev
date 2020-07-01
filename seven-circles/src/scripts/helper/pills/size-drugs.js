@@ -13,7 +13,7 @@ const playSound = async grow => {
     AudioManager.play(sound);
 };
 
-const particleEffect = async ({world,player},grow) => {
+const particleEffect = async (world,player,grow) => {
     PillParticles.Emit(world,player,grow ? GROW_EFFECT : SHRINK_EFFECT);
 };
 
@@ -69,7 +69,7 @@ const getRanges = ({start,end}) => {
     ];
 };
 
-const animate = async (data,{player,world}) => {
+const animate = async (world,player,data) => {
     world.playerController.lock();
 
     let updateID = null;
@@ -111,8 +111,8 @@ const animate = async (data,{player,world}) => {
 
 };
 
-const makePlayerSmall = ({player}) => scale(player,0.5);
-const makePlayerBig = ({player}) => scale(player,2);
+const setPlayerSmall = player => scale(player,0.5);
+const setPlayerBig = player => scale(player,2);
 
 const setBaseSizes = player => {
     if(!player.baseSize) {
@@ -126,54 +126,50 @@ const setBaseSizes = player => {
     }
 };
 
-function BigPill() {
-    this.action = data => {
-        const {player} = data;
-        setBaseSizes(player);
-        let animationData = null;
-        switch(player.scale) {
-            case 2: return false;
-            default:
-                animationData = makePlayerBig(data);
-                player.scale = 2;
-                break;
-            case 0.5:
-                animationData = makePlayerBig(data);
-                player.scale = 1;
-                break;
-        }
-        if(animationData) {
-            animate(animationData,data);
-            playSound(true);
-            particleEffect(data,true);
-        }
-        return true;
-    };
-}
-function SmallPill() {
-    this.action = data => {
-        const {player} = data;
-        setBaseSizes(player);
-        let animationData = null;
-        switch(player.scale) {
-            case 0.5: return false;
-            default:
-                animationData = makePlayerSmall(data);
-                player.scale = 0.5;
-                break;
-            case 2:
-                animationData = makePlayerSmall(data);
-                player.scale = 1;
-                break;
-        }
-        if(animationData) {
-            animate(animationData,data);
-            playSound(false);
-            particleEffect(data,false);
-        }
-        return true;
-    };
+function MakePlayerBig(world) {
+    const {player} = world;
+    setBaseSizes(player);
+    let animationData = null;
+    switch(player.scale) {
+        case 2: return false;
+        default:
+            animationData = setPlayerBig(player);
+            player.scale = 2;
+            break;
+        case 0.5:
+            animationData = setPlayerBig(player);
+            player.scale = 1;
+            break;
+    }
+    if(animationData) {
+        animate(world,player,animationData);
+        playSound(true);
+        particleEffect(world,player,true);
+    }
+    return true;
 }
 
-export default BigPill;
-export {BigPill,SmallPill};
+function MakePlayerSmall(world) {
+    const {player} = world;
+    setBaseSizes(player);
+    let animationData = null;
+    switch(player.scale) {
+        case 0.5: return false;
+        default:
+            animationData = setPlayerSmall(player);
+            player.scale = 0.5;
+            break;
+        case 2:
+            animationData = setPlayerSmall(player);
+            player.scale = 1;
+            break;
+    }
+    if(animationData) {
+        animate(world,player,animationData);
+        playSound(false);
+        particleEffect(world,player,false);
+    }
+    return true;
+}
+
+export {MakePlayerBig,MakePlayerSmall};

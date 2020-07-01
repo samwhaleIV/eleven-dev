@@ -1,6 +1,4 @@
-import PillParticles from "./pill-particles.js";
-
-const {ResourceManager, AudioManager} = Eleven;
+const {ResourceManager,AudioManager} = Eleven;
 
 const SPEED_MODIFIER = 4;
 
@@ -104,23 +102,22 @@ function Ghost(target) {
     };
 }
 
-function SpeedPill() {
-    this.action = ({world,player}) => {
-        if(player[SPEED_PILL_FLAG]) {
-            return false;
-        }
-        player[SPEED_PILL_FLAG] = true;
+function IAmSpeed(world) {
+    const {player} = world;
+    if(player[SPEED_PILL_FLAG]) {
+        return false;
+    }
+    player[SPEED_PILL_FLAG] = true;
 
-        player.oldVelocity = player.velocity;
-        player.velocity *= SPEED_MODIFIER;
+    player.oldVelocity = player.velocity;
+    player.velocity *= SPEED_MODIFIER;
 
-        const sound = ResourceManager.getAudio("grow");
-        AudioManager.play(sound);
-        PillParticles.Emit(world,player,PillParticles.Speed,2);
+    const sound = ResourceManager.getAudio("grow");
+    AudioManager.play(sound);
+    PillParticles.Emit(world,player,PillParticles.Speed,2);
 
-        world.spriteLayer.add(new Ghost(player),player.zIndex-1);
+    world.spriteLayer.add(new Ghost(player),player.zIndex-1);
 
-        return true;
-    };
+    return true;
 }
-export default SpeedPill;
+export default IAmSpeed;
