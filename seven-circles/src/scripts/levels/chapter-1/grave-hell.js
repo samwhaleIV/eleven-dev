@@ -1,16 +1,18 @@
-import {AddFixedWaterBackground,Teleporter,GetSwitchDoors,KeyDoor,PickupField} from "../helper.js";
+import {AddFixedWaterBackground,Teleporter,GetSwitchDoors,KeyDoor,PickupField,HellGate} from "../helper.js";
+import Fissure from "../../helper/doors/fissure.js";
 
 function GraveHell({world,inventory}) {
     world.setMap("grave-hell");
     world.camera.padding = true;
     AddFixedWaterBackground(world,2,12,6,8);
-    const player = world.addPlayer(14.5,0.25);
-    player.direction = "down";
+    const player = world.addPlayer(12.5,3.9375,"down");
 
     const teleporter = new Teleporter(world,[[6,8,6,22]]);
     const switchDoors = GetSwitchDoors(world,[[13,25,"yellow",false]],[[15,17,"yellow"]]);
     const keyDoors = KeyDoor.getDoors(world,this,[[28,10,"verticalRed"]]);
     const pickupField = new PickupField(world,[[19,25,"red-key",1,true,false]]);
+
+    const fissure = new Fissure(world,16,true);
 
     this.unload = () => {
         inventory.clear("red-key");
@@ -22,6 +24,7 @@ function GraveHell({world,inventory}) {
         if(pickupField.tryPickup(data)) return;
         if(switchDoors.tryInteract(data)) return;
         if(teleporter.tryInteract(data)) return;
+        if(fissure.tryInteract(data)) return;
     }
 }
 export default GraveHell;

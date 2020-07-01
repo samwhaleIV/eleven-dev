@@ -3,6 +3,8 @@
 import ScriptBook from "./script-book.js";
 
 /* Note that these import aliases might not reflect the real script identifier/function names. */
+import AlicePalace from "./levels/chapter-1/alice-palace.js";
+import CheckerPalace from "./levels/chapter-1/checker-palace.js";
 import ChocolateHell from "./levels/chapter-1/chocolate-hell.js";
 import GraveHell from "./levels/chapter-1/grave-hell.js";
 import HatHell from "./levels/chapter-1/hat-hell.js";
@@ -16,9 +18,7 @@ import TheBeginning from "./levels/chapter-1/the-beginning.js";
 import TunnelsOfHell from "./levels/chapter-1/tunnels-of-hell.js";
 import VoidHell from "./levels/chapter-1/void-hell.js";
 
-import AlicePalace from "./levels/chapter-2/alice-palace.js";
 import BombHell from "./levels/chapter-2/bomb-hell.js";
-import CheckerPalace from "./levels/chapter-2/checker-palace.js";
 import DeadHell from "./levels/chapter-2/dead-hell.js";
 import MineHell from "./levels/chapter-2/mine-hell.js";
 import PondHell from "./levels/chapter-2/pond-hell.js";
@@ -29,7 +29,7 @@ import HelloWorld from "./levels/other/hello-world.js";
 import BombTest from "./levels/test/bomb-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
 
-const Scripts = ScriptBook.Import(ChocolateHell,GraveHell,HatHell,HelloHell,MazeHell,PaintHell,RiverHell,SaveHell,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,AlicePalace,BombHell,CheckerPalace,DeadHell,MineHell,PondHell,ErrorPlace,HelloWorld,BombTest,NpcClTest);
+const Scripts = ScriptBook.Import(AlicePalace,CheckerPalace,ChocolateHell,GraveHell,HatHell,HelloHell,MazeHell,PaintHell,RiverHell,SaveHell,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,BombHell,DeadHell,MineHell,PondHell,ErrorPlace,HelloWorld,BombTest,NpcClTest);
 
 export default Scripts;
 

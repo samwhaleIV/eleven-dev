@@ -3,6 +3,7 @@ import {
     PickupField,
     InstallBombAreas
 } from "../helper.js";
+import Fissure from "../../helper/doors/fissure.js";
 
 function SwitchHell({world,inventory}) {
     world.setMap("switch-hell");
@@ -43,23 +44,13 @@ function SwitchHell({world,inventory}) {
     ]);
 
     InstallBombAreas(world,this);
-    
-    const askTheHole = async () => {
-        if(await world.prompt(
-            "Do you want to crawl into the odd looking hole?",
-            ["Yes, get me out of here!","No. I want to stay here forever."]
-        ) === 0) {
-            world.transitionNext(null,2000);
-        }
-    };
+
+    const fissure = new Fissure(world,16);
 
     this.interact = data => {
         if(pickupField.tryPickup(data)) return;
         if(switchDoors.tryInteract(data)) return;
-        if(data.value === 16) {
-            askTheHole();
-            return;
-        }
+        if(fissure.tryInteract(data)) return;
     };
 
     world.setTriggers([[1,()=>{world.transitionLast()},true]]);

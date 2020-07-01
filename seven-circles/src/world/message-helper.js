@@ -13,11 +13,13 @@ const TEXT_SCALE = 4 * SCALE;
 const LINE_SPACING = 1;
 const BOX_PADDING = 20 * SCALE;
 const LETTER_SPACING = 0;
+const WORD_SPACING = 2.5;
 
 const textLayerDefaults = Object.freeze({
     lineSpacing: LINE_SPACING,
     boxPadding: BOX_PADDING,
     scale: TEXT_SCALE,
+    wordSpacing: WORD_SPACING,
     letterSpacing: LETTER_SPACING,
     width: WIDTH,
     height: HEIGHT

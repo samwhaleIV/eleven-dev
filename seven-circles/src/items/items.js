@@ -19,7 +19,8 @@ const ITEM_DATA = [
     ["Warp Crystal","warp-crystal"],
     ["Blueprint","blueprint-fragment"],
     ["White Key","white-key"],
-    ["Ice Key","ice-key"]
+    ["Ice Key","ice-key"],
+    ["Fissure Token","fissure-token"]
 ];
 
 const ItemLookup = new Object();

@@ -1,6 +1,6 @@
 import MessageHelper from "./message-helper.js";
 
-const {SpeechBox} = Eleven;
+const {SpeechBox,ResourceManager,AudioManager} = Eleven;
 
 function WorldMessage(dispatchRenderer,text,instant) {
     this.complete = false;
@@ -9,7 +9,10 @@ function WorldMessage(dispatchRenderer,text,instant) {
     this.textLayer = MessageHelper.GetTextLayer(text);
     const terminateMessage = MessageHelper.AddRenderer(dispatchRenderer,this);
 
-    const speechBox = new SpeechBox(this.textLayer);
+    const textSound = ResourceManager.getAudio("text-sound");
+    const playSound = () => AudioManager.playSound(textSound);
+
+    const speechBox = new SpeechBox(this.textLayer,playSound);
 
     const complete = () => {
         speechBox.finish();

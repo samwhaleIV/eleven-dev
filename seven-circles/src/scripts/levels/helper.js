@@ -26,8 +26,10 @@ import SpriteDoor from "../helper/doors/sprite-door/sprite-door.js";
 import InvisibileWall from "../helper/doors/invisible-wall.js";
 import HellGate from "../helper/doors/gates/hell-gate.js";
 import WarpGate from "../helper/doors/gates/warp-gate.js";
+import Fissure from "../helper/doors/fissure.js";
 
 export {
+    Fissure,
     HellGate,
     AddPalaceFloor,
     MapNuke,

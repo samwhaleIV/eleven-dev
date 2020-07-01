@@ -1,4 +1,4 @@
-import {AddPalaceFloor,HellGate} from "../helper.js";
+import {AddPalaceFloor,HellGate, Fissure} from "../helper.js";
 
 function CheckerPalace({world,fromNextLevel}) {
     world.setMap("checker-palace");
@@ -7,6 +7,9 @@ function CheckerPalace({world,fromNextLevel}) {
     } else {
         world.addPlayer(9,3.5,"down");
     }
+
+    const fissure = new Fissure(world,17,true);
+
     const endGate = new HellGate(world,34,14,false,0,()=>{
         world.transitionNext();
     });
@@ -15,6 +18,7 @@ function CheckerPalace({world,fromNextLevel}) {
 
     this.interact = data => {
         if(endGate.tryInteract(data)) return;
+        if(fissure.tryInteract(data)) return;
     };
 }
 export default CheckerPalace;

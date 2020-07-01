@@ -42,6 +42,7 @@ const ItemUseTable = {
     "warp-crystal": ImpulsePassthrough,
     "power-cell": ImpulsePassthrough,
     "blueprint-fragment": ImpulsePassthrough,
+    "fissure-token": ImpulsePassthrough
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{
