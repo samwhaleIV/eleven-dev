@@ -69,8 +69,57 @@ const getRanges = ({start,end}) => {
     ];
 };
 
+const lerp = (v0,v1,t) => (1 - t) * v0 + t * v1;
+
 const animate = async (world,player,data) => {
+    /* All hail the behemoth! */
+
     world.playerController.lock();
+
+    const {tileCollision,collisionLayer} = world;
+
+    const collides = () => {
+        let result = null;
+        result = tileCollision.collides(player);
+        if(result) return result;
+        result = collisionLayer.collides(player);
+        return result;
+    };
+
+    const hitBox = player.hitBox;
+
+    const verticalCenter = hitBox.y + hitBox.height / 2;
+    const hitBoxTop = hitBox.y;
+    const hitBoxBottom = hitBox.y + hitBox.height;
+
+    const horizontalCenter = hitBox.x + hitBox.width / 2;
+    const hitBoxLeft = hitBox.x;
+    const hitBoxRight = hitBox.x + hitBox.width;
+
+    /* I told myself I wasn't going to write more mirrored dimensional code, but here we are again... */
+    const tryHandleCollision = t => {
+        const collision = collides();
+        if(!collision) return;
+
+        const collisionTop = collision.y, collisionBottom = collision.y + collision.height;
+        const verticalHitBoxDifference = (player.height - hitBox.height) / 2;
+
+        if(collisionBottom < verticalCenter && collisionBottom > hitBoxTop) {
+            player.y = lerp(player.y,collisionBottom - verticalHitBoxDifference,t);
+        } else if(collisionTop > verticalCenter && collisionTop < hitBoxBottom) {
+            player.y = lerp(player.y,collisionTop + verticalHitBoxDifference - player.height,t);
+        }
+
+        const collisionLeft = collision.x, collisionRight = collision.x + collision.width;
+        const horizontalHitBoxDifference = (player.width - hitBox.width) / 2;
+
+        if(collisionRight < horizontalCenter && collisionRight > hitBoxLeft) {
+            player.x = lerp(player.x,collisionRight - horizontalHitBoxDifference,t);
+        } else if(collisionLeft > horizontalCenter && collisionLeft < hitBoxRight) {
+
+            player.x = lerp(player.x,collisionLeft + horizontalHitBoxDifference - player.width,t);
+        }
+    };
 
     let updateID = null;
     await new Promise(resolve => {
@@ -96,6 +145,7 @@ const animate = async (world,player,data) => {
                player.y = end.y;
                player.width = end.width;
                player.height = end.height;
+               tryHandleCollision(1);
                resolve();
                return;
             }
@@ -103,6 +153,7 @@ const animate = async (world,player,data) => {
             player.y = startY + yRange * delta;
             player.width = startWidth + widthRange * delta;
             player.height = startHeight + heightRange * delta;
+            tryHandleCollision(delta);
         });
 
     });

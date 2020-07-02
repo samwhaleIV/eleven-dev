@@ -29,7 +29,7 @@ function SaveStone(world,x,y) {
 
         AudioManager.play(saveSound);
 
-        world.message("Game saved! The save stone will remember where you belong.");
+        world.message("Game saved! The save stone remembers where you belong.");
         return true;
     };
 }

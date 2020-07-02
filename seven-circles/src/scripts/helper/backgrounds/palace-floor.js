@@ -5,7 +5,7 @@ const COLOR_TWO = "#B7004F";
 
 const BACKGROUND_PARALLAX = -0.25;
 
-const TILE_SCALE = 2.5;
+const TILE_SCALE = 2;
 
 const FALLBACK_COLOR = COLOR_ONE;
 
