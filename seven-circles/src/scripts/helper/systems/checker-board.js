@@ -24,7 +24,7 @@ function Grid(width,height) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
     this.get = (x,y) => {
-        if(!inBounds) {
+        if(!inBounds(x,y)) {
             return undefined;
         }
         return grid[x][y];
