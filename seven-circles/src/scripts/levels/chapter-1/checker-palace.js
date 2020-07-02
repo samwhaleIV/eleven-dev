@@ -8,8 +8,6 @@ function CheckerPalace({world,fromNextLevel}) {
         world.addPlayer(9,3.5,"down");
     }
 
-    world.player.setPosition(31.928571428572035,17.49107142857128); //DEV POSITION
-
     const fissure = new Fissure(world,17,true);
 
     const endGate = new HellGate(world,34,14,false,0,()=>{
