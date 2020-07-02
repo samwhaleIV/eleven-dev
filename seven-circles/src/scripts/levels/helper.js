@@ -29,9 +29,11 @@ import WarpGate from "../helper/doors/gates/warp-gate.js";
 import Fissure from "../helper/doors/fissure.js";
 import {MakePlayerBig,MakePlayerSmall} from "../helper/pills/size-drugs.js";
 import IAmSpeed from "../helper/pills/i-am-speed.js";
+import CheckerBoard from "../helper/systems/checker-board.js";
 
 export {
     Fissure,
+    CheckerBoard,
     MakePlayerSmall,
     MakePlayerBig,
     IAmSpeed,

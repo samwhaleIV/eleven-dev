@@ -1,22 +1,23 @@
-import {AddNamedBackground} from "./color-background.js";
 import NamedColors from "./named-colors.js";
 
 const COLOR_ONE = "#EF0067";
 const COLOR_TWO = "#B7004F";
 
 const BACKGROUND_PARALLAX = -0.25;
-const TILE_SCALE = 2;
+
+const TILE_SCALE = 2.5;
 
 const FALLBACK_COLOR = COLOR_ONE;
 
 function GetPattern(buffer,tileSize) {
     tileSize *= TILE_SCALE;
+
     const halfSize = tileSize / 2;
 
     buffer.width = tileSize, buffer.height = tileSize;
 
     const context = buffer.getContext("2d",{alpha:false});
-    context.imageSmoothingEnabled = true;
+    context.imageSmoothingEnabled = false;
     context.imageSmoothingQuality = "low";
 
     context.fillStyle = COLOR_ONE;
@@ -27,45 +28,45 @@ function GetPattern(buffer,tileSize) {
     context.rect(halfSize,halfSize,halfSize,halfSize);
     context.fill();
 
-    const basePattern = context.createPattern(buffer,"repeat");
+    const pattern = context.createPattern(buffer,"repeat");
 
-    let lastPattern = null, lastX = null, lastY = null;
+    let lastX = null, lastY = null;
 
-    return (xOffset=0,yOffset=0) => {
-        if(xOffset === lastX && lastY === yOffset) {
-            return lastPattern;
-        }
+    const matrix = new DOMMatrix();
+
+    const updatePattern = (xOffset=0,yOffset=0) => {
+        if(xOffset === lastX && lastY === yOffset) return;
         lastX = xOffset, lastY = yOffset;
 
         xOffset *= tileSize, yOffset *= tileSize;
-        context.fillStyle = basePattern;
 
-        context.beginPath();
-        context.rect(0,0,tileSize,tileSize);
-        context.translate(xOffset,yOffset);
-        context.fill();
-        context.translate(-xOffset,-yOffset);
-
-        const pattern = context.createPattern(buffer,"repeat");
-        lastPattern = pattern;
-        return pattern;
+        matrix.translateSelf(xOffset,yOffset);
+        pattern.setTransform(matrix);
+        matrix.translateSelf(-xOffset,-yOffset);
     };
+
+    return {pattern,updatePattern};
 }
 
 function AddPalaceFloor(world) {
 
     const buffer = new OffscreenCanvas(0,0);
 
-    let pattern = () => FALLBACK_COLOR, tileSize = 0;
+    let pattern = FALLBACK_COLOR;
+    let updatePattern = null;
+    let tileSize = 0;
+
     const resize = () => {
         const newTileSize = world.grid.tileSize;
         if(newTileSize === tileSize) return;
         tileSize = newTileSize;
-        pattern = GetPattern(buffer,tileSize);
+
+        const patternData = GetPattern(buffer,tileSize);
+        pattern = patternData.pattern;
+        updatePattern = patternData.updatePattern;
     };
 
     const {camera,dispatchRenderer,grid} = world;
-
     dispatchRenderer.addResize(resize);
 
     const normalizeRange = (start,end,limit) => {
@@ -100,8 +101,13 @@ function AddPalaceFloor(world) {
             context.fillRect(0,0,width,height);
         }
 
-        context.fillStyle = pattern(parallaxX,parallaxY);
+        if(updatePattern) updatePattern(parallaxX,parallaxY);
+
+        context.fillStyle = pattern;
+        const smoothingEnabled = context.imageSmoothingEnabled;
+        context.imageSmoothingEnabled = true;
         context.fillRect(x,y,renderWidth,renderHeight);
+        context.imageSmoothingEnabled = smoothingEnabled;
     };
     dispatchRenderer.addBackground(render);
 }
