@@ -20,7 +20,13 @@ function Grid(width,height) {
     this.set = (x,y,value) => {
         return grid[x][y] = value;
     };
+    const inBounds = (x,y) => {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
     this.get = (x,y) => {
+        if(!inBounds) {
+            return undefined;
+        }
         return grid[x][y];
     };
     this.clear = (x,y) => {
@@ -105,6 +111,7 @@ function CheckerBoard(world,x,y,width,height,callback) {
 
     const removeChecker = (checker,deleteStart) => {
         delete checkers[checker.checkerID];
+        grid.clear(checker.x-x,checker.y-y);
 
         const startX = checker.x, startY = checker.y;
 
