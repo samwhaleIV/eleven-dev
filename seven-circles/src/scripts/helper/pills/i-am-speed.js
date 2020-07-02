@@ -1,3 +1,5 @@
+import PillParticles from "./pill-particles.js";
+
 const {ResourceManager,AudioManager} = Eleven;
 
 const SPEED_MODIFIER = 4;
