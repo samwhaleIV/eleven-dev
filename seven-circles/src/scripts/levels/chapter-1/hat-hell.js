@@ -160,8 +160,10 @@ function HatHell(data) {
 
             await MessageChain(world,[
                 "Oh. Hey.", "You're still here?",
+                1000,
                 "Usually no one makes it this far.",
-                600,
+                "You probably have a lot of questions but we don't have time for them.",
+                1000,
                 "I'm not really sure what I'm supposed to say now.",
                 600,
                 "Are you familiar with passageways?"

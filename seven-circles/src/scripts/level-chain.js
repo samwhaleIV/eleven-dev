@@ -12,15 +12,15 @@ const LevelBlocks = [
 
         "RiverHell",
         "VoidHell",
-
         "BombHell",
         "MineHell",
-
+    
         "SaveHell",
         "MazeHell",
-        null,
         "PaintHell",
-        null,
+
+        "PrepareHell",
+        "DeadTitanHell",
         "SwitchHell",
         "CheckerPalace",
         "AlicePalace",

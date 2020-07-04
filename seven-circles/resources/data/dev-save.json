@@ -8,7 +8,7 @@
 
         "Named": {
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "GraveHell",
+                "x": 0, "y": 0, "scriptID": "DeadTitanHell",
                 "direction": 0,
                 "_deserialize": true
             }
