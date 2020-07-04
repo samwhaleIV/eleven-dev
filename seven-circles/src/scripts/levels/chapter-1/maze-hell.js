@@ -30,6 +30,8 @@ function MazeHell({world,fromNextMap}) {
         } else if(value === 18) {
             world.say("Can't a skeledemon drink chocolate milk in peace?");
             return;
+        } else if(value === 19) {
+            return world.sayNamed("Even though I know exactly what way to go, I really feel like a maze is just wasted potential.","Mysterious Lamp","r");
         }
         if(teleporter.tryInteract(data)) {
             if(objective.status === "escape") {

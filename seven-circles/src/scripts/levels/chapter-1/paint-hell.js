@@ -166,6 +166,10 @@ function PaintHell({world,inventory,fromNextMap}) {
     let blueprintsGained = 0;
 
     this.interact = async data => {
+        if(data.value === 17) {
+            world.sayNamed("You know, I'm something of an artist myself.","Mysterious Lamp","r");
+            return;
+        }
         if(isBaseStation(data.value) && inventory.has("blueprint-fragment")) {
             useFragment();
             inventory.take("blueprint-fragment");

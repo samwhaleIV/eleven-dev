@@ -161,20 +161,21 @@ function HatHell(data) {
             await MessageChain(world,[
                 "Oh. Hey.", "You're still here?",
                 "Usually no one makes it this far.",
-                "I'll let you in on a secret.",
-                "We're in the first of the Seven Circles.",
-                "You probably have a lot of questions, but like always we're running out of time.",
-                "Although.. You know the passageways that take you from one place to another?"
+                600,
+                "I'm not really sure what I'm supposed to say now.",
+                600,
+                "Are you familiar with passageways?"
             ]);
-            await world.prompt("Passageways, what's the buzz?",["I'm somewhat familiar.","Passagewhat?"]);
+            await world.prompt("Passageways?",["I'm somewhat familiar.","Passagewhat?"]);
             await delay(800);
             await MessageChain(world,[
                 "Yeah, you know.. Passageways!",
-                "I'll spill the beans. Like I said, we're running out time.",
                 "If you get stuck in a new area, passageways are magic.",
                 "Passageways can make a room forget that you were even there!",
                 "I, however, will remember this conversation forever because I am not a room.",
                 "Plus, my new hat (that I definitely didn't steal) makes me much too important.",
+                1000,
+                "Well it looks like we're out of time, but the hat store might still have some hats for you to try on."
             ]);
 
             await dramaZoom.zoomOut();
@@ -188,6 +189,7 @@ function HatHell(data) {
         switch(data.value) {
             case 16: world.transition(HatHell,{hatStore:true}); break;
             case 17: talkToDemonGuy(); break;
+            case 18: world.sayNamed("Hats are very clingy in hell.","Mysterious Lamp");
         }
     };
 

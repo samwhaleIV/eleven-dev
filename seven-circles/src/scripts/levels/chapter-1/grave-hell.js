@@ -1,12 +1,16 @@
 import {
     AddFixedWaterBackground,Teleporter,GetSwitchDoors,KeyDoor,PickupField,Fissure,AntiPlayer,MessageChain
 } from "../helper.js";
+import ObjectiveText from "../../helper/other/objective-text.js";
 
 function GraveHell({world,inventory}) {
     world.setMap("grave-hell");
     world.camera.padding = true;
     AddFixedWaterBackground(world,1,11,6,8);
     world.addPlayer(12.5,3.9375,"down");
+
+    const objective = new ObjectiveText(world);
+    objective.set("Find a way out!");
 
     const teleporter = new Teleporter(world,[[5,7,5,21]]);
     const switchDoors = GetSwitchDoors(world,[[12,24,"yellow",false]],[[14,16,"yellow"]]);
@@ -41,6 +45,7 @@ function GraveHell({world,inventory}) {
 
     coffinClicked = async () => {
         world.playerController.lock();
+        objective.close();
         await world.say("Your cooperation is deeply appreciated.");
         await delay(600);
         placePlayerInCoffin();
@@ -106,6 +111,7 @@ function GraveHell({world,inventory}) {
             antiPlayer.velocity = normalSpeed;
             await shiftSpriteFollower(world.player,1000,false);
             world.playerController.unlock();
+            objective.set("Go into the unsettling chamber.");
         }
     };
 
@@ -182,6 +188,7 @@ function GraveHell({world,inventory}) {
             await world.say("Get in.");
             await frameDelay(800);
             world.playerController.unlock();
+            objective.set("Get in the coffin.");
         },true],
         [4,()=>{
             if(hadRedKeyForTrigger && hadYellowSwitchTrigger) return;

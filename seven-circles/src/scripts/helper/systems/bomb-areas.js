@@ -129,6 +129,7 @@ function InstallBombAreas(world,script) {
         }
         world.pushInteractionChanges();
         world.pushCollisionChanges();
+        if(world.script.bombExploded) world.script.bombExploded();
     };
 
     const getDestructionTileFinalizer = destructionTiles =>

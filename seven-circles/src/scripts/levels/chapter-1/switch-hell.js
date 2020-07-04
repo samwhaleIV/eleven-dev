@@ -1,7 +1,8 @@
 import {
     GetSwitchDoors,
     PickupField,
-    InstallBombAreas
+    InstallBombAreas,
+    ObjectiveText
 } from "../helper.js";
 import Fissure from "../../helper/doors/fissure.js";
 
@@ -12,10 +13,17 @@ function SwitchHell({world,inventory}) {
     player.direction = "down";
     world.camera.padding = true;
 
+    const objective = new ObjectiveText(world);
+    objective.set("Gain access to the fissure!");
+
     this.unload = () => {
         inventory.clear("bomb");
     };
     this.unload();
+
+    this.bombExploded = () => {
+        objective.set("Travel through the fissure!");
+    };
 
     const pickupField = new PickupField(world,[
         [12,17,"bomb"]
@@ -50,7 +58,10 @@ function SwitchHell({world,inventory}) {
     this.interact = data => {
         if(pickupField.tryPickup(data)) return;
         if(switchDoors.tryInteract(data)) return;
-        if(fissure.tryInteract(data)) return;
+        if(fissure.tryInteract(data)) {
+            objective.close();
+            return;
+        }
     };
 
     world.setTriggers([[1,()=>{world.transitionLast()},true]]);

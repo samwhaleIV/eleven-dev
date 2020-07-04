@@ -1,9 +1,11 @@
-import {AddPalaceFloor,KeyDoor,SaveStone,HellGate,MakePlayerBig,MakePlayerSmall} from "../helper.js";
+import {AddPalaceFloor,KeyDoor,SaveStone,HellGate,MakePlayerBig,MakePlayerSmall,ObjectiveText} from "../helper.js";
 
 function AlicePalace({world,inventory,fromNextMap}) {
     world.setMap("alice-palace");
     world.camera.verticalPadding = true;
     AddPalaceFloor(world);
+
+    const objective = new ObjectiveText(world);
 
     if(!fromNextMap) {
         world.addPlayer(8.545,2.9375,"down");
@@ -121,7 +123,8 @@ function AlicePalace({world,inventory,fromNextMap}) {
             }
             world.setForegroundTile(x,y,1254);
             endGate.open();
-            world.message("The nearby gate was activated!");
+            world.message("The nearby portal gate was activated!");
+            objective.set("Travel through the portal gate!");
         }
     };
 
