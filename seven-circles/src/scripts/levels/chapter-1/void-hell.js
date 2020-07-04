@@ -2,7 +2,8 @@ import {
     GetTransitionTrigger,
     MessageChain,
     GetSwitchDoors,
-    SaveStone
+    SaveStone,
+    AntiPlayer
 } from "../helper.js";
 
 const {ResourceManager,UVTCReflection} = Eleven;
@@ -28,18 +29,10 @@ function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
 
     const {player,camera,playerController} = world;
 
-    const antiPlayer = world.addNPC(
-        20,6.5,ResourceManager.getImage("anti-player")
-    );
-    antiPlayer.direction = "left";
-    antiPlayer.velocity = 1.5;
-    const NPCController = antiPlayer.controller;
-    antiPlayer.interact = () => {
+    const antiPlayer = new AntiPlayer(world,20,6.5,"left",()=>{
         world.say("We'll be in touch.");
-    };
-
-    antiPlayer.xOffset = player.xOffset;
-    antiPlayer.yOffset = player.yOffset;
+    });
+    const NPCController = antiPlayer.controller;
 
     camera.horizontalPadding = true;
 

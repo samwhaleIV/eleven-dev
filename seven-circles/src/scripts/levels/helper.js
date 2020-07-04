@@ -30,8 +30,10 @@ import Fissure from "../helper/doors/fissure.js";
 import {MakePlayerBig,MakePlayerSmall} from "../helper/pills/size-drugs.js";
 import IAmSpeed from "../helper/pills/i-am-speed.js";
 import CheckerBoard from "../helper/systems/checker-board.js";
+import AntiPlayer from "../helper/sprites/anti-player.js";
 
 export {
+    AntiPlayer,
     Fissure,
     CheckerBoard,
     MakePlayerSmall,
