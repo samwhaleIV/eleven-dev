@@ -6,6 +6,7 @@
     ],
     "JSON": [
         "maps.json",
-        "suggested-songs.json"
+        "suggested-songs.json",
+        "sound-effects.json"
     ]
 }

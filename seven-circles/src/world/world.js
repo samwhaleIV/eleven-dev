@@ -86,6 +86,8 @@ function World(callback) {
     this.scriptData = null;
     this.inputDisabled = false;
 
+    this.soundEffects = {};
+
     this.load = async () => {
 
         tileset = ResourceManager.getImage(TILESET_NAME);

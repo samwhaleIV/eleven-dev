@@ -7,6 +7,10 @@ const MUTE_DISTANCE = 12;
 const HIGH_SCALE_DELINEATION = 2;
 const LOW_SCALE_DELINEATION = 4;
 
+const MISSING_SOUND = name => {
+    console.warn(`Cannot play sound '${name}'. It was not loaded or is not in the sound effects table.`);
+};
+
 const minMax = (value,min,max) => {
     if(value <= min) {
         return min;
@@ -46,9 +50,18 @@ function sendTrackedPositionUpdate(remoteControl,target,baseVolume) {
     sendPositionUpdate.call(this,remoteControl,target.x,target.y,baseVolume);
 }
 
-async function playSound({
-    buffer, volume, detune, x, y, loop, playbackRate, target
-}) {
+async function playSound(data) {
+    if(typeof data === "string") data = {name:data};
+    let {name,buffer,volume,detune,x,y,loop,playbackRate,target} = data;
+
+    if(name) {
+        buffer = this.soundEffects[name];
+        if(buffer === null) return;
+        if(!buffer) {
+            if(buffer !== null) MISSING_SOUND(name);
+            return;
+        }
+    }
     if(isNaN(volume)) volume = 1;
 
     const useTarget = Boolean(target);
