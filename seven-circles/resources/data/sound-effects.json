@@ -1,44 +1,31 @@
 {
     "Save": "save.mp3",
-
     "Grow": "grow.mp3",
     "Shrink": "shrink.mp3",
     "SpeedPill": null,
-
     "Pew": "pew.mp3",
     "KeyUsed": null,
-
     "RemoveHat": null,
     "SwapHat": null,
-
     "RockGrabbed": null,
     "RockInWater": null,
-
     "BombFuse": null,
     "BombExplode": null,
     "ClawMachinePaint": null,
-
     "ChocolateMilkSip": null,
     "TheMapExploded": null,
     "GotAnItem": null,
     "SwitchDoorsToggled": null,
-
     "PlayerGateTeleport": null,
     "TeleporterStart": null,
     "TeleporterEnd": null,
-
     "CheckerMove": null,
     "CheckerMatch": null,
     "CheckerCantMove": null,
-
     "FissureTravel": null,
-
     "CleaverMushroom": null,
-
     "EnterCoffin": null,
     "CoffinClose": null,
-
     "BuildBridge": null,
-
     "ButtonClick": null
 }

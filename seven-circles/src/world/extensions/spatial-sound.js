@@ -55,9 +55,8 @@ function dataPreprocess(data) {
     const {name,volume} = data;
     if(name) {
         data.buffer = this.soundEffects[name];
-        if(buffer === null) return null;
-        if(!buffer) {
-            if(buffer !== null) MISSING_SOUND(name);
+        if(!data.buffer) {
+            if(data.buffer !== null) MISSING_SOUND(name);
             return null;
         }
     }
@@ -66,7 +65,7 @@ function dataPreprocess(data) {
 };
 
 async function playSpatialSound(data) {
-    data = dataPreprocess(data); if(!data) return;
+    data = dataPreprocess.call(this,data); if(!data) return;
 
     data.usePanning = true;
     let {target,x,y,volume} = data;
@@ -94,7 +93,7 @@ async function playSpatialSound(data) {
 }
 
 function playControlledSound(data) {
-    data = dataPreprocess(data); if(!data) return;
+    data = dataPreprocess.call(this,data); if(!data) return;
     data.usePanning = false;
     const remoteControl = AudioManager.playSound(data);
     return remoteControl;
@@ -102,6 +101,7 @@ function playControlledSound(data) {
 
 function playSound(data) {
     const remoteControl = playControlledSound.call(this,data);
+    if(!remoteControl) return;
     return remoteControl.waitForEnd();
 }
 
