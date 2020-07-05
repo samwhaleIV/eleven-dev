@@ -42,7 +42,8 @@ const ItemUseTable = {
     "power-cell": Impulse,
     "blueprint-fragment": Impulse,
     "fissure-token": Impulse,
-    "cleaver": Impulse
+    "cleaver": Impulse,
+    "bridge-piece": Impulse
 };
 
 Object.entries(ItemUseTable).forEach(([key,values])=>{

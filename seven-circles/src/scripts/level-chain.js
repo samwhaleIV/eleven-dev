@@ -6,29 +6,31 @@ const LevelBlocks = [
         "TheBeginning",
         "HelloHell",
 
-        "TunnelsOfHell",
+        "TunnelsOfHell", //Save level
         "ChocolateHell",
-        "HatHell",
+        "HatHell", //Save level
 
         "RiverHell",
-        "VoidHell",
+        "VoidHell", //Save level
         "BombHell",
-        "MineHell",
+        "MineHell", //Save level
     
-        "SaveHell",
-        "MazeHell",
+        "SaveHell", //Save level
+        "MazeHell", //Save level
         "PaintHell",
 
-        "PrepareHell",
+        "PrepareHell", //Save level
         "DeadTitanHell",
         "SwitchHell",
-        "CheckerPalace",
-        "AlicePalace",
-        null,
+        "CheckerPalace", //Save level
+        "AlicePalace", //Save level
+        "SavePalace",
+        "SuperCheckerPalace",
         "GraveHell",
-        "DeadHell",
+        null,
 
         /* Chapter 2 */
+        "DeadHell",
         null,
         "PondHell"
     ]

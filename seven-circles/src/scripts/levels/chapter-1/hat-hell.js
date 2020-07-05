@@ -160,10 +160,10 @@ function HatHell(data) {
 
             await MessageChain(world,[
                 "Oh. Hey.", "You're still here?",
-                1000,
+                600,
                 "Usually no one makes it this far.",
                 "You probably have a lot of questions but we don't have time for them.",
-                1000,
+                800,
                 "I'm not really sure what I'm supposed to say now.",
                 600,
                 "Are you familiar with passageways?"
@@ -176,7 +176,7 @@ function HatHell(data) {
                 "Passageways can make a room forget that you were even there!",
                 "I, however, will remember this conversation forever because I am not a room.",
                 "Plus, my new hat (that I definitely didn't steal) makes me much too important.",
-                1000,
+                800,
                 "Well it looks like we're out of time, but the hat store might still have some hats for you to try on."
             ]);
 

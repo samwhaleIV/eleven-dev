@@ -79,7 +79,7 @@ function GraveHell({world,inventory}) {
 
         await world.say("Lights out.");
 
-        await frameDelay(3000);
+        await frameDelay(2000);
 
         await world.say("Sweet dreams.");
 
@@ -138,7 +138,7 @@ function GraveHell({world,inventory}) {
     let hadYellowSwitchTrigger = false;
 
     const foundYellowButton = async () => {
-        await world.say("Hey! You found the yellow button. Nice job");
+        await world.say("Hey! You found the yellow button. Nice job.");
         await delay(3000);
         await world.say("Annnnd you just keep ignoring us.");
         await delay(1000);
@@ -186,9 +186,8 @@ function GraveHell({world,inventory}) {
             await world.say("Let's not make this any harder than it needs to be.");
             await frameDelay(600);
             await world.say("Get in.");
-            await frameDelay(800);
-            world.playerController.unlock();
             objective.set("Get in the coffin.");
+            world.playerController.unlock();
         },true],
         [4,()=>{
             if(hadRedKeyForTrigger && hadYellowSwitchTrigger) return;

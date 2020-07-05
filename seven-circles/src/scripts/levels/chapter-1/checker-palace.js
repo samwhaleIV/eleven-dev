@@ -19,13 +19,14 @@ function CheckerPalace({world,fromNextLevel}) {
     AddPalaceFloor(world);
     world.camera.verticalPadding = true;
 
-    CheckerBoard(world,31,18,11,9,()=>{
+    const checkerBoard = new CheckerBoard(world,31,18,11,9,()=>{
         world.message("A nearby portal gate was activated!");
         objective.set("Travel through the portal gate!");
         endGate.open();
     });
 
     this.interact = data => {
+        if(checkerBoard.tryInteract(data)) return;
         if(endGate.tryInteract(data)) return;
         if(fissure.tryInteract(data)) return;
     };

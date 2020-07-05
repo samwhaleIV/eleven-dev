@@ -1,16 +1,19 @@
+import GetInteractionStart from "../self/get-interaction-start.js";
+
 const RED_CHECKER_ID = 1493;
 const BLUE_CHECKER_ID = 1494;
-
-const CHECKER_TYPES = {
-    [RED_CHECKER_ID]: true,
-    [BLUE_CHECKER_ID]: true
-};
+const GREEN_CHECKER_ID = 1818;
+const ORANGE_CHECKER_ID = 1754;
+const PURPLE_CHECKER_ID = 1755;
+const PINK_CHECKER_ID = 1819;
 
 const CHECKER_MOVE_TIME = 100;
 const DELETE_INTERVAL = 350;
 const DELETE_TIME = 300;
 
 const EMPTY = Symbol("empty");
+
+const INTERACTION_START = GetInteractionStart();
 
 function Grid(width,height) {
     const grid = new Array(width);
@@ -34,8 +37,20 @@ function Grid(width,height) {
     };
 }
 
-function CheckerBoard(world,x,y,width,height,callback) {
-    const redCheckers = [], blueCheckers = [];
+function CheckerBoard(world,x,y,width,height,callback,matchCallback) {
+    const checkerTypes = [
+        RED_CHECKER_ID,
+        BLUE_CHECKER_ID,
+        GREEN_CHECKER_ID,
+        ORANGE_CHECKER_ID,
+        PURPLE_CHECKER_ID,
+        PINK_CHECKER_ID
+    ].reduce((pv,cv)=>{
+        pv[cv] = true;
+        return pv;
+    },new Object());
+
+    const allCheckers = [];
 
     for(let xOffset = 0;xOffset<width;xOffset++) {
         for(let yOffset = 0;yOffset<height;yOffset++) {
@@ -43,12 +58,9 @@ function CheckerBoard(world,x,y,width,height,callback) {
             const tileID = world.getForegroundTile(
                 position[0],position[1]
             );
-            if(!(tileID in CHECKER_TYPES)) continue;
-            if(tileID === RED_CHECKER_ID) {
-                redCheckers.push(position);
-            } else {
-                blueCheckers.push(position);
-            }
+            if(!(tileID in checkerTypes)) continue;
+            position.push(tileID);
+            allCheckers.push(position);
         }
     }
 
@@ -63,12 +75,13 @@ function CheckerBoard(world,x,y,width,height,callback) {
 
         let nextTile = grid.get(endX-x,endY-y);
 
+        let nestedPromise = null;
+
         if(nextTile === undefined) {
             return false;
         } else if(nextTile !== EMPTY) {
-            if(!tryMoveCheckerSprite(nextTile,xDelta,yDelta)) {
-                return false;
-            }
+            nestedPromise = tryMoveCheckerSprite(nextTile,xDelta,yDelta);
+            if(!nestedPromise) return false;
         }
 
         world.playerController.lock();
@@ -79,28 +92,29 @@ function CheckerBoard(world,x,y,width,height,callback) {
 
         let resolver = null;
 
-        const promise = new Promise(resolve => resolver = resolve);
+        const promises = [new Promise(resolve => resolver = resolve)];
+        if(nestedPromise) promises.push(nestedPromise);
 
         sprite.update = time => {
             let t = (time.now - startTime) / CHECKER_MOVE_TIME;
             if(t < 0) {
                 t = 0;
-            } else if(t >= 1) {
+            } else if(t > 1) {
                 t = 1;
-                world.playerController.unlock();
-                if(resolver) resolver();
-                sprite.update = null;
             }
             sprite.x = startX + xDelta * t;
             sprite.y = startY + yDelta * t;
+            if(t === 1) {
+                if(resolver) resolver();
+                sprite.update = null;
+                world.playerController.unlock();
+            }
         };
 
-        return promise;
+        return Promise.all(promises);
     };
 
-    const requiredMatches = (
-        redCheckers.length + blueCheckers.length
-    ) / 3;
+    const requiredMatches = allCheckers.length / 3;
     let totalMatches = 0;
 
     const checkers = {};
@@ -109,8 +123,12 @@ function CheckerBoard(world,x,y,width,height,callback) {
         world.spriteLayer.remove(checker.ID);
     };
 
+    const interactionTable = new Object();
+
     const removeChecker = (checker,deleteStart) => {
         delete checkers[checker.checkerID];
+        delete interactionTable[checker.interactionID];
+
         grid.clear(checker.x-x,checker.y-y);
 
         const startX = checker.x, startY = checker.y;
@@ -212,6 +230,7 @@ function CheckerBoard(world,x,y,width,height,callback) {
                 dropChecker(checker,deleteStartTime+i*DELETE_INTERVAL);
             }
 
+            if(matchCallback) matchCallback();
             if(++totalMatches >= requiredMatches) {
                 allMatchesMade();
                 return;
@@ -219,23 +238,46 @@ function CheckerBoard(world,x,y,width,height,callback) {
         }
     };
 
-    const getCheckerInteraction = sprite => {
-        return async data => {
-            if(!(sprite.checkerID in checkers)) {
-                return;
-            }
-            let didMove = false;
-            switch(data.source.direction) {
-                case 0: didMove = tryMoveCheckerSprite(sprite,0,-1); break;
-                case 1: didMove = tryMoveCheckerSprite(sprite,1,0); break;
-                case 2: didMove = tryMoveCheckerSprite(sprite,0,1); break;
-                case 3: didMove = tryMoveCheckerSprite(sprite,-1,0); break;
-            }
-            if(didMove) {
-                await didMove;
-                findMatches();
-            }
+    const getCheckers = () => {
+        const checkerSprites = [];
+        for(const checkerData of Object.entries(checkers)) {
+            checkerSprites.push(checkerData[1]);
         }
+        return checkerSprites;
+    };
+    const clearCheckerCollision = () => {
+        for(const checker of getCheckers()) {
+            const x = Math.floor(checker.x), y = Math.floor(checker.y);
+            world.setCollisionTile(x,y,0);
+            world.setInteractionTile(x,y,0);
+        }
+    };
+    const updateCheckerCollision = () => {
+        for(const checker of getCheckers()) {
+            const x = Math.floor(checker.x), y = Math.floor(checker.y);
+            world.setCollisionTile(x,y,1);
+            world.setInteractionTile(x,y,checker.interactionID);
+        }
+        world.pushTileChanges();
+    };
+
+    const tryMoveChecker = async(sprite,source) => {
+        if(!(sprite.checkerID in checkers)) {
+            return;
+        }
+        let didMove = false;
+        switch(source.direction) {
+            case 0: didMove = tryMoveCheckerSprite(sprite,0,-1); break;
+            case 1: didMove = tryMoveCheckerSprite(sprite,1,0); break;
+            case 2: didMove = tryMoveCheckerSprite(sprite,0,1); break;
+            case 3: didMove = tryMoveCheckerSprite(sprite,-1,0); break;
+        }
+        if(!didMove) return;
+
+        clearCheckerCollision();
+        await didMove;
+        findMatches();
+        updateCheckerCollision();
     };
 
     let checkerID = 0;
@@ -244,23 +286,34 @@ function CheckerBoard(world,x,y,width,height,callback) {
         tileSprite.type = type;
         const currentID = checkerID++;
         tileSprite.checkerID = currentID;
+        tileSprite.collides = false;
         checkers[currentID] = tileSprite;
-        tileSprite.interact = getCheckerInteraction(tileSprite);
+        const interactionID = INTERACTION_START + checkerID;
+        tileSprite.interactionID = interactionID;
+        interactionTable[interactionID] = tileSprite;
+        world.setInteractionTile(worldX,worldY,interactionID);
         grid.set(worldX-x,worldY-y,tileSprite);
         return tileSprite;
     };
 
-    const mapCheckers = (checkers,type) => {
-        checkers.forEach(([x,y]) => {
-            world.setCollisionTile(x,y,0);
+    const mapCheckers = checkers => {
+        checkers.forEach(([x,y,type]) => {
+            world.setCollisionTile(x,y,1);
             world.setForegroundTile(x,y,0);
             addCheckerSprite(x,y,type);
         });
     };
 
-    mapCheckers(blueCheckers,BLUE_CHECKER_ID);
-    mapCheckers(redCheckers,RED_CHECKER_ID);
+    mapCheckers(allCheckers);
 
-    blueCheckers.splice(0), redCheckers.splice(0);
+    allCheckers.splice(0);
+
+    this.tryInteract = ({value}) => {
+        if(value in interactionTable) {
+            tryMoveChecker(interactionTable[value],world.player);
+            return true;
+        }
+        return false;
+    };
 }
 export default CheckerBoard;
