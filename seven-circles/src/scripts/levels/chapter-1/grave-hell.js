@@ -214,6 +214,9 @@ function GraveHell({world,inventory}) {
             case 19:
                 coffinClicked();
                 return;
+            case 24:
+                world.sayNamed("I used to know that guy. We still hang out sometimes.","Mysterious Lamp","r");
+                return;
         }
         if(keyDoors.tryInteract(data)) return;
         if(pickupField.tryPickup(data)) return;

@@ -15,6 +15,10 @@ function PrepareHell({world,fromNextMap}) {
         if(saveStone.tryInteract(data)) {
             return;
         }
+        if(data.value === 16) {
+            world.sayNamed("Do you even know where you're going?","Mysterious Lamp","r");
+            return;
+        }
     }
 }
 export default PrepareHell;

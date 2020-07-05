@@ -62,6 +62,10 @@ function SwitchHell({world,inventory}) {
             objective.close();
             return;
         }
+        if(data.value === 17) {
+            world.sayNamed("After everything we've been through, you're planning on leaving me here?","Mysterious Lamp","r");
+            return;
+        }
     };
 
     world.setTriggers([[1,()=>{world.transitionLast()},true]]);
