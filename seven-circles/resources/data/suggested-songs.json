@@ -1,9 +1,9 @@
 {
-    "HelloWorld": {"song": null},
-    "TheBeginning": {"song": null},
-    "HelloHell": {"song": null},
+    "HelloWorld": {"song": "beginning_loop"},
+    "TheBeginning": {"song": "iceworld"},
+    "HelloHell": {"song": "i_loop"},
 
-    "TunnelsOfHell": {"song": null},
+    "TunnelsOfHell": {"song": "i_loop"},
     "ChocolateHell": {"song": null},
     "HatHell": {"song": null},
     "HatStore": {"song": null},
