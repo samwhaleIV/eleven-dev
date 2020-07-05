@@ -50,32 +50,34 @@ function sendTrackedPositionUpdate(remoteControl,target,baseVolume) {
     sendPositionUpdate.call(this,remoteControl,target.x,target.y,baseVolume);
 }
 
-async function playSound(data) {
+function dataPreprocess(data) {
     if(typeof data === "string") data = {name:data};
-    let {name,buffer,volume,detune,x,y,loop,playbackRate,target} = data;
-
+    const {name,volume} = data;
     if(name) {
-        buffer = this.soundEffects[name];
-        if(buffer === null) return;
+        data.buffer = this.soundEffects[name];
+        if(buffer === null) return null;
         if(!buffer) {
             if(buffer !== null) MISSING_SOUND(name);
-            return;
+            return null;
         }
     }
-    if(isNaN(volume)) volume = 1;
+    if(isNaN(volume)) data.volume = 1;
+    return data;
+};
 
+async function playSpatialSound(data) {
+    data = dataPreprocess(data); if(!data) return;
+
+    data.usePanning = true;
+    let {target,x,y,volume} = data;
     const useTarget = Boolean(target);
 
     if(useTarget) {
-        if(isNaN(x)) x = target.x;
-        if(isNaN(y)) y = target.y;
+        if(isNaN(x)) x = target.x; if(isNaN(y)) y = target.y;
     }
+    if(isNaN(x)) x = this.camera.x; if(isNaN(y)) y = this.camera.y;
 
-    if(!x) x = this.camera.x; if(!y) y = this.camera.y;
-
-    const remoteControl = AudioManager.playSound({
-        buffer, detune, volume, loop, playbackRate, usePanning: true
-    });
+    const remoteControl = AudioManager.playSound(data);
 
     let updater;
     if(useTarget) {
@@ -85,12 +87,22 @@ async function playSound(data) {
     }
 
     const updaterID = this.dispatchRenderer.addFinalize(updater);
-
     updater();
 
     await remoteControl.waitForEnd();
-
     this.dispatchRenderer.removeFinalize(updaterID);
 }
 
-export default {playSound};
+function playControlledSound(data) {
+    data = dataPreprocess(data); if(!data) return;
+    data.usePanning = false;
+    const remoteControl = AudioManager.playSound(data);
+    return remoteControl;
+}
+
+function playSound(data) {
+    const remoteControl = playControlledSound.call(this,data);
+    return remoteControl.waitForEnd();
+}
+
+export default {playSound,playControlledSound,playSpatialSound};

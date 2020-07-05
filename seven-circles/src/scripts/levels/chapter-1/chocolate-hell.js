@@ -103,6 +103,7 @@ function ChocolateHell({
                         await frameDelay(500);
                         inventory.take("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
+                        world.playSound("ChocolateMilkSip");
                         milkGaveCount++;
                         objective.set(getDeliveryStatusMessage());
                         await frameDelay(500);

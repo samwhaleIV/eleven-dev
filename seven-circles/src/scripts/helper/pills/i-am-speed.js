@@ -114,8 +114,7 @@ function IAmSpeed(world) {
     player.oldVelocity = player.velocity;
     player.velocity *= SPEED_MODIFIER;
 
-    const sound = ResourceManager.getAudio("grow");
-    AudioManager.play(sound);
+    world.playSound("SpeedPill");
     PillParticles.Emit(world,player,PillParticles.Speed,2);
 
     world.spriteLayer.add(new Ghost(player),player.zIndex-1);

@@ -113,6 +113,7 @@ function PaintHell({world,inventory,fromNextMap}) {
         } else return;
         if(!blueprintExposed[idx]) return;
         blueprintExposed[idx] = false;
+        world.playSound("ClawMachinePaint");
         if(++paintedCount === paintTileCount) {
             if(objective.status === "complete-canvas") {
                 objective.close();

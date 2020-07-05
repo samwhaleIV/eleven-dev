@@ -24,5 +24,7 @@
     "AlicePalace": {"song": null}, 
     "SavePalace": {"song": null},
     "SuperCheckerPalace": {"song": null},
-    "GraveHell": {"song": null}
+    "GraveHell": {"song": null},
+
+    "GoodbyeHell": {"song": "i_loop"}
 }

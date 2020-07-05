@@ -78,6 +78,7 @@ function DeadTitanHell({world,fromNextMap,inventory}) {
                 talkedToButton = true;
             } else {
                 world.playerController.lock();
+                world.playSound("ButtonClick");
                 world.setForegroundTile(x,y,547);
                 buttonPressed = true;
                 await frameDelay(500);

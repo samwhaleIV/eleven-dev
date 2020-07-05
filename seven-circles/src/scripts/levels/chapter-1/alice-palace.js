@@ -82,6 +82,7 @@ function AlicePalace({world,inventory,fromNextMap}) {
             world.pushInteractionChanges();
             inventory.give("cleaver");
             world.setForegroundTile(13,34,1443);
+            world.playSound("CleaverMushroom");
         },
         17: x => {
             if(!inventory.has("cleaver")) {
@@ -100,7 +101,7 @@ function AlicePalace({world,inventory,fromNextMap}) {
             }
 
             world.pushInteractionChanges();
-
+            world.playSound("CleaverMushroom");
             inventory.take("cleaver",1);
             MakePlayerBig(world);
         },
@@ -121,6 +122,7 @@ function AlicePalace({world,inventory,fromNextMap}) {
                 world.message("This is a button that can only be pressed once.");
                 return;
             }
+            world.playSound("ButtonClick");
             world.setForegroundTile(x,y,1254);
             endGate.open();
             world.message("The nearby portal gate was activated!");

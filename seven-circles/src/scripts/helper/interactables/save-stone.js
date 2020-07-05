@@ -20,14 +20,12 @@ function SaveStone(world,x,y) {
         lifetime.resumePosition(world.player);
     }
 
-    const saveSound = ResourceManager.getAudio("save");
-
     this.tryInteract = ({value}) => {
         if(value !== INTERACTION_ID) return false;
 
         lifetime.serialize(world.player); lifetime.save();
 
-        AudioManager.play(saveSound);
+        world.playSound("Save");
 
         world.message("Game saved! The save stone remembers where you belong.");
         return true;

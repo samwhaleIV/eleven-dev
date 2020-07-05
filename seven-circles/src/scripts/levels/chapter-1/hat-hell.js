@@ -60,6 +60,11 @@ function HatStore({world,saveState}) {
     };
 
     const setHat = name => {
+        if(name) {
+            world.playSound("RemovedHat");
+        } else {
+            world.playSound("SwapHat");
+        }
         player.texture = Eleven.ResourceManager.getImage(
             name ? `player/${name}` : Constants.PlayerSprite
         );

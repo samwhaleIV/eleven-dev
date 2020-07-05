@@ -29,7 +29,7 @@ const Constants = Object.freeze({
     MusicVolumeKey: "SVCC_MUSIC_VOLUME",
     SoundVolumeKey: "SVCC_SOUND_VOLUME",
 
-    MusicVolume: 0.4,
+    MusicVolume: 0.8,
     SoundVolume: 1,
 
     MinVolume: 0,

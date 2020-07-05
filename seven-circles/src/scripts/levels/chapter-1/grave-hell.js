@@ -27,6 +27,7 @@ function GraveHell({world,inventory}) {
         world.setForegroundTile(45,7,1220);
         world.setForegroundTile(46,7,1221);
         world.spriteLayer.remove(world.player.ID);
+        world.playSound("EnterCoffin");
     };
 
     const shiftSpriteFollower = async (target,duration,zoom) => {
@@ -62,6 +63,8 @@ function GraveHell({world,inventory}) {
 
         world.setForegroundTile(45,7,641);
         world.setForegroundTile(46,7,642);
+
+        world.playSound("CoffinClose");
 
 
         await frameDelay(1000);

@@ -13,6 +13,7 @@ function KeyDoorHandler(world,doors) {
 
                 if(matchesDoor) {
                     door.open();
+                    world.playSound("KeyUsed");
                     const {script} = world;
                     if(script.keyDoorOpened) {
                         script.keyDoorOpened(door);

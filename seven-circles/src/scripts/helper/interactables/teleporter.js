@@ -39,6 +39,7 @@ function Teleporter(world,beacons) {
         spriteFollower.disable();
 
         await PlayerSizeLoop(world,0);
+        world.playSound("TeleporterStart");
 
         player.x = x - (player.hitBox.width / 2) - 0.5;
         player.y = y - player.yOffset;
@@ -47,6 +48,7 @@ function Teleporter(world,beacons) {
 
         await camera.moveTo(player,TRAVEL_TIME);
 
+        world.playSound("TeleporterEnd");
         await PlayerSizeLoop(world,startWidth);
 
         spriteFollower.enable();

@@ -61,6 +61,7 @@ function itemHandler(safeID) {
 }
 function itemNotification(itemName,amount) {
     if(this.script.dontNotifyItems) return;
+    this.playSound("GotAnItem");
     ItemNotification(this,itemName,amount);
 }
 export default {itemNotification, itemHandler, useItem}

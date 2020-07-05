@@ -7,11 +7,12 @@ function Fissure(world,interactionID,toPrevious=false) {
                 ["Yes, get me out of here!","No. I want to stay here forever."]
             ) === 0) {
                 world.inventory.take("fissure-token",1);
-                const paramters = [null,1000];
+                world.playerSound("FissureTravel");
+                const parameters = [null,1000];
                 if(toPrevious) {
-                    world.transitionLast();
+                    world.transitionLast(...parameters);
                 } else {
-                    world.transitionNext();
+                    world.transitionNext(...parameters);
                 }
             }
         } else {

@@ -54,6 +54,7 @@ function SuperCheckerPalace({world,fromNextMap,inventory}) {
             }
             inventory.take("bridge-piece",1);
             placeBridge(18,y);
+            world.playSound("BuildBridge");
         } else if(value === 18) {
             inventory.give("fissure-token",1);
             world.setForegroundTile(x,y,0);

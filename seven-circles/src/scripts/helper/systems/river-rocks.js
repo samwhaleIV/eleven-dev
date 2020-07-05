@@ -33,6 +33,7 @@ function RiverRocks(world,script) {
                 world.setInteractionTile(x,y,0);
                 tryCreateHeadspace(x,y);
                 world.pushTileChanges();
+                world.playSound("RockInWater");
                 return true;    
             }
             return false;
@@ -73,7 +74,8 @@ function RiverRocks(world,script) {
                 world.setCollisionTile(x,y,0);
                 world.setInteractionTile(x,y,0);
                 world.pushTileChanges();
-    
+
+                world.playSound("RockGrabbed");
                 player.setWeapon(PickupRock,script);
                 player.lockWeapon();
             }

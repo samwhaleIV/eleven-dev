@@ -26,6 +26,7 @@ function GateTeleport(world,callback) {
     const particles = world.addParticles(
         target.camX+target.width/2,target.camY,emitter
     );
+    world.playSound("PlayerGateTeleport");
 
     (async () => {
         await Promise.all([
