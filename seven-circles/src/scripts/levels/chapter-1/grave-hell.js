@@ -83,7 +83,7 @@ function GraveHell({world,inventory}) {
 
         await world.say("Sweet dreams.");
 
-        world.transitionNext();
+        world.transitionNext(null,1000);
     };
 
     this.unload = () => {

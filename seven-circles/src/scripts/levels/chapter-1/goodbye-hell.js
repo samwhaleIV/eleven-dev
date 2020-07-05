@@ -11,7 +11,7 @@ function GoodbyeHell({world}) {
 
     this.start = () => {
         (async () => {
-            await delay(750);
+            await delay(500);
             await MessageChain(world,[
                 "You had a good run.",
                 "Hell, I think you even set a new highscore.",
@@ -20,7 +20,9 @@ function GoodbyeHell({world}) {
                 "I'm sorry the demo is over.",
                 "Oh but we'll meet again.",
                 "You'll see.",
+                1000,
                 "They'll all see.",
+                1000,
                 "HAHAHAHAHAHAHAHAHAHAHAHA!"
             ],["Mysterious Lamp","r"]);
             world.transitionNext(null,1000);
