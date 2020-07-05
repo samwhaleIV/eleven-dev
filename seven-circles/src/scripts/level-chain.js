@@ -23,10 +23,12 @@ const LevelBlocks = [
         "DeadTitanHell",
         "SwitchHell",
         "CheckerPalace", //Save level
-        "AlicePalace", //Save level
-        "SavePalace",
+        "AlicePalace", 
+        "SavePalace", //Save level
         "SuperCheckerPalace",
         "GraveHell",
+
+        "Chapter1End",
         null,
 
         /* Chapter 2 */

@@ -1,58 +1,27 @@
 {
-    "HelloWorld": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "TheBeginning": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "HelloHell": {
-        "song": "not_pig.mp3",
-        "preloadSongs": []
-    },
-    "TunnelsOfHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "ChocolateHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "HatHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "RiverHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "VoidHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "MazeHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "PaintHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "PondHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "GraveHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "DeadHell": {
-        "song": null,
-        "preloadSongs": []
-    },
-    "SwitchHell": {
-        "song": null,
-        "preloadSongs": []
-    }
+    "HelloWorld": {"song": null},
+    "TheBeginning": {"song": null},
+    "HelloHell": {"song": null},
+
+    "TunnelsOfHell": {"song": null},
+    "ChocolateHell": {"song": null},
+    "HatHell": {"song": null},
+
+    "RiverHell": {"song": null},
+    "VoidHell": {"song": null},
+    "BombHell": {"song": null},
+    "MineHell": {"song": null},
+
+    "SaveHell": {"song": null},
+    "MazeHell": {"song": null},
+    "PaintHell": {"song": null},
+
+    "PrepareHell": {"song": null},
+    "DeadTitanHell": {"song": null},
+    "SwitchHell": {"song": null},
+    "CheckerPalace": {"song": null},
+    "AlicePalace": {"song": null}, 
+    "SavePalace": {"song": null},
+    "SuperCheckerPalace": {"song": null},
+    "GraveHell": {"song": null}
 }
