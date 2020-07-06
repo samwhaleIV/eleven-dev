@@ -6,13 +6,6 @@ const {ResourceManager, AudioManager} = Eleven;
 
 const ANIMATION_DURATION = 250;
 
-const playSound = async grow => {
-    const sound = ResourceManager.getAudio(
-        grow ? "grow" : "shrink"
-    );
-    AudioManager.play(sound);
-};
-
 const particleEffect = async (world,player,grow) => {
     PillParticles.Emit(world,player,grow ? GROW_EFFECT : SHRINK_EFFECT);
 };
@@ -194,7 +187,7 @@ function MakePlayerBig(world) {
     }
     if(animationData) {
         animate(world,player,animationData);
-        playSound(true);
+        world.playSound("Grow");
         particleEffect(world,player,true);
     }
     return true;
@@ -217,7 +210,7 @@ function MakePlayerSmall(world) {
     }
     if(animationData) {
         animate(world,player,animationData);
-        playSound(false);
+        world.playSound("Shrink");
         particleEffect(world,player,false);
     }
     return true;

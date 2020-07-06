@@ -7,6 +7,10 @@ const MUTE_DISTANCE = 12;
 const HIGH_SCALE_DELINEATION = 2;
 const LOW_SCALE_DELINEATION = 4;
 
+const MISSING_SOUND = name => {
+    console.warn(`Cannot play sound '${name}'. It was not loaded or is not in the sound effects table.`);
+};
+
 const minMax = (value,min,max) => {
     if(value <= min) {
         return min;
@@ -46,23 +50,33 @@ function sendTrackedPositionUpdate(remoteControl,target,baseVolume) {
     sendPositionUpdate.call(this,remoteControl,target.x,target.y,baseVolume);
 }
 
-async function playSound({
-    buffer, volume, detune, x, y, loop, playbackRate, target
-}) {
-    if(isNaN(volume)) volume = 1;
+function dataPreprocess(data) {
+    if(typeof data === "string") data = {name:data};
+    const {name,volume} = data;
+    if(name) {
+        data.buffer = this.soundEffects[name];
+        if(!data.buffer) {
+            if(data.buffer !== null) MISSING_SOUND(name);
+            return null;
+        }
+    }
+    if(isNaN(volume)) data.volume = 1;
+    return data;
+};
 
+async function playSpatialSound(data) {
+    data = dataPreprocess.call(this,data); if(!data) return;
+
+    data.usePanning = true;
+    let {target,x,y,volume} = data;
     const useTarget = Boolean(target);
 
     if(useTarget) {
-        if(isNaN(x)) x = target.x;
-        if(isNaN(y)) y = target.y;
+        if(isNaN(x)) x = target.x; if(isNaN(y)) y = target.y;
     }
+    if(isNaN(x)) x = this.camera.x; if(isNaN(y)) y = this.camera.y;
 
-    if(!x) x = this.camera.x; if(!y) y = this.camera.y;
-
-    const remoteControl = AudioManager.playSound({
-        buffer, detune, volume, loop, playbackRate, usePanning: true
-    });
+    const remoteControl = AudioManager.playSound(data);
 
     let updater;
     if(useTarget) {
@@ -72,12 +86,23 @@ async function playSound({
     }
 
     const updaterID = this.dispatchRenderer.addFinalize(updater);
-
     updater();
 
     await remoteControl.waitForEnd();
-
     this.dispatchRenderer.removeFinalize(updaterID);
 }
 
-export default {playSound};
+function playControlledSound(data) {
+    data = dataPreprocess.call(this,data); if(!data) return;
+    data.usePanning = false;
+    const remoteControl = AudioManager.playSound(data);
+    return remoteControl;
+}
+
+function playSound(data) {
+    const remoteControl = playControlledSound.call(this,data);
+    if(!remoteControl) return;
+    return remoteControl.waitForEnd();
+}
+
+export default {playSound,playControlledSound,playSpatialSound};

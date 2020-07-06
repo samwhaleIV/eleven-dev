@@ -23,14 +23,11 @@ function ChocolateHell({
     world.camera.enablePadding();
     AddWaterBackground(world);
 
-    const player = world.addPlayer();
-
+    let player;
     if(fromNextMap) {
-        player.setPosition(45,29);
-        player.direction = "up";
+        player = world.addPlayer(45,29,"up");
     } else {
-        player.setPosition(20,4);
-        player.direction = "down";
+        player = world.addPlayer(20,4,"down");
     }
 
     const riverRocks = new RiverRocks(world,this);
@@ -52,7 +49,7 @@ function ChocolateHell({
     const pickupField = new PickupField(world,[
         [14,15,"chocolate-key"],
         [33,4,"chocolate-milk",1,true,false],
-        [35,3,"chocolate-milk",2,true,false],
+        [35,3,"chocolate-milk",1,true,false],
         [36,3,"chocolate-milk",1,true,false],
         [37,5,"chocolate-milk",1,true,false]
     ]);
@@ -103,6 +100,7 @@ function ChocolateHell({
                         await frameDelay(500);
                         inventory.take("chocolate-milk");
                         world.setForegroundTile(x,y,MILK_SKELE);
+                        world.playSound("ChocolateMilkSip");
                         milkGaveCount++;
                         objective.set(getDeliveryStatusMessage());
                         await frameDelay(500);

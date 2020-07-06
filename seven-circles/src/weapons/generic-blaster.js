@@ -30,8 +30,6 @@ function GenericBlaster(image) {
         context.drawImage(image,textureX,0,16,16,x,y,width,height);
     };
 
-    const pewSound = Eleven.ResourceManager.getAudio("pew");
-
     const shoot = () => {
         let {x, y, direction} = this.owner;
 
@@ -47,7 +45,7 @@ function GenericBlaster(image) {
         } else {
             soundX = x; soundY = y;
         }
-        this.world.playSound({buffer:pewSound,x:soundX,y:soundY});
+        this.world.playSound({name:"Pew",x:soundX,y:soundY});
 
         let zIndex = this.owner.zIndex;
         offset.behind ? zIndex-- : zIndex++;

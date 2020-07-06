@@ -24,11 +24,5 @@
 
         "the-watcher.png"
     ],
-    "Audio": [
-        "text-sound.mp3",
-        "grow.mp3",
-        "shrink.mp3",
-        "pew.mp3",
-        "save.mp3"
-    ]
+    "Audio": ["text-sound.mp3"]
 }

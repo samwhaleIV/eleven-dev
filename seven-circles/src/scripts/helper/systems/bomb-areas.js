@@ -52,6 +52,8 @@ function getEndOfExplosion(world,tileSprite,callback) {
 
 function addBomb(world,x,y,callback) {
     const tileSprite = world.addTileSprite(x,y,BOMB_TILE_ID,false);
+    world.playSound("BombFuse");
+
     const {render} = tileSprite;
 
     tileSprite.render = (context,x,y,width,height) => {
@@ -129,6 +131,8 @@ function InstallBombAreas(world,script) {
         }
         world.pushInteractionChanges();
         world.pushCollisionChanges();
+        world.playSound("BombExplode");
+
         if(world.script.bombExploded) world.script.bombExploded();
     };
 

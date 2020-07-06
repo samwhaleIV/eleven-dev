@@ -88,6 +88,7 @@ function BombHell({world,fromNextMap}) {
     const dayIsSaved = () => snippedCount >= SNIP_COUNT;
 
     const animateButtonPress = async (x,y) => {
+        world.playSound("ButtonClick");
         const startTile = world.getForegroundTile(x,y);
         world.setForegroundTile(x,y,547);
         await delay(500);
@@ -98,8 +99,8 @@ function BombHell({world,fromNextMap}) {
     this.interact = data => {
         const {value,x,y} = data;
         if(value === 19) {
-            animateButtonPress(x,y);
             if(dayIsSaved()) {
+                animateButtonPress(x,y);
                 world.message("The button is no longer operational.");
                 return;
             }
@@ -108,6 +109,7 @@ function BombHell({world,fromNextMap}) {
                 temptedFate = true;
                 return;
             }
+            animateButtonPress(x,y);
             hahaBombsGoBoom();
         }  else if(value === SNIPPED_INTERACTION_ID) {
             if(world.getForegroundTile(x,y) === SNIPPED_TEXTURE_ID) return;

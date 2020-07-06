@@ -1,5 +1,6 @@
 async function MapNuke(world,objectiveText,transitionData) {
     if(objectiveText) objectiveText.close();
+    world.playSound("TheMapExploded");
     world.dispatchRenderer.addFinalize((context,{width,height})=>{
         context.fillStyle = "black";
         context.fillRect(0,0,width,height);

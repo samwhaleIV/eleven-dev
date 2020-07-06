@@ -97,6 +97,8 @@ function SwitchDoors(world,doors,switches) {
                 door.toggle();
             }
 
+            world.playSound("SwitchDoorsToggled");
+
             return true;
         } else {
             return false;

@@ -216,6 +216,7 @@ function CheckerBoard(world,x,y,width,height,callback,matchCallback) {
             removeChecker(checker,deleteStart);
             droppedCheckers[checker.checkerID] = true;
         };
+        let madeMatch = false;
         for(const [checkerID,checker] of Object.entries(checkers)) {
 
             if(checkerID in droppedCheckers) continue;
@@ -230,12 +231,15 @@ function CheckerBoard(world,x,y,width,height,callback,matchCallback) {
                 dropChecker(checker,deleteStartTime+i*DELETE_INTERVAL);
             }
 
+            madeMatch = true;
+
             if(matchCallback) matchCallback();
             if(++totalMatches >= requiredMatches) {
                 allMatchesMade();
-                return;
+                break;
             }
         }
+        return madeMatch;
     };
 
     const getCheckers = () => {
@@ -272,11 +276,17 @@ function CheckerBoard(world,x,y,width,height,callback,matchCallback) {
             case 2: didMove = tryMoveCheckerSprite(sprite,0,1); break;
             case 3: didMove = tryMoveCheckerSprite(sprite,-1,0); break;
         }
-        if(!didMove) return;
+        if(!didMove) {
+            world.playSound("CheckerCantMove");
+            return;
+        }
+        world.playSound("CheckerMove");
 
         clearCheckerCollision();
         await didMove;
-        findMatches();
+        if(findMatches()) {
+            world.playSound("CheckerMatch");
+        }
         updateCheckerCollision();
     };
 
