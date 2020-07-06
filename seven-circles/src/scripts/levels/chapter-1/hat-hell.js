@@ -23,7 +23,7 @@ function HatStore({world,saveState}) {
 
     const getStandSaveKey = ID => `hat-store-stand-${ID}`;
 
-    const hatStands = [[1,5],[1,3],[2,1],[5,1],[6,3],[6,5]];
+    const hatStands = [[1,5],[1,3],[2,2],[5,2],[6,3],[6,5]];
     const standKeys = {};
 
     const hatLookup = {
@@ -50,7 +50,7 @@ function HatStore({world,saveState}) {
         world.setForegroundTile(x,y,inverseHatLookup[storedHat]);
     }
 
-    const player = world.addPlayer(3.5,8);
+    const player = world.addPlayer(3.5,7.75);
     player.direction = "up";
 
     const getCurrentHat = () => {
@@ -196,7 +196,7 @@ function HatHell(data) {
         switch(data.value) {
             case 16: world.transition(HatHell,{hatStore:true}); break;
             case 17: talkToDemonGuy(); break;
-            case 18: world.sayNamed("Hats are very clingy in hell.","Mysterious Lamp");
+            case 18: world.sayNamed("Hats are very clingy in hell.","Mysterious Lamp","r");
         }
     };
 
