@@ -1,10 +1,10 @@
 {
     "HelloWorld": {"song": "beginning_loop"},
     "TheBeginning": {"song": "iceworld"},
-    "HelloHell": {"song": "i_loop"},
+    "HelloHell": {"song": "tunnels_loop"},
 
-    "TunnelsOfHell": {"song": "i_loop"},
-    "ChocolateHell": {"song": null},
+    "TunnelsOfHell": {"song": "tunnels_loop"},
+    "ChocolateHell": {"song": "chocolateHell_loop"},
     "HatHell": {"song": null},
     "HatStore": {"song": null},
 
