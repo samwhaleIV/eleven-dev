@@ -3,9 +3,9 @@ import {AddPalaceFloor,HellGate,Fissure,CheckerBoard,ObjectiveText} from "../hel
 function CheckerPalace({world,fromNextLevel}) {
     world.setMap("checker-palace");
     if(fromNextLevel) {
-        world.addPlayer(34.545,16.9375,"down");
+        world.addPlayer(34.545,16.9375,"down",{lowSpeed:true});
     } else {
-        world.addPlayer(9,3.5,"down");
+        world.addPlayer(9,3.5,"down",{lowSpeed:true});
     }
 
     const objective = new ObjectiveText(world);

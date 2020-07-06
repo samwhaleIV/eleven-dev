@@ -28,10 +28,10 @@ function PaintHell({world,inventory,fromNextMap}) {
     world.setMap("paint-hell");
     world.camera.padding = true;
     if(fromNextMap) {
-        const player = world.addPlayer(7,33);
+        const player = world.addPlayer(7,33,{lowSpeed:true});
         player.direction = "up";
     } else {
-        const player = world.addPlayer(22,2);
+        const player = world.addPlayer(22,2,{lowSpeed:true});
         player.direction = "down";
     }
 

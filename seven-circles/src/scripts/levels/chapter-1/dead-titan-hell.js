@@ -5,9 +5,9 @@ function DeadTitanHell({world,fromNextMap,inventory}) {
     world.setMap("dead-titan-hell");
     world.camera.padding = true;
     if(fromNextMap) {
-        world.addPlayer(10,6,"up");
+        world.addPlayer(10,6,"up",{lowSpeed:true});
     } else {
-        world.addPlayer(16,3,"down");
+        world.addPlayer(16,3,"down",{lowSpeed:true});
     }
 
     DarkRoom(world);

@@ -3,7 +3,7 @@ import {AddColorBackground,ObjectiveText} from "../helper.js";
 function TheBeginning({world}) {
     world.setMap("the-beginning");
     AddColorBackground(world,"#96DDFF");
-    world.addPlayer(8,12,"down");
+    world.addPlayer(8,12,"down",{lowSpeed:true});
     
     const objective = new ObjectiveText(world);
 

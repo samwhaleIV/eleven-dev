@@ -3,12 +3,9 @@ import NPCController from "./npc-controller.js";
 import Alignments from "./alignments.js";
 import Constants from "../constants.js";
 
-const PLAYER_VELOCITY = Constants.PlayerSpeed;
-const NPC_VELOCITY = Constants.NPCSpeed;
-
 const {CollisionTypes, InstallHitBox} = Eleven;
 
-function Avatar(isPlayer) {
+function Avatar(isPlayer,lowSpeed) {
     WeaponHandler.call(this);
 
     this.collisionType = CollisionTypes.Avatar;
@@ -19,14 +16,14 @@ function Avatar(isPlayer) {
         InstallHitBox(this,5/8,7/8);
         this.yOffset = -(1 / 8);
         this.alignment = Alignments.Friendly;
-        this.velocity = PLAYER_VELOCITY;
+        this.velocity = lowSpeed ? Constants.PlayerSpeedSlow : Constants.PlayerSpeed;
         this.showHitBox = false;
     } else {
         NPCController.call(this);
         InstallHitBox(this,1,this.height);
         this.yOffset = 0;
         this.alignment = Alignments.Neutral;
-        this.velocity = NPC_VELOCITY;
+        this.velocity = Constants.NPCSpeed;
     }
 
 }

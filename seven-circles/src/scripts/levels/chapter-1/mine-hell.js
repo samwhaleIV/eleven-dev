@@ -7,9 +7,9 @@ function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
     world.setMap("mine-hell");
     const objective = new ObjectiveText(world);
     if(fromNextMap) {
-        world.addPlayer(62,7.5,"left");
+        world.addPlayer(62,7.5,"left",{lowSpeed:true});
     } else {
-        world.addPlayer(6,22,"up");
+        world.addPlayer(6,22,"up",{lowSpeed:true});
         objective.set("Look out for landmines!","boom");
     }
     const {player} = world;

@@ -4,9 +4,9 @@ import SaveStone from "../../helper/interactables/save-stone.js";
 function PrepareHell({world,fromNextMap}) {
     world.setMap("prepare-hell");
     if(fromNextMap) {
-        world.addPlayer(18,17,"up");
+        world.addPlayer(18,17,"up",{lowSpeed:true});
     } else {
-        world.addPlayer(5,2,"down");
+        world.addPlayer(5,2,"down",{lowSpeed:true});
     }
     world.camera.padding = true;
     const saveStone = new SaveStone(world,4,3);
