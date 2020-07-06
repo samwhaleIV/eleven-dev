@@ -6,9 +6,9 @@ function SaveHell({world,fromNextMap}) {
     AddNamedBackground(world,"hell");
     AddFixedWaterBackground(world,6,6,3,3);
     if(fromNextMap) {
-        world.addPlayer(7,13.75,"up",{lowSpeed:true});
+        world.addPlayer(7,13.75,"up");
     } else {
-        world.addPlayer(7,0.25,"down",{lowSpeed:true});
+        world.addPlayer(7,0.25,"down");
     }
     const objective = new ObjectiveText(world);
     objective.set("Touch the save stone!","save");

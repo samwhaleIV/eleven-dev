@@ -5,7 +5,7 @@ import Constants from "../constants.js";
 
 const {CollisionTypes, InstallHitBox} = Eleven;
 
-function Avatar(isPlayer,lowSpeed) {
+function Avatar(isPlayer) {
     WeaponHandler.call(this);
 
     this.collisionType = CollisionTypes.Avatar;
@@ -16,7 +16,7 @@ function Avatar(isPlayer,lowSpeed) {
         InstallHitBox(this,5/8,7/8);
         this.yOffset = -(1 / 8);
         this.alignment = Alignments.Friendly;
-        this.velocity = lowSpeed ? Constants.PlayerSpeedSlow : Constants.PlayerSpeed;
+        this.velocity = Constants.PlayerSpeed;
         this.showHitBox = false;
     } else {
         NPCController.call(this);

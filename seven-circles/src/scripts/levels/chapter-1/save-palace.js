@@ -5,7 +5,7 @@ function SavePalace({world}) {
     world.setMap("save-palace");
     AddPalaceFloor(world);
     world.camera.padding = false;
-    world.addPlayer(2.5,6,"down",{lowSpeed:true});
+    world.addPlayer(2.5,6,"down");
 
     const saveStone = new SaveStone(world,5,5);
 

@@ -7,10 +7,8 @@ const ByCanvasScale = value => Math.ceil(WorldCanvasScale * value);
 const Constants = Object.freeze({
     Namespace: "SVCC",
 
-    PlayerSpeed: 3,
-    PlayerSpeedSlow: 2.5,
-
-    NPCSpeed: 3,
+    PlayerSpeed: 2.5,
+    NPCSpeed: 2.5,
 
     FaderDuration: 500,
     FakeLoadingTime: 500,

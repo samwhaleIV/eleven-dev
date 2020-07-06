@@ -8,9 +8,9 @@ function AlicePalace({world,inventory,fromNextMap}) {
     const objective = new ObjectiveText(world);
 
     if(!fromNextMap) {
-        world.addPlayer(8.545,2.9375,"down",{lowSpeed:true});
+        world.addPlayer(8.545,2.9375,"down");
     } else {
-        world.addPlayer(8.545,49.9375,"down",{lowSpeed:true});
+        world.addPlayer(8.545,49.9375,"down");
     }
 
     world.player.hitBox.width = 0.8;

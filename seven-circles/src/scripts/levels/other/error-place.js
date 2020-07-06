@@ -3,7 +3,7 @@ import { AddColorBackground } from "../helper.js";
 function ErrorPlace({world}) {
     world.setMap("error-place");
     AddColorBackground(world,"black");
-    const player = world.addPlayer(4,3.5,{lowSpeed:true});
+    const player = world.addPlayer(4,3.5);
     player.direction = "down";
     this.interact = ({value}) => {
         if(value === 16) {

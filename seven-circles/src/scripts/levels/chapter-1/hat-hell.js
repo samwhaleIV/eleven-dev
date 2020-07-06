@@ -50,7 +50,7 @@ function HatStore({world,saveState}) {
         world.setForegroundTile(x,y,inverseHatLookup[storedHat]);
     }
 
-    const player = world.addPlayer(3.5,7.75,{lowSpeed:true});
+    const player = world.addPlayer(3.5,7.75);
     player.direction = "up";
 
     const getCurrentHat = () => {
@@ -139,13 +139,13 @@ function HatHell(data) {
     AddNamedBackground(world,"hell");
 
     if(lastScript === nextMap) {
-        const player = world.addPlayer(18,5,{lowSpeed:true});
+        const player = world.addPlayer(18,5);
         player.direction = "left";
     } else if(fromStore) {
-        const player = world.addPlayer(10,3,{lowSpeed:true});
+        const player = world.addPlayer(10,3);
         player.direction = "down";
     } else {
-        const player = world.addPlayer(0,5,{lowSpeed:true});
+        const player = world.addPlayer(0,5);
         player.direction = "right";
     }
 

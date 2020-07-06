@@ -6,7 +6,7 @@ const {ResourceManager} = Eleven;
 
 const PLAYER_SPRITE = Constants.PlayerSprite;
 
-function GetPlayerSprite(x,y,direction,data={}) {
+function GetPlayerSprite(x,y,direction) {
     if(isNaN(x)) x = 0; if(isNaN(y)) y = 0;
 
     const playerHat = SVCC.Runtime.SaveState.get("player-hat");
@@ -16,7 +16,7 @@ function GetPlayerSprite(x,y,direction,data={}) {
     const player = GetAvatarBase(this,x,y,playerImage);
     if(direction !== undefined) player.direction = direction;
 
-    Avatar.call(player,true,data.lowSpeed);
+    Avatar.call(player,true);
     return player;
 }
 
