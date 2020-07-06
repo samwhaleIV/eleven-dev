@@ -203,7 +203,7 @@ function HatHell(data) {
     let sadGoodbye = false;
 
     const dontKnowWhyYouSayGoodbyeISayHello = () => {
-        if(!sadGoodbye && lastScript === lastMap && !saveState.get(TALKED_KEY)) {
+        if(!sadGoodbye && !saveState.get(TALKED_KEY)) {
             sadGoodbye = true;
             world.say("Wow. Leaving without even saying hello?");
         }
