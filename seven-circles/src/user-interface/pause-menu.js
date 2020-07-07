@@ -1,6 +1,6 @@
 import ManagedBase from "./managed-base.js";
 
-function PauseMenu({terminate,proxyFrame},callback) {
+function PauseMenu({terminate,proxyFrame},keyDownBase,keyUpBase,callback) {
     const {CanvasManager,ResourceManager} = Eleven;
     const {size,canvas} = CanvasManager;
 
@@ -105,6 +105,8 @@ function PauseMenu({terminate,proxyFrame},callback) {
         setPanelSelection(currentSelection);
     };
 
+    let openedSubMenu = false;
+
     const accept = (fromKey=false) => {
         if(selection >= 1) {
             const currentSelection = selection;
@@ -112,9 +114,11 @@ function PauseMenu({terminate,proxyFrame},callback) {
             switch(currentSelection) {
                 case 1:
                     SVCC.Runtime.ConfigKeyBinds(proxyFrame.render);
+                    openedSubMenu = true;
                     return;
                 case 2:
                     SVCC.Runtime.ConfigAudio(proxyFrame.render);
+                    openedSubMenu = true;
                     return;
                 case 3:
                     exit();
@@ -124,21 +128,23 @@ function PauseMenu({terminate,proxyFrame},callback) {
     };
 
     const exit = ManagedBase(proxyFrame,()=>{
-        terminate(); if(callback) callback();
-    },({impulse})=>{
-        switch(impulse) {
+        terminate(); if(callback) callback({refreshInput:openedSubMenu});
+    },data=>{
+        switch(data.impulse) {
             case "MoveLeft":
             case "MoveUp":
                 cycleSelection(-1);
+                keyDownBase(data);
                 return;
             case "MoveRight":
             case "MoveDown":
                 cycleSelection(1);
+                keyDownBase(data);
                 return;
             case "Enter": accept(true); return;
             case "Escape": return "exit";
         }
-    });
+    },keyUpBase);
 
     panel.onpointerdown = event => {
         updateMousePosition(event);
@@ -151,4 +157,3 @@ function PauseMenu({terminate,proxyFrame},callback) {
     return menu;
 }
 export default PauseMenu;
-
