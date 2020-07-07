@@ -5,10 +5,10 @@
 
     "TunnelsOfHell": {"song": "tunnels_loop"},
     "ChocolateHell": {"song": "chocolateHell_loop"},
-    "HatHell": {"song": null},
-    "HatStore": {"song": null},
+    "HatHell": {"song": "HatHell_loop"},
+    "HatStore": {"song": "HatStore_loop"},
 
-    "RiverHell": {"song": null},
+    "RiverHell": {"song": "RiverHell_loop"},
     "VoidHell": {"song": null},
     "BombHell": {"song": null},
     "MineHell": {"song": null},
