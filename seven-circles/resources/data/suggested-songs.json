@@ -9,7 +9,7 @@
     "HatStore": {"song": "HatStore_loop"},
 
     "RiverHell": {"song": "RiverHell_loop"},
-    "VoidHell": {"song": null},
+    "VoidHell": {"song": "VoidHell_loop"},
     "BombHell": {"song": null},
     "MineHell": {"song": null},
 
