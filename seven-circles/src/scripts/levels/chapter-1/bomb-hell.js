@@ -20,7 +20,6 @@ function BombHell({world,fromNextMap}) {
 
     if(!fromNextMap) {
         world.addPlayer(0,8,"right");
-        setObjectiveTimer();
         objective.status = "disable-trap";
     } else {
         world.addPlayer(41,6,"left");
@@ -44,6 +43,7 @@ function BombHell({world,fromNextMap}) {
     };
 
     if(objective.status === "disable-trap") this.start = () => {
+        setObjectiveTimer();
         let intervalID = null;
         const cancelTimer = () => {
             clearInterval(intervalID);
@@ -115,6 +115,7 @@ function BombHell({world,fromNextMap}) {
             if(world.getForegroundTile(x,y) === SNIPPED_TEXTURE_ID) return;
             world.setForegroundTile(x,y,SNIPPED_TEXTURE_ID);
             snippedCount += 1;
+            world.playSound("WireSnipped");
             if(dayIsSaved()) {
                 saveTheDay();
             } else {

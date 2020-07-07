@@ -1,4 +1,4 @@
-import {SaveStone,InstallLevelChainTriggers,AddNamedBackground,AddFixedWaterBackground,ObjectiveText} from "../helper.js";
+import {SaveStone,InstallLevelChainTriggers,AddNamedBackground,AddFixedWaterBackground} from "../helper.js";
 
 function SaveHell({world,fromNextMap}) {
     world.setMap("save-hell");
@@ -10,19 +10,13 @@ function SaveHell({world,fromNextMap}) {
     } else {
         world.addPlayer(7,0.25,"down");
     }
-    const objective = new ObjectiveText(world);
-    objective.set("Touch the save stone!","save");
     const saveStone = new SaveStone(world,7,7);
     this.interact = data => {
         if(data.value === 16) {
             world.sayNamed("I can wait forever if I have to.","Mysterious Lamp","r");
-        } else {
-            if(saveStone.tryInteract(data)) {
-                if(objective.status === "save") {
-                    objective.close();
-                }
-            }
+            return;
         }
+        if(saveStone.tryInteract(data)) return;
     }
     InstallLevelChainTriggers(world,"up","down");
 }

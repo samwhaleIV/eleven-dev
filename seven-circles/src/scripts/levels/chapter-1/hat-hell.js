@@ -47,28 +47,25 @@ function HatHell(data) {
 
             await MessageChain(world,[
                 "Oh. Hey.", "You're still here?",
-                600,
                 "Usually no one makes it this far.",
-                800,
-                "You probably have a lot of questions but we don't have time for them.",
-                800,
+                "You probably have a lot of questions.",
+                "We still don't have time for them.",
                 "I'm not really sure what I'm supposed to say now.",
-                600,
                 "Are you familiar with passageways?"
             ]);
+            await delay(400);
             await world.prompt("Passageways?",["I'm somewhat familiar.","Passagewhat?"]);
-            await delay(800);
+            await delay(600);
             const messages = [
                 "Yeah, you know.. Passageways!",
                 "If you get stuck in a new area, passageways are magic.",
                 "Passageways can make a room forget that you were even there!",
                 "I, however, will remember this conversation forever because I am not a room.",
                 "Plus, my new hat (that I definitely didn't steal) makes me much too important.",
-                800,
                 "Well it looks like we're out of time.",
 
             ];
-            if(!saveStone.get("player-hat")) {
+            if(!saveState.get("player-hat")) {
                 messages.push("The hat store might have some hats for you to try on.");
             } 
             await MessageChain(world,messages);

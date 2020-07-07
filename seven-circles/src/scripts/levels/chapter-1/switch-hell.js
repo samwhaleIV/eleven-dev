@@ -6,7 +6,7 @@ import {
 } from "../helper.js";
 import Fissure from "../../helper/doors/fissure.js";
 
-function SwitchHell({world,inventory}) {
+function SwitchHell({world,inventory,fromNextMap}) {
     world.setMap("switch-hell");
 
     const player = world.addPlayer(15,3);
@@ -14,7 +14,9 @@ function SwitchHell({world,inventory}) {
     world.camera.padding = true;
 
     const objective = new ObjectiveText(world);
-    objective.set("Gain access to the fissure!");
+    this.start = () => {
+        if(!fromNextMap) objective.set("Gain access to the fissure!");
+    };
 
     this.unload = () => {
         inventory.clear("bomb");

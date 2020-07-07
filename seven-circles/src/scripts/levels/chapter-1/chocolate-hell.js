@@ -119,7 +119,7 @@ function ChocolateHell({
                             });
                         }
                     } else {
-                        await world.say("Need. Chocolate. Milk.");
+                        await world.say("Please get me chocolate milk.");
                     }
                 } else if(foregroundValue === MILK_SKELE) {
                     await world.say("Mmmm.. Delicious chocolate milk.");

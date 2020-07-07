@@ -11,9 +11,11 @@ function MazeHell({world,fromNextMap}) {
         const player = world.addPlayer(61,66);
         player.direction = "up";
     } else {
-        objective.set("Find your way through the maze!","escape");
         const player = world.addPlayer(4,2);
         player.direction = "down";
+        this.start = () => {
+            objective.set("Find your way through the maze!","escape");
+        };
     }
 
     const saveStone = new SaveStone(world,59,64);

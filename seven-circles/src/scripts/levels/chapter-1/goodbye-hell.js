@@ -20,9 +20,7 @@ function GoodbyeHell({world}) {
                 "I'm sorry the demo is over.",
                 "Oh but we'll meet again.",
                 "You'll see.",
-                1000,
                 "They'll all see.",
-                1000,
                 "HAHAHAHAHAHAHAHAHAHAHAHA!"
             ],["Mysterious Lamp","r"]);
             world.transitionNext(null,1000);

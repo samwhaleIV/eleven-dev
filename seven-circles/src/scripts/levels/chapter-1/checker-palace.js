@@ -9,9 +9,12 @@ function CheckerPalace({world,fromNextLevel}) {
     }
 
     const objective = new ObjectiveText(world);
-    objective.set("Navigate through the pocket dimension!");
 
     const fissure = new Fissure(world,17,true);
+
+    this.start = () => {
+        objective.set("Navigate through the pocket dimension!");
+    };
 
     const endGate = new HellGate(world,34,14,false,0,()=>{
         world.transitionNext();
@@ -27,7 +30,10 @@ function CheckerPalace({world,fromNextLevel}) {
 
     this.interact = data => {
         if(checkerBoard.tryInteract(data)) return;
-        if(endGate.tryInteract(data)) return;
+        if(endGate.tryInteract(data)) {
+            if(endGate.isOpen) objective.close();
+            return;
+        }
         if(fissure.tryInteract(data)) return;
     };
 }

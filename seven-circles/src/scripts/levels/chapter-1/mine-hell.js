@@ -10,7 +10,6 @@ function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
         world.addPlayer(62,7.5,"left");
     } else {
         world.addPlayer(6,22,"up");
-        objective.set("Look out for landmines!","boom");
     }
     const {player} = world;
     world.camera.padding = true;
@@ -50,6 +49,9 @@ function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
     };
 
     if(failureCount === 1 && !grabbedWepLastTime) this.start = () => {
+        if(!fromNextMap) {
+            objective.set("Look out for landmines!","boom");
+        }
         (async () => {
             await delay(500);
             await world.sayNamed("Hey, idiot. You're in a minefield. If only someone here had a sixth sense.","Mysterious Lamp","r");
@@ -60,7 +62,7 @@ function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
 
     world.setTriggers([
         GetLastTrigger(world,1,"down"),
-        GetNextTrigger(world,2,"right"),
+        GetNextTrigger(world,2,"right",null,objective.close),
         [BOMB_TRIGGER_ID,trippedABomb,true]
     ]);
 }

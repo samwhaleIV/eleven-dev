@@ -10,7 +10,6 @@ function GraveHell({world,inventory}) {
     world.addPlayer(12.5,3.9375,"down");
 
     const objective = new ObjectiveText(world);
-    objective.set("Find a way out!");
 
     const teleporter = new Teleporter(world,[[5,7,5,21]]);
     const switchDoors = GetSwitchDoors(world,[[12,24,"yellow",false]],[[14,16,"yellow"]]);
@@ -82,7 +81,7 @@ function GraveHell({world,inventory}) {
 
         await world.say("Lights out.");
 
-        await frameDelay(2000);
+        await frameDelay(1000);
 
         await world.say("Sweet dreams.");
 
@@ -119,6 +118,7 @@ function GraveHell({world,inventory}) {
     };
 
     this.start = () => {
+        objective.set("Find a way out!");
         (async ()=>{
             await frameDelay(1000);
             await MessageChain(world,[
