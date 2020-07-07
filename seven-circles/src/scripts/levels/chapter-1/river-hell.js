@@ -80,7 +80,7 @@ function RiverHell({world,inventory,fromNextMap}) {
                 await MessageChain(world,[
                     "Freedom! Thank you kind soul!",
                     "Take this as a token of our gratitude."
-                ],true);
+                ]);
                 if(objective.status === "freedom") objective.close();
                 inventory.give("bomb",1);
                 gotLastBomb = true;
