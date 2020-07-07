@@ -78,9 +78,11 @@ function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
             "Who do you think you are?",
             "Do you think you're brave?",
             "Do you think you're smart?",
-            "Strong?", "Clever?",
+            "Strong?",
+            "Clever?",
             500,
-            "We'll see."
+            "We'll see.",
+            "We'll all see."
         ]);
 
         spriteFollower.disable();

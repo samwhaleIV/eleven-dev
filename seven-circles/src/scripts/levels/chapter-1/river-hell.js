@@ -61,6 +61,7 @@ function RiverHell({world,inventory,fromNextMap}) {
                 await MessageChain(world,[
                     "Explosions. Death. Fire. Pain.",
                     "Sorry, I was just thinking out loud.",
+                    "Lots of thinking.",
                     "There might be a faster way to get through this chamber.",
                 ],["Mysterious Lamp","r"]);
             })();
@@ -77,7 +78,8 @@ function RiverHell({world,inventory,fromNextMap}) {
             }
             (async ()=>{
                 await MessageChain(world,[
-                    "Freedom! Thank you kind soul!",
+                    "Freedom!",
+                    "Thank you kind soul!",
                     "Take this as a token of our gratitude."
                 ]);
                 if(objective.status === "freedom") objective.close();

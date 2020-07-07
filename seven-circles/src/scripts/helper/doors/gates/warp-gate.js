@@ -1,4 +1,6 @@
 import GetInteractionStart from "../../self/get-interaction-start.js";
+import GateTeleport from "../../doors/gates/gate-teleport.js";
+
 const INTERACTION_START = GetInteractionStart();
 
 const HOLDER_TOP = 1103;
@@ -68,13 +70,17 @@ function WarpGate(world,gateX,gateY,crystalHolders,saveStateBase,gateUsed) {
 
     if(gateIsOpen()) openGate();
 
-    const gateInteract = () => {
+    const gateInteract = async () => {
         if(gateIsOpen()) {
             if(!gateUsed) {
                 world.message("The gate won't do anything.");
                 return;
             }
-            gateUsed();
+            if(await world.prompt(
+                "Do you want to use the warp gate?",["Yes, this place sucks!","Not yet."]
+            ) === 0) {
+                gateUsed();
+            }
             world.prompt("Do you want to use the warp gate?");
         } else {
             world.message("All the crystals must be placed in the crystal holders!");

@@ -5,7 +5,8 @@ import {
     RiverRocks,
     AddNamedBackground,
     WarpGate,
-    WarpCrystalBox
+    WarpCrystalBox,
+    MessageChain
 } from "../helper.js";
 import Lantern from "../../../weapons/lantern.js";
 
@@ -42,7 +43,39 @@ const clearPowerCell = (world,x,y,pushChanges=true) => {
 function MainRoom({world,lastRoom,saveState,inventory}) {
     let position, direction = "up";
     switch(lastRoom) {
-        default: position = [9.5,9]; direction = "down"; break;
+        default: {
+            position = [9.5,9]; direction = "down";
+            this.start = () => {
+                (async () => {
+                    await frameDelay(800);
+                    await MessageChain(world,[
+                        "Is it that time again?",
+                        "I feel like you and I have done this before.",
+                        "So our plan before failed spectacularly.",
+                        "It's alright.",
+                        "You can't win every battle.",
+                        600,
+                        "You know the drill.",
+                        "You died.",
+                        "You're dead.",
+                        "But you have a chance, blah blah blah.",
+                        800,
+                        "Do you have any idea how hard it was to get you here?",
+                        600,
+                        "It wasn't as bad as you'd expect.",
+                        800,
+                        "Anyway, there's a warp gate nearby.",
+                        "Don't worry, they're generally safer than fissures.",
+                        "Fifty percent less likely to lead you into a trap.",
+                        800,
+                        "Okay.",
+                        "Go do your thing."
+                    ]);
+                    world.playerController.unlock();
+                })();
+                return true;
+            };
+        } break;
         case "roomOne": position = [6,3]; break;
         case "roomTwo": position = [13,1]; break;
         case "roomThree": position = [13,9]; break;
@@ -63,7 +96,9 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
     
     const warpCrystalBox = new WarpCrystalBox(world,12,16,[[13,14]],mapName);
 
-    const warpGate = new WarpGate(world,6,10,[[5,13],[8,13]],mapName);
+    const warpGate = new WarpGate(world,6,10,[[5,13],[8,13]],mapName,()=>{
+        world.transitionNext();
+    });
     this.interact = data => {
         if(warpCrystalBox.tryInteract(data)) return;
         if(warpGate.tryInteract(data)) return;
@@ -73,6 +108,11 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
             clearPowerCell(world,x,y);
             inventory.give("power-cell");
             saveState.set("dead-hell-cell",true);
+        } else if(value === 16) {
+            MessageChain(world,[
+                "You're welcome by the way.",
+                "You could've died."
+            ]);
         }
     };
 }

@@ -22,6 +22,9 @@
         "player/helmet.png",
         "player/red-hat.png",
 
+        "boat.png",
+        "effects/blood.png",
+
         "the-watcher.png"
     ],
     "Audio": ["text-sound.mp3"]

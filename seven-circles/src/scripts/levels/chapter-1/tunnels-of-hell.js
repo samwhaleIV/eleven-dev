@@ -118,19 +118,27 @@ function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
                 await dramaZoom.zoomIn();
 
                 await MessageChain(world,[
-                    "Look, I don't have a lot of time so I'll make this brief. You're dead.",
+                    "Look, I don't have a lot of time so I'll make this brief.",
+                    "You're dead.",
                     "You probably have a lot of questions but we don't have time for them.",
-                    "There's all this red tape and it makes my life a living hell. They don't make dying like they used to..",
-                    "So here's the short version: You have a strong soul. If you can make it out of here in one piece, you get to live.",
-                    "Different people have different names for here. Hell, the seven circles. I just call it home.",
-                    "So, call it whatever you want. I got to pay my bills either way."
+                    "There's all this red tape and it makes my life a living hell.",
+                    "They don't make dying like they used to..",
+                    "So here's the short version: You have a strong soul.",
+                    "If you can make it out of here in one piece, you get to live.",
+                    "Different people have different names for here.",
+                    "Hell, the seven circles.",
+                    "I just call it home.",
+                    "So, call it whatever you want.",
+                    "I got to pay my bills either way."
                 ]);
 
                 await dramaZoom.zoomOut();
                 await MessageChain(world,[
                     "Before you leave, you might want to interact with that blue stone over there with the S on it.",
                     "I'm not entirely sure what it does, but management insists I tell everyone about it.",
-                    "You're free to go now. I have to go hat shopping. Hell has been a bit drafty lately.",
+                    "You're free to go now.",
+                    "I have to go hat shopping.",
+                    "Hell has been a bit drafty lately.",
                 ]);
     
                 world.playerController.unlock();

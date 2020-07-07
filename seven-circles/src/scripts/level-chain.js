@@ -1,44 +1,35 @@
-const LevelBlocks = [
-    /* The last instance of a level name is put into the lookup table */
-    [
-        /* Chapter 1 */
-        "HelloWorld",
-        "TheBeginning",
-        "HelloHell",
-
-        "TunnelsOfHell", //Save level
-        "ChocolateHell",
-        "HatHell", //Save level
-
-        "RiverHell",
-        "VoidHell", //Save level
-        "BombHell",
-        "MineHell", //Save level
-    
-        "SaveHell", //Save level
-        "MazeHell", //Save level
-        "PaintHell",
-
-        "PrepareHell", //Save level
-        "DeadTitanHell",
-        "SwitchHell",
-
-        "CheckerPalace", //Save level
-        "AlicePalace", 
-        "SavePalace", //Save level
-        "SuperCheckerPalace",
-
-        "GraveHell",
-        "GoodbyeHell",
-        "Chapter1End",
-        null,
-
-        /* Chapter 2 */
-        "DeadHell",
-        null,
-        "PondHell"
-    ]
+const Chapter1 = [
+    "HelloWorld",
+    "TheBeginning",
+    "HelloHell",
+    "TunnelsOfHell",
+    "ChocolateHell",
+    "HatHell",
+    "RiverHell",
+    "VoidHell",
+    "BombHell",
+    "MineHell",
+    "SaveHell",
+    "MazeHell",
+    "PaintHell",
+    "PrepareHell",
+    "DeadTitanHell",
+    "SwitchHell",
+    "CheckerPalace",
+    "AlicePalace", 
+    "SavePalace",
+    "SuperCheckerPalace",
+    "GraveHell",
+    "GoodbyeHell",
+    "Chapter1End"
 ];
+const Chapter2 = [
+    "DeadHell",
+    null,
+    "PondHell"
+];
+
+const LevelBlocks = [Chapter1,Chapter2];
 
 const LevelChain = new function LevelChain() {
     const lookup = new Object();

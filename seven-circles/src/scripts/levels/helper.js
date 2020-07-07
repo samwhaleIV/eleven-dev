@@ -31,8 +31,12 @@ import {MakePlayerBig,MakePlayerSmall} from "../helper/pills/size-drugs.js";
 import IAmSpeed from "../helper/pills/i-am-speed.js";
 import CheckerBoard from "../helper/systems/checker-board.js";
 import AntiPlayer from "../helper/sprites/anti-player.js";
+import BoatLevel from "../helper/systems/boat-level.js";
+import AddBloodBackground from "../helper/backgrounds/blood-background.js";
 
 export {
+    AddBloodBackground,
+    BoatLevel,
     AntiPlayer,
     Fissure,
     CheckerBoard,
