@@ -16,11 +16,10 @@ function RiverHell({world,inventory,fromNextMap}) {
 
     const objective = new ObjectiveText(world);
 
-    let player;
     if(fromNextMap) {
-        player = world.addPlayer(6,80,"down");
+        world.addPlayer(6,80,"down");
     } else {
-        player = world.addPlayer(7,3,"down");
+        world.addPlayer(7,3,"down");
     }
 
     const doors = KeyDoor.getDoors(world,this,[
