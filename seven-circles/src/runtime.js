@@ -10,6 +10,7 @@ import DevKeyBindMenu from "./user-interface/dev-keybinds.js";
 import CustomPrompt from "./user-interface/custom-prompt.js";
 import WorldPreload from "./scripts/world-preload.js";
 import GetSong from "./storage/song-getter.js";
+import PauseMenu from "./user-interface/pause-menu.js";
 
 const SAVE_STATE_ADDRESS = Constants.SaveStateAddress;
 const GLOBAL_PRELOAD = Constants.GlobalResourceFile;
@@ -232,10 +233,19 @@ function Runtime() {
     };
 
     const audioMenu = DOMInterface.getMenu(AudioMenu);
-    this.ConfigAudio = () => audioMenu.show();
+    this.ConfigAudio = (...parameters) => {
+        audioMenu.show(...parameters);
+    };
 
     const keyBindMenu = DOMInterface.getMenu(DevKeyBindMenu);
-    this.ConfigKeyBinds = () => keyBindMenu.show();
+    this.ConfigKeyBinds = (...parameters) => {
+        keyBindMenu.show(...parameters);
+    };
+
+    const pauseMenu = DOMInterface.getMenu(PauseMenu);
+    this.OpenPauseMenu = (...parameters) => {
+        pauseMenu.show(...parameters);
+    };
 
     Object.freeze(this);
 }

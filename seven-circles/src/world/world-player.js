@@ -57,38 +57,51 @@ function GetInteractivePlayerController(world,sprite) {
 
     const canSendNonDirectionalInput = () => !world.inputDisabled;
 
-    const keyUp = input.keyUp;
-    const keyDown = event => {
-        if(event.impulse === InputCodes.Inventory) {
-            if(!canSendNonDirectionalInput()) return;
-            if(event.repeat) return;
-            if(playerController.locked) {
-                if(!world.canAdvanceMessage()) return;
-                world.advanceMessage();
-            } else {
-                playerController.locked = true;
-                world.refreshInput = null;
-                Inventory.show(keyDown,keyUp,()=>{
-                    if(!world.canAdvanceMessage() && !world.directionalMessage) {
-                        playerController.locked = false;
-                    }
-                    world.refreshInput = input.refresh;
-                });
-            }
-        } else if(event.impulse === InputCodes.Click) {
-            if(!canSendNonDirectionalInput()) return;
-            if(event.repeat) return;
-            if(world.directionalMessage) {
-                world.directionalMessage.accept();
-            }
-            if(world.canAdvanceMessage()) {
-                world.advanceMessage();
-            } else if(!playerController.locked) {
-                if(sprite.hasWeapon()) {
-                    sprite.attack(); return;
+    let keyUp, keyDown;
+
+    const tryOpenMenu = (event,target) => {
+        if(!canSendNonDirectionalInput()) return;
+        if(event.repeat) return;
+        if(playerController.locked) {
+            if(!world.canAdvanceMessage()) return;
+            world.advanceMessage();
+        } else {
+            playerController.locked = true;
+            world.refreshInput = null;
+            target(keyDown,keyUp,data=>{
+                if(data && data.refreshInput) input.refresh();
+                if(!world.canAdvanceMessage() && !world.directionalMessage) {
+                    playerController.locked = false;
                 }
-                playerImpulse.impulse();
+                world.refreshInput = input.refresh;
+            });
+        }
+    };
+
+    const processClick = event => {
+        if(!canSendNonDirectionalInput()) return;
+        if(event.repeat) return;
+        if(world.directionalMessage) {
+            world.directionalMessage.accept();
+        }
+        if(world.canAdvanceMessage()) {
+            world.advanceMessage();
+        } else if(!playerController.locked) {
+            if(sprite.hasWeapon()) {
+                sprite.attack(); return;
             }
+            playerImpulse.impulse();
+        }
+    };
+
+    keyUp = input.keyUp;
+    keyDown = event => {
+        if(event.impulse === InputCodes.Click) {
+            processClick(event);
+        } else if(event.impulse === InputCodes.Inventory) {
+            tryOpenMenu(event,Inventory.show);
+        } else if(event.impulse === InputCodes.Exit) {
+            tryOpenMenu(event,SVCC.Runtime.OpenPauseMenu);
         } else {
             if(world.directionalMessage) {
                 world.directionalMessage.move(event);

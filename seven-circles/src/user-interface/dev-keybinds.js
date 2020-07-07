@@ -99,7 +99,11 @@ function GetInvertBinds() {
     return InvertBinds(SVCC.Runtime.InputServer.getBinds());
 }
 
-function DevKeyBindMenu({terminate,proxyFrame}) {
+function DevKeyBindMenu({terminate,proxyFrame},proxyFrameRenderer) {
+    if(proxyFrameRenderer) {
+        proxyFrame.render = proxyFrameRenderer;
+        proxyFrame.opaque = true;
+    }
 
     const menu = document.createElement("div");
     menu.className = MENU_CLASS; menu.classList.add("center");

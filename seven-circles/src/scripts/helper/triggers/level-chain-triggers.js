@@ -1,12 +1,12 @@
 import GetTransitionTrigger from "./transition-trigger.js";
 
-function GetNextTrigger(world,triggerID,triggerDirection,data) {
+function GetNextTrigger(world,triggerID,triggerDirection,data,callback) {
     const {nextMap} = world.scriptData;
-    return GetTransitionTrigger(world,triggerID,nextMap,triggerDirection,data);
+    return GetTransitionTrigger(world,triggerID,nextMap,triggerDirection,data,undefined,callback);
 }
-function GetLastTrigger(world,triggerID,triggerDirection,data) {
+function GetLastTrigger(world,triggerID,triggerDirection,data,callback) {
     const {lastMap} = world.scriptData;
-    return GetTransitionTrigger(world,triggerID,lastMap,triggerDirection,data);
+    return GetTransitionTrigger(world,triggerID,lastMap,triggerDirection,data,undefined,callback);
 }
 
 function InstallLevelChainTriggers(world,trigger1Direction,trigger2Direction) {

@@ -80,7 +80,6 @@ function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
             "Do you think you're smart?",
             "Strong?",
             "Clever?",
-            500,
             "We'll see.",
             "We'll all see."
         ]);

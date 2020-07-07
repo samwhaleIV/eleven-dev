@@ -5,7 +5,7 @@ const directions = {
 };
 
 function GetTransitionTrigger(
-    world,ID,scriptName,direction,scriptData,fadeTime
+    world,ID,scriptName,direction,scriptData,fadeTime,callback
 ) {
     const player = world.player;
     const targetDirection = directions[direction];
@@ -13,6 +13,7 @@ function GetTransitionTrigger(
     return [
         ID,hasDirection ? () => {
             if(player.direction !== targetDirection) return "repeat";
+            if(callback) callback();
             FadeTransition(world,scriptName,scriptData,fadeTime);
         }:FadeTransition.bind(null,world,scriptName,scriptData,fadeTime),!hasDirection
     ];

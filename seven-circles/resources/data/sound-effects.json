@@ -27,5 +27,6 @@
     "EnterCoffin": null,
     "CoffinClose": null,
     "BuildBridge": null,
-    "ButtonClick": null
+    "ButtonClick": null,
+    "WireSnipped": null
 }

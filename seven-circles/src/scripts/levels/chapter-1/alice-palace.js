@@ -146,7 +146,10 @@ function AlicePalace({world,inventory,fromNextMap}) {
             return;
         };
         if(startGate.tryInteract(data)) return;
-        if(endGate.tryInteract(data)) return;
+        if(endGate.tryInteract(data)) {
+            if(endGate.isOpen) objective.close();
+            return;
+        }
         if(keyDoors.tryInteract(data)) return;
         if(saveStone.tryInteract(data)) return;   
     };
