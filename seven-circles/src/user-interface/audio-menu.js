@@ -61,7 +61,11 @@ function GetVolumeControl(getVolume,setVolume,name) {
     return div;
 }
 
-function AudioMenu({terminate,proxyFrame}) {
+function AudioMenu({terminate,proxyFrame},proxyFrameRenderer) {
+    if(proxyFrameRenderer) {
+        proxyFrame.render = proxyFrameRenderer;
+        proxyFrame.opaque = true;
+    }
     const menu = document.createElement("div");
     menu.className = MENU_CLASS; menu.classList.add("center");
 

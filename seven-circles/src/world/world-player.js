@@ -89,6 +89,23 @@ function GetInteractivePlayerController(world,sprite) {
                 }
                 playerImpulse.impulse();
             }
+        } else if(event.impulse === InputCodes.Exit) {
+            if(!canSendNonDirectionalInput()) return;
+            if(event.repeat) return;
+            if(playerController.locked) {
+                if(!world.canAdvanceMessage()) return;
+                world.advanceMessage();
+            } else {
+                playerController.locked = true;
+                input.refresh();
+                world.refreshInput = null;
+                SVCC.Runtime.OpenPauseMenu(()=>{
+                    if(!world.canAdvanceMessage() && !world.directionalMessage) {
+                        playerController.locked = false;
+                    }
+                    world.refreshInput = input.refresh;
+                });
+            }
         } else {
             if(world.directionalMessage) {
                 world.directionalMessage.move(event);

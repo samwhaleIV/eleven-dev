@@ -289,3 +289,12 @@ div.inner-popup-text p {
     margin: 4px;
     padding: 4px;
 }
+
+div.pause-menu img {
+    width: 400px;
+    image-rendering: pixelated;
+    display: block;
+    margin: 0 auto;
+    user-select: none;
+    filter: drop-shadow(2px 2px 3px rgb(146, 146, 146));
+}
