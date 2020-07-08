@@ -120,7 +120,7 @@ function BombHell({world,fromNextMap}) {
                 saveTheDay();
             } else {
                 const oneSnipLeft = snippedCount === SNIP_COUNT - 1;
-                const message = oneSnipLeft ? "There's probably just one more!" : "You broke the patch on the wire. Is there more?";
+                const message = oneSnipLeft ? "There's probably just one more!" : "You broke the patch on the wire. Are there more?";
                 world.message(message);
             }
         } else if(value === 20) {

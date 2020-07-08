@@ -192,7 +192,7 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
         spriteFollower.target = centerPiece;
         spriteFollower.enable();
 
-        let downKeys = null;
+        let downKeys = {};
 
         const {codes,managedGamepad} = SVCC.Runtime.InputServer;
 
@@ -231,7 +231,7 @@ function ClawMachine(world,x1,y1,x2,y2,baseStations,clawAction) {
         };
 
         inputUpdater = dispatchRenderer.addUpdate(()=>{
-            processDownKeys(); downKeys = null;
+            processDownKeys(); downKeys = {};
         },centerPiece.zIndex-1);
 
         const downKeyApplicator = keys => {

@@ -17,7 +17,7 @@ function BoatController(world,boat) {
 
     const PI2 = Math.PI * 2;
 
-    let downKeys = null;
+    let downKeys = {};
     const inputProxy = world.getInputProxy();
     const {codes,managedGamepad} = SVCC.Runtime.InputServer;
 
@@ -154,7 +154,7 @@ function BoatController(world,boat) {
     };
 
     world.dispatchRenderer.addUpdate((context,size,time)=>{
-        boatUpdater(time); downKeys = null;
+        boatUpdater(time); downKeys = {};
     },-1);
 
     const downKeyApplicator = keys => {
