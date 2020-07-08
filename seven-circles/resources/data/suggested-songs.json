@@ -15,16 +15,16 @@
 
     "SaveHell": {"song": "SaveHell_loop"},
     "MazeHell": {"song": "MazeHell_loop"},
-    "PaintHell": {"song": null},
+    "PaintHell": {"song": "PaintHell_loop"},
 
-    "PrepareHell": {"song": null},
-    "DeadTitanHell": {"song": null},
-    "SwitchHell": {"song": null},
-    "CheckerPalace": {"song": null},
-    "AlicePalace": {"song": null}, 
-    "SavePalace": {"song": null},
-    "SuperCheckerPalace": {"song": null},
-    "GraveHell": {"song": null},
+    "PrepareHell": {"song": "CaveWorld_loop"},
+    "DeadTitanHell": {"song": "CaveWorld_loop"},
+    "SwitchHell": {"song": "CaveWorld_loop"},
+    "CheckerPalace": {"song": "Fissure_loop"},
+    "AlicePalace": {"song": "Fissure_loop"}, 
+    "SavePalace": {"song": "Fissure_loop"},
+    "SuperCheckerPalace": {"song": "Fissure_loop"},
+    "GraveHell": {"song": "GraveHell_loop"},
 
     "GoodbyeHell": {"song": "tunnels_loop"}
 }
