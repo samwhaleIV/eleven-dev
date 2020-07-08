@@ -7,8 +7,9 @@
     "Containers": {
 
         "Named": {
+            "player-hat": "dev",
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "ChocolateHell",
+                "x": 0, "y": 0, "scriptID": "BoatHell",
                 "direction": 0,
                 "_deserialize": true
             }

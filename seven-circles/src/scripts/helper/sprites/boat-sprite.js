@@ -1,6 +1,6 @@
 const DEFAULT_IMAGE = "boat";
-const ROW_TIME = 2400;
-const ROW_ANGLE_DAMPENING = 2.25;
+const ROW_TIME = 400;
+const ROW_ANGLE_DAMPENING = 4;
 
 function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
 
@@ -60,16 +60,14 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         updatePosition(time);
 
         let duration = ROW_TIME, intensity = this.paddleIntensity;
-        if(intensity > 1) {
-            duration /= intensity;
-            intensity = 1;
-        } else if(intensity <= 0) {
+
+        if(intensity <= 0) {
             leftPaddleAngle = 0, rightPaddleAngle = 0;
             return;
         }
         const angle = time.now / duration * PI2;
 
-        const paddleAngle = Math.sin(angle) / ROW_ANGLE_DAMPENING * intensity;
+        const paddleAngle = (Math.sin(angle) * Math.min(intensity,1)) / ROW_ANGLE_DAMPENING;
 
         leftPaddleAngle = paddleAngle * this.leftPaddlePolarity * -1;
         rightPaddleAngle = paddleAngle * this.rightPaddlePolarity;
@@ -120,6 +118,22 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
     const occupantBuffer = new OffscreenCanvas(0,0);
     const bufferContext = occupantBuffer.getContext("2d",{alpha:true});
 
+    const inRange = (value,min,max) => value >= min && value <= max;
+
+    const getOccupantDirection = () => {
+        const angle = this.angle * 180 / Math.PI;
+        if(inRange(angle,0,45) || inRange(315,360)) {
+            return 2;
+        } else if(inRange(angle,45,135)) {
+            return 3;
+        } else if(inRange(angle,135,225)) {
+            return 0;
+        } else if(inRange(angle,225,315)) {
+            return 1;
+        }
+        return 2;
+    };
+
     const renderOccupant = (width,height) => {
         const occupantWidth = Math.floor(width * frameWidthRatio);
         const occupantHeight = Math.floor(height * frameHeightRatio);
@@ -129,15 +143,14 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
             occupantBuffer.width = occupantWidth, occupantBuffer.height = occupantHeight;
             bufferContext.imageSmoothingEnabled = false;
         }
+        occupant.direction = getOccupantDirection();
         occupant.render(bufferContext,0,0,occupantWidth,occupantHeight);
     };
 
     const renderOccupantTop = (context,x,y,width,headHeight,legHeight) => {
-
         context.drawImage(occupantBuffer,0,0,width,headHeight,x,y,width,headHeight);
     };
     const renderOccupantBottom = (context,x,y,width,headHeight,legHeight) => {
-
         context.drawImage(occupantBuffer,0,headHeight,width,legHeight,x,y+headHeight,width,legHeight);
     };
 
@@ -145,6 +158,7 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         let centerX = x + width / 2, centerY = y + height / 2;
 
         renderOccupant(width,height);
+        const deferBottom = occupant.direction === 0;
 
         context.save();
         context.translate(centerX,centerY);
@@ -159,12 +173,19 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         const legHeight = occupantHeight - headHeight;
 
         renderBase(context,x,y,width,height);
-        context.save();
-        context.resetTransform();
-        renderOccupantBottom(context,centerX,centerY,occupantWidth,headHeight,legHeight);
-        context.restore();
+
+        if(!deferBottom) {
+            context.save();
+            context.resetTransform();
+            renderOccupantBottom(context,centerX,centerY,occupantWidth,headHeight,legHeight);
+            context.restore();
+        }
+
         renderPaddles(context,x,y,width,height);
         context.restore();
+        if(deferBottom) {
+            renderOccupantBottom(context,centerX,centerY,occupantWidth,headHeight,legHeight); 
+        }
         renderOccupantTop(context,centerX,centerY,occupantWidth,headHeight,legHeight);
     };
 }

@@ -10,6 +10,7 @@ function BoatLevel({world}) {
     AddBloodBackground(world);
 
     const player = GetPlayerSprite(0,0,"down");
+    player.collides = false;
 
     const boat = new BoatSprite(world,player);
     boat.roundRenderPosition = true;
@@ -23,13 +24,6 @@ function BoatLevel({world}) {
 
     world.spriteLayer.add(boat);
 
-    boat.paddleIntensity = 2;
-    boat.rightPaddlePolarity = 1;
-
-    boat.yVelocity = 0.9;
-    boat.xVelocity = 1;
-    boat.angle = -60 * Math.PI / 180;
-
-    const boatController = new BoatController(world);
+    const boatController = new BoatController(world,boat);
 }
 export default BoatLevel;
