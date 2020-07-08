@@ -10,7 +10,7 @@
 
     "RiverHell": {"song": "RiverHell_loop"},
     "VoidHell": {"song": "VoidHell_loop"},
-    "BombHell": {"song": null},
+    "BombHell": {"song": "BombHell_loop"},
     "MineHell": {"song": null},
 
     "SaveHell": {"song": null},
