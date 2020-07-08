@@ -11,10 +11,10 @@
     "RiverHell": {"song": "RiverHell_loop"},
     "VoidHell": {"song": "VoidHell_loop"},
     "BombHell": {"song": "BombHell_loop"},
-    "MineHell": {"song": null},
+    "MineHell": {"song": "MineHell_loop"},
 
-    "SaveHell": {"song": null},
-    "MazeHell": {"song": null},
+    "SaveHell": {"song": "SaveHell_loop"},
+    "MazeHell": {"song": "MazeHell_loop"},
     "PaintHell": {"song": null},
 
     "PrepareHell": {"song": null},
