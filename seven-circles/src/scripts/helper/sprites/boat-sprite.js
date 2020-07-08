@@ -147,7 +147,7 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         occupant.render(bufferContext,0,0,occupantWidth,occupantHeight);
     };
 
-    const renderOccupantTop = (context,x,y,width,headHeight,legHeight) => {
+    const renderOccupantTop = (context,x,y,width,headHeight) => {
         context.drawImage(occupantBuffer,0,0,width,headHeight,x,y,width,headHeight);
     };
     const renderOccupantBottom = (context,x,y,width,headHeight,legHeight) => {

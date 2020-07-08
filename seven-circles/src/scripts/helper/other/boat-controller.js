@@ -66,7 +66,6 @@ function BoatController(world,boat) {
 
             const x = Math.sin(angle), y = Math.cos(angle);
             const distance = Math.hypot(-axis.x - x,axis.y - y);
-            console.log(distance);
 
             return distance < 1 ? 1 : -1;
         }

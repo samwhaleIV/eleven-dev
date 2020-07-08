@@ -84,7 +84,7 @@ function AlicePalace({world,inventory,fromNextMap}) {
             world.setForegroundTile(13,34,1443);
             world.playSound("CleaverMushroom");
         },
-        17: x => {
+        17: async x => {
             if(!inventory.has("cleaver")) {
                 world.message("The mushroom is too thick to break with your hands!");
                 return;
@@ -103,6 +103,9 @@ function AlicePalace({world,inventory,fromNextMap}) {
             world.pushInteractionChanges();
             world.playSound("CleaverMushroom");
             inventory.take("cleaver",1);
+            world.playerController.lock();
+            await frameDelay(600);
+            world.playerController.unlock();
             MakePlayerBig(world);
         },
         18: () => {
