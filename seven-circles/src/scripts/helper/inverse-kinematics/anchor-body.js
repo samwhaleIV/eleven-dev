@@ -36,7 +36,7 @@ Anchor.prototype.getTargetCenter = function() {
     return [xCenter,yCenter];
 }
 
-function Anchors(joints,coordinateBase=1) {
+function AnchorBody(joints,coordinateBase=1) {
     const jointContainer = new Object();
 
     for(const jointData of joints) {
@@ -55,4 +55,5 @@ function Anchors(joints,coordinateBase=1) {
 
     this.getAnchor = getAnchor;
 }
-export default Anchors;
+export default AnchorBody;
+

@@ -1,12 +1,11 @@
 function IKBone(
-    length,parent,renderer,width,anchorPoint
+    parent,length,renderer,width,anchorPoint
 ) {
-    this.anchorPoint = isNaN(anchorPoint) ? 1 : anchorPoint;
+    this.parent = parent;
 
-    this.parent = parent, this.length = length;
-
-    this.height = length; this.width = width || 0.05;
+    this.height = length, this.width = width || 0.05;
     this.angle = 0, this.x = 0, this.y = 0;
+    this.length = length * (isNaN(anchorPoint) ? 1 : anchorPoint);
 
     const renderBone = renderer ? renderer : (context,x,y,width,height) => {
         context.fillStyle = "red";
@@ -36,16 +35,11 @@ function IKBone(
 IKBone.prototype.getLocation = function() {
     /* The end of the bone, aka the joint: Not the start of the bone */
     let {angle,length} = this;
-    length *= this.anchorPoint;
 
-    return [this.x + Math.sin(angle)*-length,this.y + Math.cos(angle)*length];
+    return [this.x + -Math.sin(angle)*length,this.y + Math.cos(angle)*length];
 };
-IKBone.prototype.addBone = function(
-    length,renderer,width,anchorPoint
-) {
-    const childBone = new IKBone(
-        length,this,renderer,width,anchorPoint
-    );
+IKBone.prototype.addBone = function(...parameters) {
+    const childBone = new IKBone(this,...parameters);
     this.child = childBone;
     return childBone;
 }

@@ -1,6 +1,6 @@
-import Anchors from "./ik-anchor.js";
+import AnchorBody from "./anchor-body.js";
 import IKBone from "./ik-bone.js";
-import GetSheetRenderer from "../sprites/sheet-renderer.js";
+import GetSheetRenderer from "./sheet-renderer.js";
 
 function IKSprite(
     image,baseSize,sheetX,sheetY,width,height,joints
@@ -39,15 +39,11 @@ function IKSprite(
         for(const bone of this.bones) updateBone(bone);
     };
 
-    Anchors.call(this,joints,baseSize);
+    AnchorBody.call(this,joints,baseSize);
 }
-IKSprite.prototype.getBone = function(
-    anchor,length,renderer,width,anchorPoint
-) {
+IKSprite.prototype.getBone = function(anchor,...parameters) {
     anchor = this.getAnchor(anchor);
-    const bone = new IKBone(
-        length,anchor,renderer,width,anchorPoint
-    );
+    const bone = new IKBone(anchor,...parameters);
     this.bones.push(bone);
     return bone;
 };
