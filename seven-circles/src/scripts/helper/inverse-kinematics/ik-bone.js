@@ -1,10 +1,10 @@
 function IKBone(
-    parent,length,renderer,width,anchorPoint
+    parent,length,renderer,height,anchorPoint
 ) {
     this.parent = parent;
 
-    this.height = length, this.width = width || 0.05;
-    this.angle = 0, this.x = 0, this.y = 0;
+    this.width = length, this.height = height || 0.05;
+    this.angle = Math.PI/2, this.x = 0, this.y = 0;
     this.length = length * (isNaN(anchorPoint) ? 1 : anchorPoint);
 
     const renderBone = renderer ? renderer : (context,x,y,width,height) => {
@@ -36,7 +36,7 @@ IKBone.prototype.getLocation = function() {
     /* The end of the bone, aka the joint: Not the start of the bone */
     let {angle,length} = this;
 
-    return [this.x + -Math.sin(angle)*length,this.y + Math.cos(angle)*length];
+    return [this.x + Math.cos(angle)*length,this.y + Math.sin(angle)*length];
 };
 IKBone.prototype.addBone = function(...parameters) {
     const childBone = new IKBone(this,...parameters);

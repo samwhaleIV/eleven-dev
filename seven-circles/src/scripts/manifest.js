@@ -36,9 +36,10 @@ import HelloWorld from "./levels/other/hello-world.js";
 
 import BombTest from "./levels/test/bomb-test.js";
 import IkTest from "./levels/test/ik-test.js";
+import MouseTest from "./levels/test/mouse-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
 
-const Scripts = ScriptBook.Import(AlicePalace,BombHell,Chaper1End,CheckerPalace,ChocolateHell,DeadTitanHell,GoodbyeHell,GraveHell,HatHell,HatStore,HelloHell,MazeHell,MineHell,PaintHell,PrepareHell,RiverHell,SaveHell,SavePalace,SuperCheckerPalace,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,BoatHell,DeadHell,PondHell,ErrorPlace,HelloWorld,BombTest,IkTest,NpcClTest);
+const Scripts = ScriptBook.Import(AlicePalace,BombHell,Chaper1End,CheckerPalace,ChocolateHell,DeadTitanHell,GoodbyeHell,GraveHell,HatHell,HatStore,HelloHell,MazeHell,MineHell,PaintHell,PrepareHell,RiverHell,SaveHell,SavePalace,SuperCheckerPalace,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,BoatHell,DeadHell,PondHell,ErrorPlace,HelloWorld,BombTest,IkTest,MouseTest,NpcClTest);
 
 export default Scripts;
 

@@ -71,26 +71,63 @@ function AngleDifferenceTest(world) {
     });
 }
 
+function MouseTrackTest(world,bone) {
+    const {pointer} = Eleven.CanvasManager;
+
+    const getAngle = (x1,y1,x2,y2) => {
+        const dx = x1 - x2, dy = y1 - y2;
+
+        let angle = Math.atan2(-dy,-dx);
+        if(angle < 0) angle += Math.PI * 2;
+    
+        return angle;
+    };
+
+    world.dispatchRenderer.addUpdate(()=>{
+
+        let {x,y} = world.grid.getLocation(bone.x,bone.y);
+
+        const angle = getAngle(x,y,pointer.x,pointer.y);
+
+        bone.angle = angle;
+    });
+}
+
 function IKTest({world}) {
     world.setMap("checkered");
 
     const megaDemonGuy = AddMegaDemonGuy(world,0,0,true,true);
-    world.camera.x = 0, world.camera.y = 0;
+    world.camera.x = -0.5, world.camera.y = 0.75;
 
     for(const bone of megaDemonGuy.leftArm) {
         console.log(bone.x,bone.y);
     }
 
-    //megaDemonGuy.setHand(true,0,0);
+    //megaDemonGuy.leftArm[0].angle = Math.PI / 2;
 
     /* [197,343] correct(ish) angle for [0,0] */
+
+    //megaDemonGuy.leftArm[0].selfAngle = Math.PI / 4;
+    //megaDemonGuy.leftArm[1].selfAngle = Math.PI / 4;
+
+    //SquareTest(megaDemonGuy);
 
     globalThis.setJoint = (a,b) => {
         megaDemonGuy.leftArm[0].angle = a, megaDemonGuy.leftArm[1].angle = b;
     };
     globalThis.getJoint = () => {
         return [megaDemonGuy.leftArm[0].angle*180/Math.PI,megaDemonGuy.leftArm[1].angle*180/Math.PI];
-    }
+    };
+
+    world.dispatchRenderer.addRender(()=>{
+        const {x,y} = Eleven.CanvasManager.pointer;
+        const location = world.grid.getTileLocation(x,y);
+        megaDemonGuy.setHand(true,location.x,location.y);
+    });
+
+    //MouseTrackTest(world,megaDemonGuy.leftArm[0]);
+    
+    megaDemonGuy.setHand(true,0,0);
 
     AddColorBackground(world,"white");
 }

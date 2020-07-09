@@ -4,19 +4,19 @@ import IKAnimator from "../inverse-kinematics/animator.js";
 import TwoBoneResolver from "../inverse-kinematics/two-bone-resolver.js";
 
 function GetLimb(anchor,left,withHand) {
-    const sheetX = left ? 0 : 1;
+    const sheetY = left ? 1 : 0;
 
     const upperArm = this.getBone(
-        anchor,2,this.getSprite(sheetX,0,1,2,-0.5),1,0.9
+        anchor,2,this.getSprite(3,sheetY,2,1,0,-0.5),1,0.9
     );
     const forearm = upperArm.addBone(
-        2,this.getSprite(sheetX,2,1,2,-0.5),1,0.9
+        2,this.getSprite(5,sheetY,2,1,0,-0.5),1,0.9
     );
 
     const bones = [upperArm,forearm];
     if(withHand) {
         const hand = forearm.addBone(
-            1,this.getSprite(sheetX,4,1,1,-0.5),1
+            1,this.getSprite(7,sheetY,1,1,0,-0.5),1
         );
         bones.push(hand);
     }
@@ -36,7 +36,7 @@ function MegaDemonGuy(world,image) {
     const arm = (name,left) => limb(name,left,true);
     const leg = (name,left) => limb(name,left,false);
 
-    IKSprite.call(this,image,baseSize,2,0,3,5,[
+    IKSprite.call(this,image,baseSize,0,0,3,5,[
         ["ShoulderLeft",7.5,36],["ShoulderRight",40.5,36],
         ["HipLeft",14,73],["HipRight",34,73]
     ]);
