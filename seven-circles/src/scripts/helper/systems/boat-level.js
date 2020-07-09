@@ -1,7 +1,7 @@
 import GetPlayerSprite from "../../../avatar/player.js";
 import AddBloodBackground from "../backgrounds/blood-background.js";
 import BoatSprite from "../sprites/boat-sprite.js";
-import BoatController from "../other/boat-controller.js";
+import BoatController from "../self/boat-controller.js";
 
 function BoatLevel({world}) {
     world.setMap("empty");
