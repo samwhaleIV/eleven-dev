@@ -24,20 +24,19 @@ function IKTest({world}) {
     const megaDemonGuy = AddMegaDemonGuy(world,0.5,0.5,true,true);
     world.camera.x = 0, world.camera.y = 0;
 
-    const box = new Box({x:0,y:0});
-    world.spriteLayer.add(box);
-
-    megaDemonGuy.leftUpperArm.angle = Math.PI * 0.25;
 
     world.dispatchRenderer.addUpdate((context,size,time) => {
-        megaDemonGuy.leftUpperArm.angle = Math.PI * (time.now / 1000);
-        const [x,y] = megaDemonGuy.leftUpperArm.getJoint("Elbow").getPosition();
-        box.x = x, box.y = y;
-        box.center();
-        //megaDemonGuy.angle = Math.PI * (time.now / 20000);
-        //console.log(megaDemonGuy.rightHand.x,megaDemonGuy.rightHand.y);
+        const {leftArm,rightArm} = megaDemonGuy;
+
+        const angle = (time.now / 500) * Math.PI;
+
+        leftArm[0].angle = angle / 2;
+        leftArm[1].angle = angle;
+
+        rightArm[0].angle = angle + Math.PI;
+        rightArm[1].angle = angle / 2 + Math.PI;
     });
 
-    //AddColorBackground(world,"white");
+    AddColorBackground(world,"white");
 }
 export default IKTest;

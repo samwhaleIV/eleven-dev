@@ -1,11 +1,13 @@
-function Joint(target,name,x,y) {
+function Anchor(
+    target,name,x,y
+) {
     this.name = name;
     this.target = target;
     this.x = x, this.y = y;
     this.calculateAngle();
     Object.freeze(this);
 }
-Joint.prototype.calculateAngle = function() {
+Anchor.prototype.calculateAngle = function() {
     const [xCenter,yCenter] = this.getTargetCenter();
 
     const xOffset = this.x - xCenter;
@@ -14,7 +16,7 @@ Joint.prototype.calculateAngle = function() {
     this.distance = Math.hypot(xOffset,yOffset);
     this.angle = Math.atan2(xOffset,yOffset);
 };
-Joint.prototype.getPosition = function() {
+Anchor.prototype.getLocation = function() {
     const [xCenter,yCenter] = this.getTargetCenter();
 
     let {angle,distance} = this;
@@ -25,33 +27,32 @@ Joint.prototype.getPosition = function() {
 
     return [xCenter+x,yCenter+y];
 };
-Joint.prototype.getTargetCenter = function() {
+Anchor.prototype.getTargetCenter = function() {
     const {target} = this;
 
-    const [x,y] = target.getCenter();
-
-    const xCenter = target.x + x;
-    const yCenter = target.y + y;
+    const xCenter = target.x + target.width / 2;
+    const yCenter = target.y + target.height / 2;
 
     return [xCenter,yCenter];
 }
 
-function Joints(joints,coordinateBase=1) {
+function Anchors(joints,coordinateBase=1) {
     const jointContainer = new Object();
 
     for(const jointData of joints) {
         let [name,x,y] = jointData;
         x /= coordinateBase, y /= coordinateBase;
 
-        const joint = new Joint(this,name,x,y);
+        const joint = new Anchor(this,name,x,y);
         jointContainer[name] = joint;
     }
 
-    const getJoint = name => {
+    const getAnchor = name => {
         if(!(name in jointContainer)) return null;
         const joint = jointContainer[name];
         return joint;
     };
-    this.getJoint = getJoint;
+
+    this.getAnchor = getAnchor;
 }
-export default Joints;
+export default Anchors;

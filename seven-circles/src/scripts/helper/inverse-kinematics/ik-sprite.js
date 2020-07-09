@@ -1,62 +1,55 @@
-import Joints from "./ik-joints.js";
+import Anchors from "./ik-anchor.js";
+import IKBone from "./ik-bone.js";
+import GetSheetRenderer from "../sprites/sheet-renderer.js";
 
-function IKSprite(image,sheetX,sheetY,width,height,baseSize,joints) {
+function IKSprite(
+    image,baseSize,sheetX,sheetY,width,height,joints
+) {
     this.x = 0, this.y = 0;
     this.collides = false;
 
     this.angle = 0;
     this.width = width; this.height = height;
-    sheetX *= baseSize, sheetY *= baseSize;
 
-    const frameWidth = width * baseSize;
-    const frameHeight = height * baseSize;
+    const renderer = GetSheetRenderer(
+        image,baseSize,sheetX,sheetY,width,height
+    );
 
     this.render = (context,x,y,width,height) => {
-        let [centerX,centerY] = this.getCenter();
-        
-        const tileSize = width / this.width;
-        centerX *= tileSize, centerY *= tileSize;
-        centerX += x, centerY += y;
-
+        const centerX = x + width / 2, centerY = y + height / 2;
         const transform = context.getTransform();
+
         context.translate(centerX,centerY);
         context.rotate(this.angle);
         context.translate(-centerX,-centerY);
-        context.drawImage(image,sheetX,sheetY,frameWidth,frameHeight,x,y,width,height);
+
+        renderer(context,x,y,width,height);
+
         context.setTransform(transform);
     };
 
-    this.centerJoint = null, this.targetJoint = null;
+    this.bones = [];
 
-    this.update = () => {
-        if(!this.targetJoint) return;
-        this.centerOn(this.targetJoint.getPosition());
+    const updateBone = bone => {
+        const [x,y] = bone.parent.getLocation();
+        bone.x = x, bone.y = y;
     };
 
-    Joints.call(this,joints,baseSize);
-}
-IKSprite.prototype.getCenter = function() {
-    let centerX, centerY;
+    this.update = () => {
+        for(const bone of this.bones) updateBone(bone);
+    };
 
-    if(this.centerJoint) {
-        centerX = this.centerJoint.x, centerY = this.centerJoint.y;
-    } else {
-        centerX = this.width / 2, centerY = this.height / 2;
-    }
-
-    return [centerX,centerY];
+    Anchors.call(this,joints,baseSize);
 }
-IKSprite.prototype.centerOn = function([x,y]) {
-    const [centerX,centerY] = this.getCenter();
-    this.x = x - centerX, this.y = y - centerY;
-};
-IKSprite.prototype.bindTo = function({
-    target,targetJoint,joint 
-}) {
-    if(joint) {
-        this.centerJoint = this.getJoint(joint);
-    }
-    this.targetJoint = target.getJoint(targetJoint);
+IKSprite.prototype.getBone = function(
+    anchor,length,renderer,width,anchorPoint
+) {
+    anchor = this.getAnchor(anchor);
+    const bone = new IKBone(
+        length,anchor,renderer,width,anchorPoint
+    );
+    this.bones.push(bone);
+    return bone;
 };
 
 export default IKSprite;
