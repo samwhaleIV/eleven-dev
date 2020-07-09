@@ -22,7 +22,7 @@ function IKTest({world}) {
     world.setMap("empty");
 
     const megaDemonGuy = AddMegaDemonGuy(world,0.5,0.5,true,true);
-    world.camera.x = 0, world.camera.y = 0;
+    world.camera.x = 0, world.camera.y = 1.5;
 
 
     world.dispatchRenderer.addUpdate((context,size,time) => {
@@ -35,6 +35,8 @@ function IKTest({world}) {
 
         rightArm[0].angle = angle + Math.PI;
         rightArm[1].angle = angle / 2 + Math.PI;
+
+        megaDemonGuy.angle = angle / 4;
     });
 
     AddColorBackground(world,"white");

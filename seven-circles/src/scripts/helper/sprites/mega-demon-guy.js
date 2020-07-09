@@ -1,15 +1,21 @@
 import IKSprite from "../inverse-kinematics/ik-sprite.js";
 import GetSheetRenderer from "./sheet-renderer.js";
 
-function GetLimb(anchor,left) {
+function GetLimb(anchor,left,withHand) {
 
     const sheetX = left ? 0 : 1;
 
     const upperArm = this.getBone(anchor,2,this.getSprite(sheetX,0,1,2,-0.5),1,0.9);
     const forearm = upperArm.addBone(2,this.getSprite(sheetX,2,1,2,-0.5),1,0.9);
-    const hand = forearm.addBone(1,this.getSprite(sheetX,4,1,1,-0.5),1);
 
-    return [upperArm,forearm,hand];
+
+    const bones = [upperArm,forearm];
+    if(withHand) {
+        const hand = forearm.addBone(1,this.getSprite(sheetX,4,1,1,-0.5),1);
+        bones.push(hand);
+    }
+
+    return bones;
 }
 
 function MegaDemonGuy(image) {
@@ -26,11 +32,15 @@ function MegaDemonGuy(image) {
     };
 
     IKSprite.call(this,image,baseSize,2,0,3,5,[
-        ["ShoulderLeft",7,36.5],["ShoulderRight",41,36.5],
-        ["HipLeft",18,75],["HipRight",30,75]
+        ["ShoulderLeft",7.5,36],["ShoulderRight",40.5,36],
+        ["HipLeft",14,73],["HipRight",34,73]
     ]);
-    this.leftArm = GetLimb.call(this,"ShoulderLeft",true);
-    this.rightArm = GetLimb.call(this,"ShoulderRight",false);
+
+    this.leftArm = GetLimb.call(this,"ShoulderLeft",true,true);
+    this.rightArm = GetLimb.call(this,"ShoulderRight",false,true);
+
+    this.leftLeg = GetLimb.call(this,"HipLeft",true,false);
+    this.rightLeg = GetLimb.call(this,"HipRight",false,false);
 }
 MegaDemonGuy.prototype = IKSprite.prototype;
 
@@ -50,6 +60,9 @@ function AddMegaDemonGuy(world,x,y,centerX,centerY) {
             nextBone = nextBone.child;
         }
     }
+
+    megaDemonGuy.leftLeg[0].zIndex -= 1, megaDemonGuy.rightLeg[0].zIndex -= 1;
+    megaDemonGuy.leftLeg[1].zIndex -= 1, megaDemonGuy.rightLeg[1].zIndex -= 1;
 
     return megaDemonGuy;
 }
