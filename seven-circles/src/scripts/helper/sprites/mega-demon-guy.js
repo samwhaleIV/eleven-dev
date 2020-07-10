@@ -49,7 +49,7 @@ function MegaDemonGuy(world,image) {
     };
 
     this.animateHand = data => {
-        const [boneA,boneB,hand] = getArmBones(data.left);
+        const [boneA,boneB] = getArmBones(data.left);
         Object.assign(data,{boneA,boneB,world});
         return IKAnimator(data);
     };

@@ -1,6 +1,6 @@
 const WorldCanvasScale = 1;
 const BaseScreenMargin = 8;
-const BaseCameraScale = 7;
+const BaseCameraScale = 8;
 
 const ByCanvasScale = value => Math.ceil(WorldCanvasScale * value);
 

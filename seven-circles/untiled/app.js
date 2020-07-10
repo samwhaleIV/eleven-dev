@@ -399,8 +399,20 @@ function App() {
     };
 
     const exportMaps = (noAlert=false) => {
-        const text = JSON.stringify(maps);
-        const blob = new Blob([text],{type:"application/json"});
+        const fileLines = ["{"];
+
+        const mapLists = Object.entries(maps);
+        for(let i=0;i<mapLists.length;i++) {
+            const [name,data] = mapLists[i];
+            let line = `  "${name}": ${JSON.stringify(data)}`;
+            if(i < mapLists.length-1) {
+                line += ",";
+            }
+            fileLines.push(line);
+        }
+
+        fileLines.push("}");
+        const blob = new Blob([fileLines.join("\n")+"\n"],{type:"application/json"});
 
         const formData = new FormData();
         formData.append("mapData",blob);

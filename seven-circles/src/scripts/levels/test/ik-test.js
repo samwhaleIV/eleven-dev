@@ -122,13 +122,18 @@ function IKTest({world}) {
         return [megaDemonGuy.leftArm[0].angle*180/Math.PI,megaDemonGuy.leftArm[1].angle*180/Math.PI];
     };
 
-    world.dispatchRenderer.addUpdate(()=>{
+    world.dispatchRenderer.addRender(()=>{
+        const {x,y} = Eleven.CanvasManager.pointer;
+        const tileLocation = world.grid.getTileLocation(x,y);
+        tileLocation.y += 0.5;
+        //megaDemonGuy.setHand(true,tileLocation.x,tileLocation.y);
+        megaDemonGuy.setHand(false,tileLocation.x,tileLocation.y);
        // console.log(megaDemonGuy.leftHand.x,megaDemonGuy.leftHand.y);
     });
 
     //MouseTrackTest(world,megaDemonGuy.leftArm[0]);
     
-    SquareTest(megaDemonGuy);
+    //SquareTest(megaDemonGuy);
     megaDemonGuy.leftHand.bindAngle = true;
     megaDemonGuy.rightHand.bindAngle = true;
 
