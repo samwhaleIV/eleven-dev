@@ -6,6 +6,7 @@ function IKBone(
     this.width = length, this.height = height || 0.05;
     this.angle = Math.PI/2, this.x = 0, this.y = 0;
     this.length = length * (isNaN(anchorPoint) ? 1 : anchorPoint);
+    this.bindAngle = false;
 
     const renderBone = renderer ? renderer : (context,x,y,width,height) => {
         context.fillStyle = "red";
@@ -30,6 +31,7 @@ function IKBone(
         const {child} = this; if(!child) return;
         const [x,y] = this.getLocation();
         child.x = x, child.y = y;
+        if(child.bindAngle) child.angle = this.angle;
     };
 }
 IKBone.prototype.getLocation = function() {

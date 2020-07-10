@@ -51,7 +51,6 @@ function MegaDemonGuy(world,image) {
     this.animateHand = data => {
         const [boneA,boneB,hand] = getArmBones(data.left);
         Object.assign(data,{boneA,boneB,world});
-        data.x -= hand.width / 2, data.y -= hand.height / 2;
         return IKAnimator(data);
     };
     this.animateHandAsync = data => {
@@ -62,7 +61,8 @@ function MegaDemonGuy(world,image) {
     };
 
     this.setHand = (left,x,y) => {
-        const [boneA,boneB] = getArmBones(left);
+        const [boneA,boneB,hand] = getArmBones(left);
+        y -= hand.height / 2;
         TwoBoneResolver(boneA,boneB,x,y);
     };
 
@@ -75,6 +75,8 @@ function MegaDemonGuy(world,image) {
             }
         }
     };
+
+    this.leftHand = this.leftArm[2], this.rightHand = this.rightArm[2];
 }
 MegaDemonGuy.prototype = IKSprite.prototype;
 
@@ -93,8 +95,24 @@ function AddMegaDemonGuy(world,x,y,centerX,centerY) {
         bone.update();
     }
 
-    megaDemonGuy.leftLeg[0].zIndex -= 1, megaDemonGuy.rightLeg[0].zIndex -= 1;
-    megaDemonGuy.leftLeg[1].zIndex -= 1, megaDemonGuy.rightLeg[1].zIndex -= 1;
+    const demonGuyZIndex = 0;
+
+    const shoulderZIndex = demonGuyZIndex + 2;
+    const forearmZIndex = shoulderZIndex + 1;
+    const handZIndex = forearmZIndex + 1;
+
+    const thighZIndex = demonGuyZIndex - 1;
+    const calfZIndex = thighZIndex - 1;
+
+    const {rightArm,leftArm,rightLeg,leftLeg} = megaDemonGuy;
+    megaDemonGuy.zIndex = demonGuyZIndex;
+
+    rightArm[0].zIndex = shoulderZIndex, leftArm[0].zIndex = shoulderZIndex;
+    rightArm[1].zIndex = forearmZIndex, leftArm[1].zIndex = forearmZIndex;
+    rightArm[2].zIndex = handZIndex, leftArm[2].zIndex = handZIndex;
+    
+    leftLeg[0].zIndex = thighZIndex, rightLeg[0].zIndex = thighZIndex;
+    leftLeg[1].zIndex = calfZIndex, rightLeg[1].zIndex = calfZIndex;
 
     return megaDemonGuy;
 }

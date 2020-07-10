@@ -16,6 +16,12 @@ const acosLimit = cos => {
     if(isNaN(result)) result = 0;
     return result;
 };
+const getStartAngle = (start,bone) => {
+    if(!isNaN(start)) return start;
+    let {angle} = bone;
+    if(isNaN(angle)) angle = 0;
+    return angle;
+};
 
 function TwoBoneResolver(boneA,boneB,targetX,targetY,aStart,bStart,t) {
     /*
@@ -23,10 +29,16 @@ function TwoBoneResolver(boneA,boneB,targetX,targetY,aStart,bStart,t) {
     */
 
     if(isNaN(t)) t = 1;
-    
-    if(isNaN(aStart)) aStart = boneA.angle; if(isNaN(bStart)) bStart = boneB.angle;
+    aStart = getStartAngle(aStart,boneA), bStart = getStartAngle(bStart,boneB);
 
     const targetDistance = Math.hypot(boneA.x - targetX,boneA.y - targetY);
+    const angle = getAngle(boneA.x,boneA.y,targetX,targetY);
+
+    if(targetDistance >= boneA.length + boneB.length) {
+        boneA.angle = lerp(aStart,angle,t);
+        boneB.angle = lerp(bStart,angle,t);
+        return;
+    }
 
     const targetDistance_2 = Math.pow(targetDistance,2);
     const boneALength_2 = Math.pow(boneA.length,2), boneBLength_2 = Math.pow(boneB.length,2);
@@ -40,11 +52,7 @@ function TwoBoneResolver(boneA,boneB,targetX,targetY,aStart,bStart,t) {
 
     const boneAAngle = acosLimit(boneAAngleCos), boneBAngle = acosLimit(boneBAngleCos);
 
-    const angle = getAngle(boneA.x,boneA.y,targetX,targetY);
-    boneA.angle = angle;
-    //return;
-
     boneA.angle = lerp(aStart,angle - boneAAngle,t);
-    boneB.angle = lerp(bStart,Math.PI - boneBAngle,t);
+    boneB.angle = lerp(bStart,boneA.angle + Math.PI - boneBAngle,t);
 }
 export default TwoBoneResolver;

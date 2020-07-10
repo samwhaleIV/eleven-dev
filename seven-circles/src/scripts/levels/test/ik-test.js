@@ -20,17 +20,20 @@ Box.prototype.center = function() {
 
 async function SquareTest(megaDemonGuy) {
     let idx = 0;
-    const spots = [[0,0],[1,0],[1,1],[0,1]];
+    const spots = [[1,1],[3,1],[3,3],[1,3]];
     while(true) {
         let [x,y] = spots[idx];
         idx = (idx + 1) % spots.length;
-        await megaDemonGuy.animateHandAsync({x,y,duration:500,left:true});
-        console.log(megaDemonGuy.leftArm[2].x.toFixed(2),megaDemonGuy.leftArm[2].y.toFixed(2));
-        await frameDelay(1000);
+        await Promise.all([
+            megaDemonGuy.animateHandAsync({x,y,duration:750,left:false}),
+            megaDemonGuy.animateHandAsync({x,y,duration:750,left:true})
+        ]);
+        console.log(megaDemonGuy.rightHand.x.toFixed(2),megaDemonGuy.rightHand.y.toFixed(2));
+        await frameDelay(500);
     }
 }
 
-function AngleDifferenceTest(world) {
+function AngleDifferenceTest(world,megaDemonGuy) {
     let i = 0;
     const data = [[],[]];
 
@@ -119,15 +122,15 @@ function IKTest({world}) {
         return [megaDemonGuy.leftArm[0].angle*180/Math.PI,megaDemonGuy.leftArm[1].angle*180/Math.PI];
     };
 
-    world.dispatchRenderer.addRender(()=>{
-        const {x,y} = Eleven.CanvasManager.pointer;
-        const location = world.grid.getTileLocation(x,y);
-        megaDemonGuy.setHand(true,location.x,location.y);
+    world.dispatchRenderer.addUpdate(()=>{
+       // console.log(megaDemonGuy.leftHand.x,megaDemonGuy.leftHand.y);
     });
 
     //MouseTrackTest(world,megaDemonGuy.leftArm[0]);
     
-    megaDemonGuy.setHand(true,0,0);
+    SquareTest(megaDemonGuy);
+    megaDemonGuy.leftHand.bindAngle = true;
+    megaDemonGuy.rightHand.bindAngle = true;
 
     AddColorBackground(world,"white");
 }
