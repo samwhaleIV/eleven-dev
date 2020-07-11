@@ -1,4 +1,4 @@
-import {MapNuke,GetNextTrigger,GetLastTrigger,ObjectiveText,SpriteDoor} from "../helper.js";
+import {MapNuke,GetNextTrigger,GetLastTrigger,ObjectiveText,SpriteDoor, MessageChain} from "../helper.js";
 
 const COUNTDOWN_TIME = 120;
 const SNIPPED_TEXTURE_ID = 483;
@@ -75,7 +75,11 @@ function BombHell({world,fromNextMap}) {
         world.spriteFollower.disable();
         world.camera.zoomTo(world.camera.scale*2,1000);
         await world.camera.moveTo(6,4.5,1000);
-        await world.say("What have you done to my wires! My boss is going to kill me. As if I wasn't dead enough!");
+        await MessageChain(world,[
+            "What have you done to my wires!",
+            "My boss is going to kill me.",
+            "As if I wasn't dead enough!"
+        ]);
         await world.camera.moveTo(37,6,1000);
         spriteDoor.open();
         await delay(1500);

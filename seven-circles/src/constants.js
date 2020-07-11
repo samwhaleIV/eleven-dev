@@ -20,8 +20,8 @@ const Constants = Object.freeze({
     TriggerTiles: 15,
     DevSaveFile: "dev-save",
 
-    GlobalResourceFile: "global-preload",
-    WorldPreloadFile: "script-preload-files",
+    GlobalResourceFile: "caches/global",
+    WorldPreloadFile: "caches/world",
 
     SaveStateAddress: "SVCC_SAVE_STATE_DATA",
     KeyBindAddress: "SVCC_KEY_BINDS",
