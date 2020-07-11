@@ -73,7 +73,8 @@ function BombHell({world,fromNextMap}) {
         terminated = true;
         objective.close();
         world.spriteFollower.disable();
-        world.camera.zoomTo(world.camera.scale*2,1000);
+        const startScale = world.camera.scale;
+        world.camera.zoomTo(14,1000);
         await world.camera.moveTo(6,4.5,1000);
         await MessageChain(world,[
             "What have you done to my wires!",
@@ -83,7 +84,7 @@ function BombHell({world,fromNextMap}) {
         await world.camera.moveTo(37,6,1000);
         spriteDoor.open();
         await delay(1500);
-        world.camera.zoomTo(world.camera.scale/2,1000);
+        world.camera.zoomTo(startScale,1000);
         await world.camera.moveTo(world.player,1000);
         world.spriteFollower.enable();
         world.playerController.unlock();
@@ -118,6 +119,8 @@ function BombHell({world,fromNextMap}) {
         }  else if(value === SNIPPED_INTERACTION_ID) {
             if(world.getForegroundTile(x,y) === SNIPPED_TEXTURE_ID) return;
             world.setForegroundTile(x,y,SNIPPED_TEXTURE_ID);
+            world.setCollisionTile(x,y,0);
+            world.pushCollisionChanges();
             snippedCount += 1;
             world.playSound("WireSnipped");
             if(dayIsSaved()) {
