@@ -2,7 +2,7 @@ import {SaveStone,HellGate,AddPalaceFloor} from "../helper.js";
 
 function SavePalace({world}) {
 
-    world.setMap("save-palace");
+    world.setMap("c1-save-palace");
     AddPalaceFloor(world);
     world.camera.padding = false;
     world.addPlayer(2.5,6,"down");

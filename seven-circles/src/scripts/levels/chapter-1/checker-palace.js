@@ -1,7 +1,7 @@
 import {AddPalaceFloor,HellGate,Fissure,CheckerBoard,ObjectiveText} from "../helper.js";
 
 function CheckerPalace({world,fromNextLevel}) {
-    world.setMap("checker-palace");
+    world.setMap("c1-checkers");
     if(fromNextLevel) {
         world.addPlayer(34.545,16.9375,"down");
     } else {

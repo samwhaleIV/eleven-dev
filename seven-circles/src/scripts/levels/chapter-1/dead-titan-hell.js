@@ -2,7 +2,7 @@ import {GetLastTrigger,GetNextTrigger,PanPreview,SpriteDoor,DramaZoom} from "../
 import MessageChain from "../../helper/director/message-chain.js";
 
 function DeadTitanHell({world,fromNextMap,inventory}) {
-    world.setMap("dead-titan-hell");
+    world.setMap("c1-dead-titan");
     world.camera.padding = true;
     if(fromNextMap) {
         world.addPlayer(10,6,"up");

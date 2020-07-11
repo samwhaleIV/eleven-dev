@@ -9,7 +9,7 @@ import {
 const {ResourceManager,UVTCReflection} = Eleven;
 
 function VoidHell({world,lastScript,saveState,lastMap,nextMap}) {
-    world.setMap("void-hell");
+    world.setMap("c1-void");
     const {dispatchRenderer,grid,spriteFollower} = world;
 
     const reflector = UVTCReflection.getScrollable(grid,null,null,-0.5);

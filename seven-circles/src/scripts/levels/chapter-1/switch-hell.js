@@ -7,7 +7,7 @@ import {
 import Fissure from "../../helper/doors/fissure.js";
 
 function SwitchHell({world,inventory,fromNextMap}) {
-    world.setMap("switch-hell");
+    world.setMap("c1-switch");
 
     const player = world.addPlayer(15,3);
     player.direction = "down";

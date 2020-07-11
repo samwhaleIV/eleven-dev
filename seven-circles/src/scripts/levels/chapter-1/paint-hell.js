@@ -25,7 +25,7 @@ const DOOR_ID = 17;
 
 function PaintHell({world,inventory,fromNextMap}) {
 
-    world.setMap("paint-hell");
+    world.setMap("c1-paint");
     world.camera.padding = true;
     if(fromNextMap) {
         const player = world.addPlayer(7,33);

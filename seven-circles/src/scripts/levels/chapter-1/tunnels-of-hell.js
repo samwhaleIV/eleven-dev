@@ -13,7 +13,7 @@ import {
 
 function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
 
-    world.setMap("tunnels-of-hell");
+    world.setMap("c1-tunnels");
     AddNamedBackground(world,"hell");
 
     AddFixedWaterBackground(world,81,7,5,5,{

@@ -1,7 +1,7 @@
 import {SaveStone,Teleporter,InstallLevelChainTriggers,ObjectiveText, MessageChain} from "../helper.js";
 
 function MazeHell({world,fromNextMap}) {
-    world.setMap("maze-hell");
+    world.setMap("c1-maze");
     const {camera} = world;
     camera.padding = true;
 

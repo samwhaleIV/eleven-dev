@@ -1,7 +1,7 @@
 import {SaveStone,InstallLevelChainTriggers,AddNamedBackground,AddFixedWaterBackground} from "../helper.js";
 
 function SaveHell({world,fromNextMap}) {
-    world.setMap("save-hell");
+    world.setMap("c1-save");
     world.camera.verticalPadding = true;
     AddNamedBackground(world,"hell");
     AddFixedWaterBackground(world,6,6,3,3);

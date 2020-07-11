@@ -1,7 +1,7 @@
 import {AddNamedBackground,MessageChain} from "../helper.js";
 
 function HelloHell({world}) {
-    world.setMap("hello-hell");
+    world.setMap("c1-hello");
     AddNamedBackground(world,"hell");
     world.addPlayer(4,4.125,"right");
     world.camera.scale *= 2;

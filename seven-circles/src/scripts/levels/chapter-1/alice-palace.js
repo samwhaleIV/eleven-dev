@@ -1,7 +1,7 @@
 import {AddPalaceFloor,KeyDoor,SaveStone,HellGate,MakePlayerBig,MakePlayerSmall,ObjectiveText} from "../helper.js";
 
 function AlicePalace({world,inventory,fromNextMap}) {
-    world.setMap("alice-palace");
+    world.setMap("c1-alice");
     world.camera.verticalPadding = true;
     AddPalaceFloor(world);
 

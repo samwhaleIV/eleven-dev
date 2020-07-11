@@ -7,7 +7,7 @@ const SNIPPED_INTERACTION_ID = 32;
 const DOOR_INTERACTION_ID = 33;
 
 function BombHell({world,fromNextMap}) {
-    world.setMap("bomb-hell");
+    world.setMap("c1-bomb");
     world.camera.padding = true;
     const objective = new ObjectiveText(world);
 

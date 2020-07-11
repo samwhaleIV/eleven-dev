@@ -76,7 +76,7 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
         case "roomThree": position = [13,9]; break;
     }
 
-    const mapName = "dead-hell";
+    const mapName = "c2-dead";
     setupMap(world,mapName,...position,null,direction);
 
     world.setTriggers([
@@ -85,7 +85,7 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
         getExitTrigger(world,"roomThree",3)
     ]);
 
-    if(saveState.get("dead-hell-cell")) {
+    if(saveState.get("c2-dead-cell")) {
         clearPowerCell(world,6,17,false);
     }
     
@@ -102,7 +102,7 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
         if(value === 18) {
             clearPowerCell(world,x,y);
             inventory.give("power-cell");
-            saveState.set("dead-hell-cell",true);
+            saveState.set("c2-dead-cell",true);
         } else if(value === 16) {
             MessageChain(world,[
                 "You're welcome by the way.",
@@ -113,7 +113,7 @@ function MainRoom({world,lastRoom,saveState,inventory}) {
 }
 
 function RoomOne({world,room}) {
-    const mapName = "dead-hell-1";
+    const mapName = "c2-dead-1";
 
     setupMap(world,mapName,3,1,room);
     world.camera.verticalPadding = true;
@@ -125,7 +125,7 @@ function RoomOne({world,room}) {
     };
 }
 function RoomTwo({world,room,inventory,saveState}) {
-    const mapName = "dead-hell-2";
+    const mapName = "c2-dead-2";
     const cellKey = `${mapName}-cell`;
 
     setupMap(world,mapName,7,2,room);
@@ -147,7 +147,7 @@ function RoomTwo({world,room,inventory,saveState}) {
     AddFixedWaterBackground(world,4,4,7,7);
 }
 function RoomThree({world,room,inventory,saveState}) {
-    const mapName = "dead-hell-3";
+    const mapName = "c2-dead-3";
     const cellKey = `${mapName}-cell`;
 
     setupMap(world,mapName,5,2,room);

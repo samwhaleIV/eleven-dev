@@ -16,7 +16,7 @@ function HatHell(data) {
 
     const {world,lastScript,saveState,nextMap,fromStore} = data;
 
-    world.setMap("hat-hell");
+    world.setMap("c1-hat");
     world.camera.horizontalPadding = true;
     AddNamedBackground(world,"hell");
 

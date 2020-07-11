@@ -5,7 +5,7 @@ const {UVTCReflection,ResourceManager} = Eleven;
 
 function PondHell({world,fromNextMap}) {
 
-    world.setMap("pond-hell");
+    world.setMap("c2-pond");
     const verticalStart = 0.7;
     const player = fromNextMap ? world.addPlayer(48,0) : world.addPlayer(5,0);
     player.y = verticalStart;
