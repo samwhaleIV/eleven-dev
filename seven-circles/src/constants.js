@@ -1,6 +1,6 @@
 const WorldCanvasScale = 1;
 const BaseScreenMargin = 8;
-const BaseCameraScale = 7;
+const BaseCameraScale = 8;
 
 const ByCanvasScale = value => Math.ceil(WorldCanvasScale * value);
 
@@ -20,8 +20,8 @@ const Constants = Object.freeze({
     TriggerTiles: 15,
     DevSaveFile: "dev-save",
 
-    GlobalResourceFile: "global-preload",
-    WorldPreloadFile: "script-preload-files",
+    GlobalResourceFile: "caches/global",
+    WorldPreloadFile: "caches/world",
 
     SaveStateAddress: "SVCC_SAVE_STATE_DATA",
     KeyBindAddress: "SVCC_KEY_BINDS",
@@ -39,7 +39,7 @@ const Constants = Object.freeze({
     GameStartScript: "HelloWorld",
     ErrorLevel: "ErrorPlace",
 
-    MenuSong: "menu",
+    MenuSong: "Menu",
 
     LogTileUpdates: false,
     AutoSelectInventory: false

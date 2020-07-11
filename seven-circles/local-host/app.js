@@ -5,18 +5,17 @@ const fs = require("fs");
 const app = express();
 const port = 80;
 
+const megabytes = value => value * Math.pow(2,30);
+const maxFileSize = megabytes(100);
+
 app.use(express.static("../../"));
 
-app.use(fileUpload({
-    limits: {fileSize: 100 * 1024 * 1024 * 1024}, //100 MB max file size
-}));
+app.use(fileUpload({limits:{fileSize:maxFileSize}}));
 
 app.post("/upload-map-data",async req => {
-
     const mapData = req.files.mapData;
 
     const file = mapData.data.toString();
-
     fs.writeFileSync(__dirname + "/../resources/data/maps.json",file);
     return;
 });

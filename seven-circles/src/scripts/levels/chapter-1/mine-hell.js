@@ -4,7 +4,7 @@ import RadarLamp from "../../../weapons/radar-lamp.js";
 const BOMB_TRIGGER_ID = 15;
 
 function MineHell({world,fromNextMap,failureCount=0,grabbedWepLastTime=false}) {
-    world.setMap("mine-hell");
+    world.setMap("c1-mine");
     const objective = new ObjectiveText(world);
     if(fromNextMap) {
         world.addPlayer(62,7.5,"left");

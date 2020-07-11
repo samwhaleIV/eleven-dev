@@ -2,7 +2,7 @@ import {InstallLevelChainTriggers} from "../helper.js";
 import SaveStone from "../../helper/interactables/save-stone.js";
 
 function PrepareHell({world,fromNextMap}) {
-    world.setMap("prepare-hell");
+    world.setMap("c1-prepare");
     if(fromNextMap) {
         world.addPlayer(18,17,"up");
     } else {

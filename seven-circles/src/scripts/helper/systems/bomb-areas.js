@@ -50,6 +50,10 @@ function getEndOfExplosion(world,tileSprite,callback) {
     return endOfExplosion.bind(null,world,tileSprite,callback);
 }
 
+function getJitter(radius) {
+    return Math.random() * radius * 2 - radius;
+}
+
 function addBomb(world,x,y,callback) {
     const tileSprite = world.addTileSprite(x,y,BOMB_TILE_ID,false);
     world.playSound("BombFuse");
@@ -57,14 +61,12 @@ function addBomb(world,x,y,callback) {
     const {render} = tileSprite;
 
     tileSprite.render = (context,x,y,width,height) => {
-        context.save();
-
         const xJitter = width * JITTER_AMOUNT, yJitter = height * JITTER_AMOUNT;
+        const xOffset = getJitter(xJitter), yOffset = getJitter(yJitter);
 
-        context.translate(Math.random()*xJitter*2-xJitter,Math.random()*yJitter*2-yJitter);
-
+        context.translate(xOffset,yOffset);
         render(context,x,y,width,height);
-        context.restore();
+        context.translate(-xOffset,-yOffset);
     };
 
     setTimeout(getEndOfExplosion(world,tileSprite,callback),EXPLOSION_DELAY);

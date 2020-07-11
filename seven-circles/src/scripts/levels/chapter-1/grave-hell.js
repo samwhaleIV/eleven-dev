@@ -4,7 +4,7 @@ import {
 import ObjectiveText from "../../helper/other/objective-text.js";
 
 function GraveHell({world,inventory}) {
-    world.setMap("grave-hell");
+    world.setMap("c1-grave");
     world.camera.padding = true;
     AddFixedWaterBackground(world,1,11,6,8);
     world.addPlayer(12.5,3.9375,"down");

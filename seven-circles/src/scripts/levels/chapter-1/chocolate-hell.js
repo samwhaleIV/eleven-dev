@@ -19,7 +19,7 @@ const DELIVERY_COUNT = 4;
 function ChocolateHell({
     world,inventory,fromNextMap
 }){
-    world.setMap("chocolate-hell");
+    world.setMap("c1-chocolate");
     world.camera.enablePadding();
     AddWaterBackground(world);
 

@@ -1,30 +1,30 @@
 {
-    "HelloWorld": {"song": "beginning_loop"},
-    "TheBeginning": {"song": "iceworld"},
-    "HelloHell": {"song": "tunnels_loop"},
+    "HelloWorld": {"song": "chapter-1/Beginning"},
+    "TheBeginning": {"song": "chapter-1/IceWorld"},
+    "HelloHell": {"song": "chapter-1/Tunnels"},
 
-    "TunnelsOfHell": {"song": "tunnels_loop"},
-    "ChocolateHell": {"song": "chocolateHell_loop"},
-    "HatHell": {"song": "HatHell_loop"},
-    "HatStore": {"song": "HatStore_loop"},
+    "TunnelsOfHell": {"song": "chapter-1/Tunnels"},
+    "ChocolateHell": {"song": "chapter-1/ChocolateHell"},
+    "HatHell": {"song": "chapter-1/HatHell"},
+    "HatStore": {"song": "chapter-1/HatStore"},
 
-    "RiverHell": {"song": "RiverHell_loop"},
-    "VoidHell": {"song": "VoidHell_loop"},
-    "BombHell": {"song": "BombHell_loop"},
-    "MineHell": {"song": "MineHell_loop"},
+    "RiverHell": {"song": "chapter-1/RiverHell"},
+    "VoidHell": {"song": "chapter-1/VoidHell"},
+    "BombHell": {"song": "chapter-1/BombHell"},
+    "MineHell": {"song": "chapter-1/MineHell"},
 
-    "SaveHell": {"song": "SaveHell_loop"},
-    "MazeHell": {"song": "MazeHell_loop"},
-    "PaintHell": {"song": "PaintHell_loop"},
+    "SaveHell": {"song": "chapter-1/SaveHell"},
+    "MazeHell": {"song": "chapter-1/MazeHell"},
+    "PaintHell": {"song": "chapter-1/PaintHell"},
 
-    "PrepareHell": {"song": "CaveWorld_loop"},
-    "DeadTitanHell": {"song": "CaveWorld_loop"},
-    "SwitchHell": {"song": "CaveWorld_loop"},
-    "CheckerPalace": {"song": "Fissure_loop"},
-    "AlicePalace": {"song": "Fissure_loop"}, 
-    "SavePalace": {"song": "Fissure_loop"},
-    "SuperCheckerPalace": {"song": "Fissure_loop"},
-    "GraveHell": {"song": "GraveHell_loop"},
+    "PrepareHell": {"song": "chapter-1/CaveWorld"},
+    "DeadTitanHell": {"song": "chapter-1/CaveWorld"},
+    "SwitchHell": {"song": "chapter-1/CaveWorld"},
+    "CheckerPalace": {"song": "chapter-1/Fissure"},
+    "AlicePalace": {"song": "chapter-1/Fissure"}, 
+    "SavePalace": {"song": "chapter-1/Fissure"},
+    "SuperCheckerPalace": {"song": "chapter-1/Fissure"},
+    "GraveHell": {"song": "chapter-1/GraveHell"},
 
-    "GoodbyeHell": {"song": "tunnels_loop"}
+    "GoodbyeHell": {"song": "chapter-1/Beginning"}
 }

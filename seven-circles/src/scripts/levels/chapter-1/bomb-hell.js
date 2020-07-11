@@ -1,4 +1,4 @@
-import {MapNuke,GetNextTrigger,GetLastTrigger,ObjectiveText,SpriteDoor} from "../helper.js";
+import {MapNuke,GetNextTrigger,GetLastTrigger,ObjectiveText,SpriteDoor, MessageChain} from "../helper.js";
 
 const COUNTDOWN_TIME = 120;
 const SNIPPED_TEXTURE_ID = 483;
@@ -7,7 +7,7 @@ const SNIPPED_INTERACTION_ID = 32;
 const DOOR_INTERACTION_ID = 33;
 
 function BombHell({world,fromNextMap}) {
-    world.setMap("bomb-hell");
+    world.setMap("c1-bomb");
     world.camera.padding = true;
     const objective = new ObjectiveText(world);
 
@@ -75,7 +75,11 @@ function BombHell({world,fromNextMap}) {
         world.spriteFollower.disable();
         world.camera.zoomTo(world.camera.scale*2,1000);
         await world.camera.moveTo(6,4.5,1000);
-        await world.say("What have you done to my wires! My boss is going to kill me. As if I wasn't dead enough!");
+        await MessageChain(world,[
+            "What have you done to my wires!",
+            "My boss is going to kill me.",
+            "As if I wasn't dead enough!"
+        ]);
         await world.camera.moveTo(37,6,1000);
         spriteDoor.open();
         await delay(1500);
@@ -120,7 +124,7 @@ function BombHell({world,fromNextMap}) {
                 saveTheDay();
             } else {
                 const oneSnipLeft = snippedCount === SNIP_COUNT - 1;
-                const message = oneSnipLeft ? "There's probably just one more!" : "You broke the patch on the wire. Is there more?";
+                const message = oneSnipLeft ? "There's probably just one more!" : "You broke the patch on the wire. Are there more?";
                 world.message(message);
             }
         } else if(value === 20) {

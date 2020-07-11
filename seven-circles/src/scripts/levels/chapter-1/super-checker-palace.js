@@ -1,7 +1,7 @@
 import {CheckerBoard,Fissure,HellGate,AddPalaceFloor} from "../helper.js";
 
 function SuperCheckerPalace({world,fromNextMap,inventory}) {
-    world.setMap("super-checker-palace");
+    world.setMap("c1-super-checkers");
     AddPalaceFloor(world);
     world.camera.padding = true;
     

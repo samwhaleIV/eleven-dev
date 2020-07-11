@@ -11,7 +11,7 @@ const HALO_STAND = 96;
 const NO_HAT = "none";
 
 function HatStore({world,saveState}) {
-    world.setMap("hat-store");
+    world.setMap("c1-hat-store");
     AddNamedBackground(world,"hell");
 
     const getStandSaveKey = ID => `hat-store-stand-${ID}`;

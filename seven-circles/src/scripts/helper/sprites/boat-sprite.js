@@ -94,25 +94,26 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
 
         let renderRotateX = x + leftRotateX * width;
 
-        context.save();
+        let transform = context.getTransform();
+
         context.translate(renderRotateX,renderRotateY);
         context.rotate(leftPaddleAngle);
         context.translate(-renderRotateX,-renderRotateY);
         renderPaddle(
             context,x+leftPaddleX*width,renderY,renderWidth,renderHeight,true
         );
-        context.restore();
+        context.setTransform(transform);
 
         renderRotateX = x + rightRotateX * width;
 
-        context.save();
+        transform = context.getTransform();
         context.translate(renderRotateX,renderRotateY);
         context.rotate(rightPaddleAngle);
         context.translate(-renderRotateX,-renderRotateY);
         renderPaddle(
             context,x+rightPaddleX*width,renderY,renderWidth,renderHeight,false
         );
-        context.restore();
+        context.setTransform(transform);
     };
 
     const occupantBuffer = new OffscreenCanvas(0,0);
@@ -160,7 +161,8 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         renderOccupant(width,height);
         const deferBottom = occupant.direction === 0;
 
-        context.save();
+        const startTransform = context.getTransform();
+
         context.translate(centerX,centerY);
         context.rotate(this.angle);
         context.translate(-centerX,-centerY);
@@ -175,14 +177,14 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
         renderBase(context,x,y,width,height);
 
         if(!deferBottom) {
-            context.save();
-            context.resetTransform();
+            const superTransform = context.getTransform();
+            context.setTransform(startTransform);
             renderOccupantBottom(context,centerX,centerY,occupantWidth,headHeight,legHeight);
-            context.restore();
+            context.setTransform(superTransform);
         }
 
         renderPaddles(context,x,y,width,height);
-        context.restore();
+        context.setTransform(startTransform);
         if(deferBottom) {
             renderOccupantBottom(context,centerX,centerY,occupantWidth,headHeight,legHeight); 
         }

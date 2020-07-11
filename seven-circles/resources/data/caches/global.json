@@ -1,0 +1,14 @@
+{
+    "Image": [
+        "items.png",
+        "player/default.png",
+        "world-tileset.png",
+        "pause-overlay.png",
+        "pause-panel.png"
+    ],
+    "JSON": [
+        "maps.json",
+        "suggested-songs.json",
+        "sound-effects.json"
+    ]
+}

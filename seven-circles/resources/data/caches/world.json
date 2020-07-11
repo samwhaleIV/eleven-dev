@@ -1,0 +1,29 @@
+{
+    "Image": [
+        "player/alien.png",
+        "player/halo.png",
+        "player/helmet.png",
+        "player/red-hat.png",
+        "player/dev.png",
+        "anti-player.png",
+
+        "weapon/keys.png",
+        "weapon/rock.png",
+        "weapon/bomb.png",
+        "weapon/lamp.png",
+        "weapon/hell-lamp.png",
+
+        "weapon/water-fists.png",
+        "effects/fire.png",
+        "effects/water.png",
+        "mega-demon-guy.png",
+        "weapon/watcher-beam.png",
+        "boat.png",
+        "effects/blood.png",
+        "the-watcher.png",
+
+        "weapon/gun.png",
+        "weapon/enemy-gun.png"
+    ],
+    "Audio": ["text-sound.mp3"]
+}

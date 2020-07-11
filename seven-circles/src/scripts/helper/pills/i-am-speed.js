@@ -79,7 +79,7 @@ function Ghost(target) {
     this.render = (context,x,y,width,height,time) => {
         advanceBuffer(time);
 
-        context.save();
+        const startAlpha = context.globalAlpha;
 
         for(let i = 0;i<bufferMeta.length;i++) {
 
@@ -98,7 +98,7 @@ function Ghost(target) {
             );
         }
 
-        context.restore();
+        context.globalAlpha = startAlpha;
     };
 }
 

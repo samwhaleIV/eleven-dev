@@ -1,5 +1,5 @@
 {
-    "devfile": "This is the file you're looking for!",
+    "DevSave": true,
 
     "CleanSlate": false,
     "Container": "Named",
@@ -9,7 +9,7 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "BoatHell",
+                "x": 0, "y": 0, "scriptID": "IKTest",
                 "direction": 0,
                 "_deserialize": true
             }

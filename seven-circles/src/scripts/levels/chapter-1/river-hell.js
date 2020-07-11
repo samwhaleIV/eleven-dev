@@ -10,7 +10,7 @@ import {
 } from "../helper.js";
 
 function RiverHell({world,inventory,fromNextMap}) {
-    world.setMap("river-hell");
+    world.setMap("c1-river");
     world.camera.padding = true;
     AddWaterBackground(world);
 
