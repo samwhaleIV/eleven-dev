@@ -9,7 +9,7 @@ const BAD_OPERATION = name => {
     throw Error(`'${name}' is an invalid map decorator operation!`);
 };
 
-function GetDecorator(...operations) {
+function GetDecorator(operations) {
     return ({template}) => {
         const decoratorBuffer = new DecoratorBuffer(template);
         for(const [operationName,...parameters] of operations) {

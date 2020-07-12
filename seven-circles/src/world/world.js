@@ -19,6 +19,8 @@ import TileEditor from "./extensions/tile-editor.js";
 import TriggerHandler from "./extensions/trigger-handler.js";
 import InputProxy from "./extensions/input-proxy.js";
 import PlayerRadio from "./extensions/player-radio.js";
+import GetDecorator from "../dynamic-map/get-decorator.js";
+import Decorators from "../dynamic-map/decorators.js";
 
 const WORLD_EXTENSIONS = [
     FadeMe,
@@ -67,6 +69,9 @@ const LEVEL_CHANGE_IN_PROGRESS = () => {
 };
 const ILLEGAL_SCRIPT_METHOD = () => {
     throw Error("This method is only for use during the initial script sequencing!");
+};
+const MISSING_DECORATOR = decoratorName => {
+    console.warn(`Unknown decorator '${decoratorName}'!`);
 };
 
 function World(callback) {
@@ -440,7 +445,7 @@ World.prototype.setMap = function(mapName,data) {
     this.validateParseOnlyMethod();
     this.reset();
 
-    if(!data) data = {isDynamic:false};
+    if(!data) data = {dynamic:false};
     let {tileset,tileMap,dynamic,decorator} = data;
     if(tileset) {
         this.tileset = tileset;
@@ -478,6 +483,20 @@ World.prototype.setMap = function(mapName,data) {
         this.cacheSuperForeground();
     }
 };
+World.prototype.setDynamicMap = function(mapName,decoratorName) {
+    if(!decoratorName) decoratorName = "none";
+    let operations = Decorators[decoratorName];
+    if(!operations) {
+        MISSING_DECORATOR(decoratorName);
+        operations = Decorators.none;
+    }
+    operations = operations({
+        world: this,
+        image: this.defaultTileset
+    });
+    const decorator = GetDecorator(operations);
+    this.setMap(mapName,{dynamic:true,decorator});
+}
 World.prototype.validateParseOnlyMethod = function() {
     if(this.pendingScriptData !== null) return; ILLEGAL_SCRIPT_METHOD();
 };
