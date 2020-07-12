@@ -22,24 +22,25 @@ function ShadowOutline(
 
     const getNearest = (startX,startY) => {
         let x = startX, y = startY;
+        let nearestLeft = Infinity, nearestTop = Infinity;
         while(x >= 0) {
             const scanDistance = startX - x;
-            if(scanDistance > distance) return Infinity;
+            if(scanDistance > distance) break;
             if(buffer.get(x,y) === wallValue) {
-                return scanDistance;
+                nearestLeft = scanDistance;
             }
             x--;
         }
         x = startX;
         while(y >= 0) {
             const scanDistance = startY - y;
-            if(scanDistance > distance) return Infinity;
+            if(scanDistance > distance) break;
             if(buffer.get(x,y) === wallValue) {
-                return scanDistance;
+                nearestTop = scanDistance;
             }
             y--;
         }
-        return Infinity;
+        return Math.min(nearestLeft,nearestTop);
     };
 
     const {colorTable} = buffer;

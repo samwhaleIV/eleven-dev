@@ -17,8 +17,8 @@ const Decorators = {
         ["Color",2,"#3C0101"],
         ["Color",3,"#F70000"],
         ["Outline",3,"#C60000"],
-        ["Shadow",1,3,5,3/4],
-        ["Shadow",2,3,5,3/4],
+        ["Shadow",1,3,4,3/5],
+        ["Shadow",2,3,4,3/5],
         ["CollisionMap",3]
     ]
 };
