@@ -8,7 +8,8 @@ function DynamMap({world}) {
         ["Outline",1,"#740303"],
         ["Color",2,"#3C0101"],
         ["Color",3,"#F70000"],
-        ["Outline",3,"#C60000"]
+        ["Outline",3,"#C60000"],
+        ["CollisionMap",3]
     );
 
     const image = world.defaultTileset;
@@ -23,11 +24,11 @@ function DynamMap({world}) {
         ["CollisionMap",3]
     );
 
-    world.setMap("test",{
+    world.setMap("triangle",{
         dynamic: true,
         decorator: ClassicHellDecorator
     });
     AddNamedBackground(world,"hell");
-    const player = world.addPlayer(2.38,2.85);
+    world.addPlayer(7.203125, 6.296875);
 }
 export default DynamMap;

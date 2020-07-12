@@ -25,7 +25,9 @@
         "weapon/gun.png",
         "weapon/enemy-gun.png",
 
-        "maps/test.png"
+        "maps/test.png",
+        "maps/trans.png",
+        "maps/triangle.png"
     ],
     "Audio": ["text-sound.mp3"]
 }
