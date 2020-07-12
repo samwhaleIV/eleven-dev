@@ -14,6 +14,7 @@ const hexToRGB = color => {
     const r = (int >> 16) & 255, g = (int >> 8) & 255, b = int & 255;
     return [r,g,b,255];
 };
+DecoratorBuffer.prototype.hexToRGB = hexToRGB;
 DecoratorBuffer.prototype.addColor = function(color) {
     if(typeof color === "string") color = hexToRGB(color);
     const ID = this.colorID++;

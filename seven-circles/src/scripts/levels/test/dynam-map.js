@@ -9,6 +9,8 @@ function DynamMap({world}) {
         ["Color",2,"#3C0101"],
         ["Color",3,"#F70000"],
         ["Outline",3,"#C60000"],
+        ["Shadow",1,3,5,3/4],
+        ["Shadow",2,3,5,3/4],
         ["CollisionMap",3]
     );
 
@@ -21,14 +23,16 @@ function DynamMap({world}) {
         ["Pattern",2,"floor"],
         ["Pattern",3,"wall"],
         ["Outline",3,"#1E120A"],
+        ["Shadow",1,3,4,1/2],
+        ["Shadow",2,3,4,1/2],
         ["CollisionMap",3]
     );
 
-    world.setMap("triangle",{
+    world.setMap("test",{
         dynamic: true,
-        decorator: ClassicHellDecorator
+        decorator: C2HellDecorator
     });
     AddNamedBackground(world,"hell");
-    world.addPlayer(7.203125, 6.296875);
+    world.addPlayer(2.5,3);
 }
 export default DynamMap;

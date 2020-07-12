@@ -57,6 +57,8 @@ const TILESET_NAME = "world-tileset";
 const MAPS_NAME = "maps";
 const IMAGE_MAPS_FOLDER = "maps";
 
+const NO_LIGHTING_FILL = [1,1,1,1,1,0];
+
 const BAD_SCRIPT = () => {
     console.warn("Bad script! The script object is not a constructor (Check for script book warnings?)");
 };
@@ -178,10 +180,10 @@ const cache = (world,layerCount,layerStart,isTop,location) => {
 
     grid.renderer = dispatchRenderer;
 };
-const installMapLayers = (world,customTileCollision) => {
+const installMapLayers = (world,customTileCollision,disableLighting) => {
     const {grid, tileRenderer, dispatchRenderer} = world;
 
-    world.lightingLayer = new UVTCLighting(
+    world.lightingLayer = disableLighting ? null : new UVTCLighting(
         grid,tileRenderer,LIGHTING_LAYER
     );
 
@@ -201,7 +203,7 @@ const installMapLayers = (world,customTileCollision) => {
     dispatchRenderer.addUpdate(world.spriteLayer.update);
 
     dispatchRenderer.addRender(world.spriteLayer.render);
-    if(world.lightingLayer.hasLighting) {
+    if(world.lightingLayer && world.lightingLayer.hasLighting) {
         dispatchRenderer.addRender(world.lightingLayer.render);
     }
 
@@ -400,7 +402,7 @@ World.prototype.getGridTileRenderer = function(mapName) {
         setRenderer: false, setSize: true,
         map: this.maps[mapName],
         uvtcDecoding: true,
-        fillEmpty: [1,1,1,1,1,0]
+        fillEmpty: NO_LIGHTING_FILL
     });
 };
 World.prototype.getImageTileRenderer = function(
@@ -429,11 +431,10 @@ World.prototype.getImageTileRenderer = function(
         width: Math.ceil(image.width / this.tileSize),
         height: Math.ceil(image.height / this.tileSize),
         map: this.maps[mapName],
-        uvtcDecoding: false,
-        fillEmpty: true
+        uvtcDecoding: false
     });
 
-    return {tileRenderer,tileCollision};
+    return {tileRenderer,tileCollision,doNotCache: true};
 };
 World.prototype.setMap = function(mapName,data) {
     this.validateParseOnlyMethod();
@@ -448,6 +449,7 @@ World.prototype.setMap = function(mapName,data) {
     }
 
     let tileRenderer, tileCollision;
+    let doCache = true;
     if(dynamic) {
         const data = this.getImageTileRenderer(
             mapName,decorator,tileMap
@@ -456,6 +458,7 @@ World.prototype.setMap = function(mapName,data) {
         if(data.tileCollision) {
             tileCollision = data.tileCollision;
         }
+        if(data.doNotCache) doCache = false;
     } else {
         tileRenderer = this.getGridTileRenderer(mapName);
     }
@@ -463,7 +466,12 @@ World.prototype.setMap = function(mapName,data) {
     tileRenderer.paused = true;
     this.tileRenderer = tileRenderer;
 
-    installMapLayers(this,tileCollision);
+    installMapLayers(this,tileCollision,!doCache);
+
+    if(!doCache) {
+        this.grid.renderer = this.dispatchRenderer;
+        return;
+    }
 
     this.cacheBackgroundForeground();
     if(hasSuperForeground(tileRenderer)) {
