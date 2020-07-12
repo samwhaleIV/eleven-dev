@@ -9,7 +9,7 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "IKTest",
+                "x": 0, "y": 0, "scriptID": "DynamMap",
                 "direction": 0,
                 "_deserialize": true
             }

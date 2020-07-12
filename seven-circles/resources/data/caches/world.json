@@ -23,7 +23,9 @@
         "the-watcher.png",
 
         "weapon/gun.png",
-        "weapon/enemy-gun.png"
+        "weapon/enemy-gun.png",
+
+        "maps/test.png"
     ],
     "Audio": ["text-sound.mp3"]
 }

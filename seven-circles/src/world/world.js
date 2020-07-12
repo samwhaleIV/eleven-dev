@@ -3,6 +3,7 @@ import Constants from "../constants.js";
 import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import FaderList from "./fader-list.js";
+import Template from "../dynamic-map/template.js";
 
 import FadeTransition from "../scripts/helper/other/fade-transition.js";
 import Lifetime from "../scripts/lifetime.js";
@@ -54,11 +55,7 @@ const LIGHTING_LAYER = 5;
 
 const TILESET_NAME = "world-tileset";
 const MAPS_NAME = "maps";
-const PLAYER_SPRITE = Constants.PlayerSprite;
-
-let tileset = null;
-let maps = null;
-let playerImage = null;
+const IMAGE_MAPS_FOLDER = "maps";
 
 const BAD_SCRIPT = () => {
     console.warn("Bad script! The script object is not a constructor (Check for script book warnings?)");
@@ -71,7 +68,6 @@ const ILLEGAL_SCRIPT_METHOD = () => {
 };
 
 function World(callback) {
-
     const {Inventory,SaveState} = SVCC.Runtime;
     this.inventory = Inventory;
     this.saveState = SaveState;
@@ -80,7 +76,6 @@ function World(callback) {
     this.messageLock = false;
     this.messageResolveStack = new Array();
 
-    this.tilesetColumns = 0;
     this.tileSize = BASE_TILE_SIZE;
 
     this.scriptData = null;
@@ -88,24 +83,20 @@ function World(callback) {
 
     this.soundEffects = {};
 
+    this.tileset = null, this.maps = null, this.defaultTileset = null;
+
     this.load = async () => {
+        this.defaultTileset = ResourceManager.getImage(TILESET_NAME);
 
-        tileset = ResourceManager.getImage(TILESET_NAME);
-        this.tilesetColumns = tileset.width / BASE_TILE_SIZE;
-
-        maps = ResourceManager.getJSON(MAPS_NAME);
-        playerImage = ResourceManager.getImage(PLAYER_SPRITE);
+        this.tileset = this.defaultTileset;
+        this.maps = ResourceManager.getJSON(MAPS_NAME);
 
         if(callback) await callback(this);
-    }
+    };
 
     Object.defineProperties(this,{
-        tileset: {
-            get: () => tileset,
-            enumerable: true
-        },
-        playerImage: {
-            get: () => playerImage,
+        tilesetColumns: {
+            get: () => this.tileset.width / BASE_TILE_SIZE,
             enumerable: true
         }
     });
@@ -187,14 +178,14 @@ const cache = (world,layerCount,layerStart,isTop,location) => {
 
     grid.renderer = dispatchRenderer;
 };
-const installMapLayers = world => {
+const installMapLayers = (world,customTileCollision) => {
     const {grid, tileRenderer, dispatchRenderer} = world;
 
     world.lightingLayer = new UVTCLighting(
         grid,tileRenderer,LIGHTING_LAYER
     );
 
-    world.tileCollision = new TileCollision(
+    world.tileCollision = customTileCollision ? customTileCollision : new TileCollision(
         grid,tileRenderer,COLLISION_LAYER,CollisionMaker
     );
 
@@ -403,37 +394,89 @@ World.prototype.reset = function() {
     this.collisionChangePending = false;
     this.interactionChangePending = false;
 }
-World.prototype.setMap = function(mapName) {
-    this.validateParseOnlyMethod();
-
-    this.reset();
-
-    const tileRenderer = this.grid.getTileRenderer({
-        tileset: tileset,
+World.prototype.getGridTileRenderer = function(mapName) {
+    return this.grid.getTileRenderer({
+        tileset: this.tileset,
         setRenderer: false, setSize: true,
-        map: maps[mapName],
+        map: this.maps[mapName],
         uvtcDecoding: true,
         fillEmpty: [1,1,1,1,1,0]
     });
+};
+World.prototype.getImageTileRenderer = function(
+    mapName,decorator,tileMap
+) {
+    let image = ResourceManager.getImage(
+        `${IMAGE_MAPS_FOLDER}/${mapName}`
+    );
+    const decoratorData = decorator({image,template:new Template(image)});
+    image = decoratorData.image;
+
+    const tileCollision = decoratorData.tileCollision;
+    const cacheRenderer = this.grid.drawCache.bind(
+        null,{data:{buffer:image}}
+    );
+    this.dispatchRenderer.addBackground(cacheRenderer,1);
+
+    if(tileMap) return {
+        tileCollision, tileRenderer: this.getGridTileRenderer(tileMap)
+    };
+
+    const tileRenderer = this.grid.getTileRenderer({
+        tileset: this.tileset,
+        skipZero: true,
+        setRenderer: false, setSize: true,
+        width: Math.ceil(image.width / this.tileSize),
+        height: Math.ceil(image.height / this.tileSize),
+        map: this.maps[mapName],
+        uvtcDecoding: false,
+        fillEmpty: true
+    });
+
+    return {tileRenderer,tileCollision};
+};
+World.prototype.setMap = function(mapName,data) {
+    this.validateParseOnlyMethod();
+    this.reset();
+
+    if(!data) data = {isDynamic:false};
+    let {tileset,tileMap,dynamic,decorator} = data;
+    if(tileset) {
+        this.tileset = tileset;
+    } else {
+        this.tileset = this.defaultTileset;
+    }
+
+    let tileRenderer, tileCollision;
+    if(dynamic) {
+        const data = this.getImageTileRenderer(
+            mapName,decorator,tileMap
+        );
+        tileRenderer = data.tileRenderer;
+        if(data.tileCollision) {
+            tileCollision = data.tileCollision;
+        }
+    } else {
+        tileRenderer = this.getGridTileRenderer(mapName);
+    }
 
     tileRenderer.paused = true;
     this.tileRenderer = tileRenderer;
 
-    installMapLayers(this);
+    installMapLayers(this,tileCollision);
 
     this.cacheBackgroundForeground();
-
     if(hasSuperForeground(tileRenderer)) {
         this.cacheSuperForeground();
     }
-}
+};
 World.prototype.validateParseOnlyMethod = function() {
     if(this.pendingScriptData !== null) return; ILLEGAL_SCRIPT_METHOD();
-}
-
+};
 World.prototype.getTextureXY = function(tileID,premultiply=true) {
-    let textureColumn = tileID % this.tilesetColumns;
-    let textureRow = Math.floor(tileID / this.tilesetColumns);
+    const {tilesetColumns} = this;
+    let textureColumn = tileID % tilesetColumns;
+    let textureRow = Math.floor(tileID / tilesetColumns);
     if(premultiply) {
         textureColumn *= this.tileSize;
         textureRow *= this.tileSize;
