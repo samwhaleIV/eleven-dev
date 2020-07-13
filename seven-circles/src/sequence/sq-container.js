@@ -2,6 +2,8 @@ import Deserialize from "./container/deserialize.js";
 import Serialize from "./container/serialize.js";
 import GetObject from "./objects.js";
 
+const orNull = value => value ? value : null;
+
 function SQContainer(world,isEditor) {
     this.world = world;
     this.objects = new Object();
@@ -17,6 +19,8 @@ SQContainer.prototype.export = function() {
     return Serialize(this);
 };
 SQContainer.prototype.import = async function(data) {
+    this.map = orNull(data.map);
+    this.decorator = orNull(data.decorator);
     await Deserialize(this,data);
 };
 SQContainer.prototype.clear = function() {

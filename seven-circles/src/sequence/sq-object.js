@@ -1,32 +1,34 @@
 const {ResourceManager} = Eleven;
-const previouslyLoadedObjects = {};
+const previouslyLoadedTypes = {};
 
-function SQObject(container,self,name) {
+function SQObject(container,self,type) {
     const {isEditor,world} = container;
     const parameterHeader = {
-        self,container,isEditor,name,
+        self,container,isEditor,type,
         files: ResourceManager, world
     };
-    Object.assign(this,{container,self,name,parameterHeader});
+    Object.assign(this,{
+        container,self,type,parameterHeader
+    });
     const ID = container.getID();
-    container[ID] = this;
+    container.objects[ID] = this;
     this.ID = ID;
 }
 
 SQObject.prototype.canLoadFiles = function() {
-    if(!self.files || name in previouslyLoadedObjects) return;
+    if(!self.files || type in previouslyLoadedTypes) return;
 };
 SQObject.prototype.loadFiles = async function() {
     if(!this.canLoadFiles()) return;
 
     await ResourceManager.queueManifest(this.self.files).load();
-    previouslyLoadedObjects[this.name] = true;
+    previouslyLoadedTypes[this.type] = true;
 };
 SQObject.prototype.queueFiles = function() {
     if(!this.canLoadFiles()) return;
 
     ResourceManager.queueManifest(this.self.files);
-    previouslyLoadedObjects[this.name] = true;
+    previouslyLoadedTypes[this.type] = true;
 };
 SQObject.prototype.create = function(data) {
     this.self.create(this.parameterHeader,data);
@@ -36,7 +38,7 @@ SQObject.prototype.delete = function() {
     delete this.container[this.ID];
 };
 SQObject.prototype.serialize = function() {
-    this.self.save(this.parameterHeader);
+    return this.self.save(this.parameterHeader);
 };
 SQObject.prototype.getProperty = function(property) {
     return this.self.properties[property].get(this.parameterHeader);
