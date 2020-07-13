@@ -1,0 +1,21 @@
+{
+    "map": "test",
+    "decorator": "c2",
+    "objects": [
+        {
+            "type": "Player",
+            "data": {
+                "x": 2.3046875,
+                "y": 3.359375,
+                "direction": "up"
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 2,
+                "y": 1
+            }
+        }
+    ]
+}

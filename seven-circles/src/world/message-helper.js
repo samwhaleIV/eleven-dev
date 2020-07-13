@@ -13,7 +13,7 @@ const TEXT_SCALE = 4 * SCALE;
 const LINE_SPACING = 1;
 const BOX_PADDING = 20 * SCALE;
 const LETTER_SPACING = 0;
-const WORD_SPACING = 2.5;
+const WORD_SPACING = 1.75;
 
 const textLayerDefaults = Object.freeze({
     lineSpacing: LINE_SPACING,

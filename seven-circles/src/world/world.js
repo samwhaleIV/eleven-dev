@@ -4,6 +4,9 @@ import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import FaderList from "./fader-list.js";
 import Template from "../dynamic-map/template.js";
+import GetDecorator from "../dynamic-map/get-decorator.js";
+import Decorators from "../dynamic-map/decorators.js";
+import SQContainer from "../sequence/sq-container.js";
 
 import FadeTransition from "../scripts/helper/other/fade-transition.js";
 import Lifetime from "../scripts/lifetime.js";
@@ -19,8 +22,6 @@ import TileEditor from "./extensions/tile-editor.js";
 import TriggerHandler from "./extensions/trigger-handler.js";
 import InputProxy from "./extensions/input-proxy.js";
 import PlayerRadio from "./extensions/player-radio.js";
-import GetDecorator from "../dynamic-map/get-decorator.js";
-import Decorators from "../dynamic-map/decorators.js";
 
 const WORLD_EXTENSIONS = [
     FadeMe,
@@ -91,6 +92,8 @@ function World(callback) {
     this.soundEffects = {};
 
     this.tileset = null, this.maps = null, this.defaultTileset = null;
+
+    this.sqContainer = null;
 
     this.load = async () => {
         this.defaultTileset = ResourceManager.getImage(TILESET_NAME);
@@ -249,7 +252,6 @@ World.prototype.disableSuperForeground = function() {
 World.prototype.whoAmI = function() {
     console.log(`The level you are currently on is most likely named '${world.script.constructor.name}'.`);
 }
-
 World.prototype.setLevel = async function(script,data,runStartScript=true) {
     if(this.pendingScriptData) LEVEL_CHANGE_IN_PROGRESS();
 
@@ -310,6 +312,9 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
     data.world = this;
 
     this.scriptData = data;
+
+    if(script.sqLevel) await this.loadSQLevel(scriptName);
+
     script = new script(data); this.script = script;
 
     if(this.playerController) this.playerController.lock();
@@ -411,11 +416,8 @@ World.prototype.getGridTileRenderer = function(mapName) {
     });
 };
 World.prototype.getImageTileRenderer = function(
-    mapName,decorator,tileMap
+    image,decorator,tileMap
 ) {
-    let image = ResourceManager.getImage(
-        `${IMAGE_MAPS_FOLDER}/${mapName}`
-    );
     const decoratorData = decorator({image,template:new Template(image)});
     image = decoratorData.image;
 
@@ -435,7 +437,6 @@ World.prototype.getImageTileRenderer = function(
         setRenderer: false, setSize: true,
         width: Math.ceil(image.width / this.tileSize),
         height: Math.ceil(image.height / this.tileSize),
-        map: this.maps[mapName],
         uvtcDecoding: false
     });
 
@@ -483,7 +484,7 @@ World.prototype.setMap = function(mapName,data) {
         this.cacheSuperForeground();
     }
 };
-World.prototype.setDynamicMap = function(mapName,decoratorName) {
+World.prototype.setDynamicMap = async function(image,decoratorName) {
     if(!decoratorName) decoratorName = "none";
     let operations = Decorators[decoratorName];
     if(!operations) {
@@ -495,8 +496,36 @@ World.prototype.setDynamicMap = function(mapName,decoratorName) {
         image: this.defaultTileset
     });
     const decorator = GetDecorator(operations);
-    this.setMap(mapName,{dynamic:true,decorator});
-}
+    this.setMap(image,{dynamic:true,decorator});
+};
+World.prototype.loadSQLevel = async function(scriptName) {
+    const file = `sq-containers/${scriptName}`;
+    await ResourceManager.queueJSON(file + ".json").load();
+    if(!ResourceManager.hasJSON(file)) {
+        throw Error(`SQ container for map '${scriptName}' not found!`);
+    }
+
+    const data = ResourceManager.getJSON(file);
+    const mapName = data.map;
+    if(!mapName) {
+        throw Error("SQ container does not contain a map!");
+    }
+
+    const imageFile = `${IMAGE_MAPS_FOLDER}/${mapName}`;
+    await ResourceManager.queueImage(imageFile + ".png").load();
+    const image = ResourceManager.getImage(imageFile);
+    if(!image) {
+        throw Error("SQ map image not found!");
+    }
+
+    const decoratorName = data.decorator;
+    this.setDynamicMap(image,decoratorName);
+
+    const sqContainer = new SQContainer(this);
+    await sqContainer.import(data);
+
+    this.sqContainer = sqContainer;
+};
 World.prototype.validateParseOnlyMethod = function() {
     if(this.pendingScriptData !== null) return; ILLEGAL_SCRIPT_METHOD();
 };
