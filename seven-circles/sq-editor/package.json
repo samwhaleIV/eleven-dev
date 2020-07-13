@@ -1,0 +1,23 @@
+{
+  "name": "sq-editor",
+  "version": "1.0.0",
+  "description": "Sequence editor for Seven Circles.",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mistopportunity/eleven-dev.git"
+  },
+  "author": "mistopportunity",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/mistopportunity/eleven-dev/issues"
+  },
+  "homepage": "https://github.com/mistopportunity/eleven-dev#readme",
+  "dependencies": {
+    "electron": "^9.1.0"
+  }
+}

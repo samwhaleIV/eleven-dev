@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Sequence Editor",
+            "request": "launch",
+            "type": "node",
+            "program": "${workspaceRoot}/sq-editor/app.js",
+            "stopOnEntry": false,
+            "args": [], 
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/sq-editor/node_modules/.bin/electron.cmd"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Link Map Scripts (ScriptBook)",
