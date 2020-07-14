@@ -1,7 +1,9 @@
 const {ResourceManager} = Eleven;
 
-async function Deserialize(container,data) {
-    const {objects} = data;
+async function DeserializeAsync(container,data) {
+    const {map,decorator,objects} = data;
+    Object.assign(container,{map,decorator});
+
     const newObjects = [];
 
     for(const {type,data} of objects) {
@@ -15,4 +17,4 @@ async function Deserialize(container,data) {
         object.create(data);
     }
 }
-export default Deserialize;
+export default DeserializeAsync;

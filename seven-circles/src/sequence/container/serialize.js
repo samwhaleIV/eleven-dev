@@ -1,14 +1,17 @@
 function Serialize(sqContainer) {
     const {map,decorator} = sqContainer;
-    const containerFile = {map,decorator};
-    const data = [];
-    for(const object of Object.values(sqContainer.objects)) {
-        data.push({
+    const objects = [];
+
+    const objectsList = Object.values(sqContainer.objects);
+
+    for(const object of objectsList) {
+        objects.push({
             type: object.type,
             data: object.serialize()
         });
     }
-    containerFile.objects = data;
-    return JSON.stringify(containerFile,null,4);
+
+    const containerData = {map,decorator,objects};
+    return containerData;
 }
 export default Serialize;

@@ -10,9 +10,8 @@ function SQObject(container,self,type) {
     Object.assign(this,{
         container,self,type,parameterHeader
     });
-    const ID = container.getID();
-    container.objects[ID] = this;
-    this.ID = ID;
+    this.ID = container.getID();
+    container.objects[this.ID] = this;
 }
 
 SQObject.prototype.canLoadFiles = function() {
@@ -38,7 +37,11 @@ SQObject.prototype.delete = function() {
     delete this.container[this.ID];
 };
 SQObject.prototype.serialize = function() {
-    return this.self.save(this.parameterHeader);
+    const data = {};
+    for(const property in this.self.properties) {
+        data[property] = this.getProperty(property);
+    }
+    return data;
 };
 SQObject.prototype.getProperty = function(property) {
     return this.self.properties[property].get(this.parameterHeader);

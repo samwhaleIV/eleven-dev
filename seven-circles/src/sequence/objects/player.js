@@ -2,13 +2,8 @@ const Player = {
     width: 1, height: 1,
 
     files: `{"Image": ["player/default"]}`,
-    defaults: {x:0,y:0,direction:"down"},
+    defaults: `{"x":0,"y":0,"direction":"down"}`,
     sprite: null,
-
-    save: ({self}) => {
-        const {x,y,direction} = self.sprite;
-        return {x,y,direction};
-    },
 
     create: ({isEditor,world,self,files},data) => {
         const {x,y,direction} = data;

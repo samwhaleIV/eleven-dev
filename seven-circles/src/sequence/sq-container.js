@@ -1,44 +1,40 @@
-import Deserialize from "./container/deserialize.js";
+import DeserializeAsync from "./container/deserialize.js";
 import Serialize from "./container/serialize.js";
 import GetObject from "./objects.js";
 
-const orNull = value => value ? value : null;
-
-function SQContainer(world,isEditor) {
-    this.world = world;
-    this.objects = new Object();
-    this.isEditor = Boolean(isEditor);
-    this.IDCounter = 0;
+function SQContainer(world,isEditor = false) {
+    Object.assign(this,{
+        world, isEditor, objects: {},
+        IDCounter: 0, map: null, decorator: null
+    });
 }
 SQContainer.prototype.getID = function() {
-    const ID = this.IDCounter;
-    this.IDCounter += 1;
-    return ID;
+    return this.IDCounter++;
 };
 SQContainer.prototype.export = function() {
     return Serialize(this);
 };
-SQContainer.prototype.import = async function(data) {
-    this.map = orNull(data.map);
-    this.decorator = orNull(data.decorator);
-    await Deserialize(this,data);
+SQContainer.prototype.import = function(data) {
+    const deserializePromise = DeserializeAsync(this,data);
+    return deserializePromise;
 };
 SQContainer.prototype.clear = function() {
-    for(const object of Object.values(this.objects)) {
-        object.delete();
+    for(const ID in this.objects) {
+        this.objects[ID].delete();
     }
-};
-SQContainer.prototype.setMap = function() {
-    throw Error("Not implemented. This is for the editor.");
-};
-SQContainer.prototype.setDecorator = function() {
-    throw Error("Not implemented. This is for the editor.");
 };
 SQContainer.prototype.getObject = function(name) {
     return GetObject(this,name);
 };
-SQContainer.prototype.addObject = async function(name) {
+SQContainer.prototype.addObject = async function(name,data) {
     const object = this.getObject(name);
+    object.ID = this.getID();
+    this.objects[object.ID] = object;
+
     await object.loadFiles();
+
+    const defaults = JSON.parse(object.self.defaults);
+    data = Object.assign(defaults,data ? data : {});
+    object.create(data);
 };
 export default SQContainer;

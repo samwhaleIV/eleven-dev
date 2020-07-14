@@ -1,13 +1,8 @@
 const Placeholder = {
     width: 1, height: 1,
 
-    defaults: {x:0,y:0},
+    defaults: `{"x":0,"y":0}`,
     sprite: null,
-
-    save: ({self}) => {
-        const {x,y} = self.sprite;
-        return {x,y};
-    },
 
     create: ({world,self},data) => {
         const {x,y} = data;
