@@ -23,14 +23,15 @@ SQContainer.prototype.clear = function() {
         this.objects[ID].delete();
     }
 };
-SQContainer.prototype.getObject = function(name) {
-    return GetObject(this,name);
+SQContainer.prototype.getObject = function(ID) {
+    const object = this.objects[ID];
+    return object ? object : null;
+};
+SQContainer.prototype.getObjects = function() {
+    return Object.values(this.objects);
 };
 SQContainer.prototype.addObject = async function(name,data) {
-    const object = this.getObject(name);
-    object.ID = this.getID();
-    this.objects[object.ID] = object;
-
+    const object = GetObject(this,name);
     await object.loadFiles();
 
     const defaults = JSON.parse(object.self.defaults);

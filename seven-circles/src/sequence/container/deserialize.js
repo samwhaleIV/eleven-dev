@@ -1,3 +1,4 @@
+import GetObject from "../objects.js";
 const {ResourceManager} = Eleven;
 
 async function DeserializeAsync(container,data) {
@@ -7,7 +8,7 @@ async function DeserializeAsync(container,data) {
     const newObjects = [];
 
     for(const {type,data} of objects) {
-        const object = container.getObject(type);
+        const object = GetObject(container,type);
         newObjects.push({object,data});
 
         object.queueFiles();
