@@ -5,16 +5,16 @@
         {
             "type": "Player",
             "data": {
-                "x": 0.390625,
-                "y": 4.5703125,
-                "direction": 3
+                "x": 2.3046875,
+                "y": 2.53125,
+                "direction": "down"
             }
         },
         {
             "type": "Placeholder",
             "data": {
-                "x": 2,
-                "y": 1
+                "x": 0.8671875,
+                "y": 4.359375
             }
         }
     ]

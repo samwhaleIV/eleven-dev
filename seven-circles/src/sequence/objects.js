@@ -5,13 +5,16 @@ const FallbackType = Placeholder;
 
 const objects = {Player,Placeholder};
 
-const GetObject = (container,type) => {
+const GetObject = (container,type,overrideID) => {
     let baseObject = objects[type];
     if(!baseObject) {
         console.warn(`Object type '${type}' not found!`);
         baseObject = FallbackType;
     }
     const dataContainer = Object.assign({},baseObject);
-    return new SQObject(container,dataContainer,type);
+    return new SQObject(
+        container,dataContainer,type,overrideID
+    );
 };
 export default GetObject;
+

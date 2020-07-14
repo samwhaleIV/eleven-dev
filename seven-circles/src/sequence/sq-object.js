@@ -1,7 +1,7 @@
 const {ResourceManager} = Eleven;
 const previouslyLoadedTypes = {};
 
-function SQObject(container,self,type) {
+function SQObject(container,self,type,overrideID) {
     const {isEditor,world} = container;
     const parameterHeader = {
         self,container,isEditor,type,
@@ -10,8 +10,20 @@ function SQObject(container,self,type) {
     Object.assign(this,{
         container,self,type,parameterHeader
     });
-    this.ID = container.getID();
+    this.ID = !isNaN(overrideID) ? overrideID : container.getID();
+    const existingObject = container.objects[this.ID];
+    if(existingObject) {
+        existingObject.delete();
+    }
     container.objects[this.ID] = this;
+
+    for(const key in self.properties) {
+        Object.defineProperty(this,key,{
+            get: () => this.getProperty(key),
+            set: value => this.setProperty(key,value),
+            enumerable: true
+        });
+    }
 }
 
 SQObject.prototype.canLoadFiles = function() {
@@ -34,7 +46,7 @@ SQObject.prototype.create = function(data) {
 };
 SQObject.prototype.delete = function() {
     this.self.delete(this.parameterHeader);
-    delete this.container[this.ID];
+    delete this.container.objects[this.ID];
 };
 SQObject.prototype.serialize = function() {
     const data = {};

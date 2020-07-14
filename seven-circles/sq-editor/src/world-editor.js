@@ -5,6 +5,7 @@ import WindowDialog from "./window-dialog.js";
 import InstallContainer from "./components/container-manager.js";
 import InstallFileTracker from "./components/file-tracker.js";
 import InstallHandjob from "./components/hand-job.js";
+import GetObject from "../../src/sequence/objects.js";
 
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
@@ -24,7 +25,7 @@ const CommandRouting = {
 
     "edit-copy": "copy",
     "edit-paste": "paste",
-    "edit-cute": "cut"
+    "edit-cut": "cut"
 };
 
 const ControlCommands = {
@@ -97,7 +98,8 @@ function WorldEditor() {
 }
 
 function propertyActionProcessor(action) {
-    let {object,property,newValue,value,oldValue} = action;
+    let {objectID,property,newValue,value,oldValue} = action;
+    const object = this.container.getObject(objectID);
     if(!newValue && value) {
         action.newValue = value;
         newValue = value;
@@ -108,22 +110,36 @@ function propertyActionProcessor(action) {
     object.setProperty(property,newValue);
 }
 function propertyActionProcessorReverse(action) {
-    const {object,property,oldValue} = action;
+    const {objectID,property,oldValue} = action;
+    const object = this.container.getObject(objectID);
     object.setProperty(property,oldValue);
 }
 
 function deleteActionProcessor(action) {
-
+    const {objectID} = action;
+    const object = this.container.getObject(objectID);
+    const serialData = object.serialize();
+    action.serialData = serialData;
+    action.objectType = object.type;
+    object.delete();
 }
 function deleteActionProcessorReverse(action) {
-
+    const {objectID,objectType,serialData} = action;
+    const object = GetObject(this.container,objectType,objectID);
+    object.create(serialData);
 }
 
 function createActionProcessor(action) {
-
+    const {serialData,objectType} = action;
+    const objectID = this.container.IDCounter++;
+    action.objectID = objectID;
+    const object = GetObject(this.container,objectType,objectID);
+    object.create(serialData);
 }
 function createActionProcessorReverse(action) {
-
+    const {objectID} = action;
+    const object = this.container.getObject(objectID);
+    object.delete();
 }
 
 const actionProcessors = {
@@ -144,14 +160,20 @@ function getActionProcessor(type,reverse) {
     return actionProcessors[type][reverse ? "reverse" : "forward"];
 }
 
-function processAction(action,reverse) {
+WorldEditor.prototype.processAction = function(action,reverse) {
     const processor = getActionProcessor(action.type,reverse);
-    processor(action);
+    const {object} = action;
+    if(object) {
+        action.objectID = object.ID;
+        delete action.object;
+    }
+    processor.call(this,action);
 }
 
 WorldEditor.prototype.addEvents = function(actions) {
+    if(!actions.length) return;
     for(const action of actions) {
-        processAction(action,false);
+        this.processAction(action,false);
     }
     this.undoStack.push(actions);
     this.redoStack.splice(0);
@@ -162,7 +184,7 @@ WorldEditor.prototype.undo = function() {
     if(!this.undoStack.length) return;
     const eventStack = this.undoStack.pop();
     for(const action of eventStack) {
-        processAction(action,true);
+        this.processAction(action,true);
     }
     this.redoStack.push(eventStack);
     this.unsaved = true;
@@ -172,7 +194,7 @@ WorldEditor.prototype.redo = function() {
     if(!this.redoStack.length) return;
     const eventStack = this.redoStack.pop();
     for(const action of eventStack) {
-        processAction(action,false);
+        this.processAction(action,false);
     }
     this.undoStack.push(eventStack);
     this.unsaved = true;
@@ -248,8 +270,10 @@ WorldEditor.prototype.newFile = async function() {
 };
 WorldEditor.prototype.installKeyHandlers = function() {
     const handleControl = (code,shiftKey,repeat) => {
-        if(repeat) return;
         const command = ControlCommands[shiftKey ? `Shift${code}` : code];
+        if(repeat && !(
+            command === "edit-undo" || command === "edit-redo"
+        )) return;
         if(command) IPCCommands.sendCommand(command);
     };
 
