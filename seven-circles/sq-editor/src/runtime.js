@@ -1,11 +1,10 @@
-import FileSystem from "./file-system.js";
-console.log("Hello, world!");
+import WorldEditor from "./world-editor.js";
 
-const {ResourceManager} = Eleven;
+const {CanvasManager} = Eleven;
 
-(async () => {
-    for(const container of FileSystem.getContainers()) {
-        ResourceManager.queueJSON(`sq-containers/${container}`);
-    }
-    await ResourceManager.load();
-})();
+const loadEditor = async () => {
+    await CanvasManager.setFrame(WorldEditor);
+    CanvasManager.start();
+    globalThis.world = CanvasManager.frame;
+};
+loadEditor();

@@ -20,5 +20,6 @@ const FileSystem = new (function(){
         return containers
     };
 })();
+globalThis.FileSystem = FileSystem;
 
 export default FileSystem;
