@@ -15,7 +15,7 @@ function SQContainer(world,isEditor = false) {
     this.frozenEventBuffer = {};
     this.eventsFrozen = false;
 
-    let map, decorator;
+    let map = null, decorator = null;
     Object.defineProperties(this,{
         map: {
             get: () => map,

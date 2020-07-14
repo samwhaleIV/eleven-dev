@@ -47,14 +47,18 @@ const menuActions = {
         ["Open","Control+O","file-open"],
         ["New","Control+N","file-new"],
         ["Save","Control+S","file-save"],
-        ["Save As","Control+Shift+S","file-save-as"]
+        ["Save As...","Control+Shift+S","file-save-as"]
     ],
     Edit: [
         ["Undo","Control+Z","edit-undo"],
         ["Redo","Control+R","edit-redo"],
         {type: "separator"},
         ["Select All","Control+A","edit-select-all"],
-        ["Delete","Backspace","edit-delete"]
+        ["Delete","Backspace","edit-delete"],
+        {type: "separator"},
+        ["Copy","Control+C","edit-copy"],
+        ["Cut","Control+X","edit-cut"],
+        ["Paste","Control+V","edit-past"]
     ]
 };
 

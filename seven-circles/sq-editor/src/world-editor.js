@@ -4,6 +4,7 @@ import IPCCommands from "./ipc-commands.js";
 import WindowDialog from "./window-dialog.js";
 import InstallContainer from "./components/container-manager.js";
 import InstallFileTracker from "./components/file-tracker.js";
+import InstallHandjob from "./components/hand-job.js";
 
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
@@ -17,8 +18,13 @@ const CommandRouting = {
 
     "edit-undo": "undo",
     "edit-redo": "redo",
+
     "edit-select-all": "selectAll",
-    "edit-delete": "deleteSelection"
+    "edit-delete": "deleteSelection",
+
+    "edit-copy": "copy",
+    "edit-paste": "paste",
+    "edit-cute": "cut"
 };
 
 const ControlCommands = {
@@ -29,7 +35,12 @@ const ControlCommands = {
 
     "KeyZ": "edit-undo",
     "KeyR": "edit-redo",
-    "KeyA": "edit-select-all"
+
+    "KeyA": "edit-select-all",
+
+    "KeyC": "edit-copy",
+    "KeyV": "edit-paste",
+    "KeyX": "edit-cut"
 };
 const NonControlCommands = {
     "Backspace": {
@@ -76,10 +87,96 @@ function WorldEditor() {
         this.tileset = ResourceManager.getImage(TILESET);
 
         InstallContainer(this);
+        InstallHandjob(this);
     };
+
+    this.undoStack = [];
+    this.redoStack = [];
 
     InstallFileTracker(this);
 }
+
+function propertyActionProcessor(action) {
+    let {object,property,newValue,value,oldValue} = action;
+    if(!newValue && value) {
+        action.newValue = value;
+        newValue = value;
+    }
+    if(!oldValue) {
+        action.oldValue = object.getProperty(property);
+    }
+    object.setProperty(property,newValue);
+}
+function propertyActionProcessorReverse(action) {
+    const {object,property,oldValue} = action;
+    object.setProperty(property,oldValue);
+}
+
+function deleteActionProcessor(action) {
+
+}
+function deleteActionProcessorReverse(action) {
+
+}
+
+function createActionProcessor(action) {
+
+}
+function createActionProcessorReverse(action) {
+
+}
+
+const actionProcessors = {
+    property: {
+        forward: propertyActionProcessor,
+        reverse: propertyActionProcessorReverse
+    },
+    create: {
+        forward: createActionProcessor,
+        reverse: createActionProcessorReverse
+    },
+    delete: {
+        forward: deleteActionProcessor,
+        reverse: deleteActionProcessorReverse
+    }
+};
+function getActionProcessor(type,reverse) {
+    return actionProcessors[type][reverse ? "reverse" : "forward"];
+}
+
+function processAction(action,reverse) {
+    const processor = getActionProcessor(action.type,reverse);
+    processor(action);
+}
+
+WorldEditor.prototype.addEvents = function(actions) {
+    for(const action of actions) {
+        processAction(action,false);
+    }
+    this.undoStack.push(actions);
+    this.redoStack.splice(0);
+    this.unsaved = true;
+};
+
+WorldEditor.prototype.undo = function() {
+    if(!this.undoStack.length) return;
+    const eventStack = this.undoStack.pop();
+    for(const action of eventStack) {
+        processAction(action,true);
+    }
+    this.redoStack.push(eventStack);
+    this.unsaved = true;
+};
+
+WorldEditor.prototype.redo = function() {
+    if(!this.redoStack.length) return;
+    const eventStack = this.redoStack.pop();
+    for(const action of eventStack) {
+        processAction(action,false);
+    }
+    this.undoStack.push(eventStack);
+    this.unsaved = true;
+};
 
 WorldEditor.prototype.resetMap = function() {
     this.container.clear();
@@ -181,21 +278,16 @@ WorldEditor.prototype.installCommandHandlers = function() {
 WorldEditor.prototype.setAction = function(name,handler) {
     this.actions[name] = handler;
 };
-WorldEditor.prototype.undo = function() {
-    const action = this.actions["undo"];
+WorldEditor.prototype.sendAction = function(name) {
+    const action = this.actions[name];
     if(action) action();
 };
-WorldEditor.prototype.redo = function() {
-    const action = this.actions["redo"];
-    if(action) action();
-};
-WorldEditor.prototype.selectAll = function() {
-    const action = this.actions["selectAll"];
-    if(action) action();
-};
-WorldEditor.prototype.deleteSelection = function() {
-    const action = this.actions["deleteSelection"];
-    if(action) action();
-};
+
+WorldEditor.prototype.selectAll = function() {this.sendAction("selectAll")};
+WorldEditor.prototype.deleteSelection = function() {this.sendAction("deleteSelection")};
+
+WorldEditor.prototype.paste = function() {this.sendAction("paste")};
+WorldEditor.prototype.copy = function() {this.sendAction("copy")};
+WorldEditor.prototype.cut = function() {this.sendAction("cut")};
 
 export default WorldEditor;
