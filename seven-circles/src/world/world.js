@@ -312,7 +312,9 @@ World.prototype.setLevel = async function(script,data,runStartScript=true) {
 
     this.scriptData = data;
 
-    if(script.sqLevel) await this.loadSQLevel(scriptName);
+    if(script.sqContainer) {
+        await this.loadSQLevel(script.sqContainer);
+    }
 
     script = new script(data); this.script = script;
 
@@ -497,11 +499,11 @@ World.prototype.setDynamicMap = async function(image,decoratorName) {
     const decorator = GetDecorator(operations);
     this.setMap(image,{dynamic:true,decorator});
 };
-World.prototype.loadSQLevel = async function(scriptName) {
-    const file = `sq-containers/${scriptName}`;
+World.prototype.loadSQLevel = async function(containerName) {
+    const file = `sq-containers/${containerName}`;
     await ResourceManager.queueJSON(file + ".json").load();
     if(!ResourceManager.hasJSON(file)) {
-        throw Error(`SQ container for map '${scriptName}' not found!`);
+        throw Error(`SQ container for map '${containerName}' not found!`);
     }
 
     const data = ResourceManager.getJSON(file);

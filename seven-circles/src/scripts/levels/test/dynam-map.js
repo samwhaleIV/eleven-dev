@@ -4,5 +4,6 @@ function DynamMap({world}) {
     AddNamedBackground(world,"hell");
 }
 
-DynamMap.sqLevel = true;
+DynamMap.sqContainer = "DynamMap";
+
 export default DynamMap;
