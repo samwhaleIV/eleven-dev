@@ -15,7 +15,7 @@ function SQObject(container,self,type) {
 }
 
 SQObject.prototype.canLoadFiles = function() {
-    if(!self.files || type in previouslyLoadedTypes) return;
+    return this.self.files && !(this.type in previouslyLoadedTypes);
 };
 SQObject.prototype.loadFiles = async function() {
     if(!this.canLoadFiles()) return;

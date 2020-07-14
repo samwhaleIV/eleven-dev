@@ -11,7 +11,8 @@ function createWindow() {
         backgroundColor: "black",
         backgroundThrottling: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     });
     mainWindow.loadURL(URL);

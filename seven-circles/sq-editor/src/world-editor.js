@@ -1,6 +1,13 @@
-const {Grid2D,DispatchRenderer,SpriteLayer} = Eleven;
+const {Grid2D,DispatchRenderer,SpriteLayer,ResourceManager} = Eleven;
+
 import IPCCommands from "./ipc-commands.js";
-import SQContainer from "../../src/sequence/sq-container.js";
+import WindowDialog from "./window-dialog.js";
+import InstallContainer from "./components/container-manager.js";
+import InstallFileTracker from "./components/file-tracker.js";
+
+const TILESET = "world-tileset";
+const DEFAULT_SCALE = 8;
+const MIDDLE_GRAY = "#777777";
 
 const CommandRouting = {
     "file-save": "save",
@@ -32,52 +39,116 @@ const NonControlCommands = {
 };
 
 function WorldEditor() {
-
     const dispatchRenderer = new DispatchRenderer();
+    
+    dispatchRenderer.addBackground((context,size)=>{
+        context.fillStyle = MIDDLE_GRAY;
+        context.fillRect(0,0,size.width,size.height);
+    });
+
     const grid = new Grid2D();
+    const {camera} = grid;
+    camera.scale = DEFAULT_SCALE;
 
     grid.renderer = dispatchRenderer;
     grid.bindToFrame(this);
+    this.resize = data => {
+        data.context.imageSmoothingEnabled = false;
+        grid.resize(data);
+    };
+
+    this.tileset = null;
 
     const spriteLayer = new SpriteLayer(grid);
     dispatchRenderer.addUpdate(spriteLayer.update);
     dispatchRenderer.addRender(spriteLayer.render);
 
-    Object.assign(this,{spriteLayer,dispatchRenderer,grid});
+    const actions = {};
+    Object.assign(this,{
+        spriteLayer,dispatchRenderer,grid,camera,actions
+    });
 
-    this.load = () => {
+    this.load = async () => {
         this.installCommandHandlers();
         this.installKeyHandlers();
 
-        this.container = new SQContainer(this,true);
+        await ResourceManager.queueImage(TILESET).load();
+        this.tileset = ResourceManager.getImage(TILESET);
+
+        InstallContainer(this);
     };
+
+    InstallFileTracker(this);
 }
 
-WorldEditor.prototype.save = function() {
-    console.log("Save");
-};
-WorldEditor.prototype.saveAs = function() {
-    console.log("Save as");
-};
-WorldEditor.prototype.undo = function() {
-    console.log("Undo");
-};
-WorldEditor.prototype.redo = function() {
-    console.log("Redo");
-};
-WorldEditor.prototype.openFile = function() {
-    console.log("Open file");
-};
-WorldEditor.prototype.newFile = function() {
-    console.log("New file");
-};
-WorldEditor.prototype.selectAll = function() {
-    console.log("Select all");
-};
-WorldEditor.prototype.deleteSelection = function() {
-    console.log("Delete selection");
-};
+WorldEditor.prototype.resetMap = function() {
+    this.container.clear();
+    this.container.map = null;
 
+    this.camera.reset();
+    this.camera.x = 2, this.camera.y = 2;
+    this.camera.scale = DEFAULT_SCALE;
+};
+WorldEditor.prototype.save = async function() {
+    if(!this.unsaved) return true;
+
+    let path;
+    if(!this.hasRealPath) {
+        const {canceled,filePath} = await WindowDialog.saveAs();
+        if(canceled) return false;
+        path = filePath;
+    } else {
+        path = this.filePath;
+    }
+
+    const exportData = this.container.export();
+    await FileSystem.writeFile(path,JSON.stringify(exportData,null,4));
+    this.unsaved = false;
+
+    return true;
+};
+WorldEditor.prototype.saveAs = async function() {
+    const {canceled,filePath} = await WindowDialog.saveAs();
+    if(canceled) return;
+    this.filePath = filePath;
+    this.unsaved = true;
+    this.hasRealPath = true;
+    await this.save();
+};
+WorldEditor.prototype.openFile = async function() {
+    if(!(await this.fileChangeCanContinue())) return;
+
+    const {canceled,filePath} = await WindowDialog.selectFile();
+    if(canceled) return;
+
+    const fileData = await FileSystem.readFile(filePath);
+    this.filePath = filePath;
+    this.unsaved = false;
+    this.hasRealPath = true;
+
+    this.resetMap();
+    this.container.import(JSON.parse(fileData));
+};
+WorldEditor.prototype.fileChangeCanContinue = async function() {
+    if(this.unsaved) {
+        if(await WindowDialog.prompt("Would you like to save your unsaved changes?")) {
+            const didSave = await this.save();
+            if(!didSave) return false;
+        }
+    }
+    return true;
+};
+WorldEditor.prototype.newFile = async function() {
+    const setDefault = () => {
+        this.resetMap();
+        this.filePath = "Untitled.json";
+        this.unsaved = false;
+        this.hasRealPath = false;
+    };
+    if(this.filePath === null || await this.fileChangeCanContinue()) {
+        setDefault();
+    }
+};
 WorldEditor.prototype.installKeyHandlers = function() {
     const handleControl = (code,shiftKey,repeat) => {
         if(repeat) return;
@@ -107,4 +178,24 @@ WorldEditor.prototype.installCommandHandlers = function() {
         IPCCommands.setHandler(command,this[target].bind(this));
     }
 };
+WorldEditor.prototype.setAction = function(name,handler) {
+    this.actions[name] = handler;
+};
+WorldEditor.prototype.undo = function() {
+    const action = this.actions["undo"];
+    if(action) action();
+};
+WorldEditor.prototype.redo = function() {
+    const action = this.actions["redo"];
+    if(action) action();
+};
+WorldEditor.prototype.selectAll = function() {
+    const action = this.actions["selectAll"];
+    if(action) action();
+};
+WorldEditor.prototype.deleteSelection = function() {
+    const action = this.actions["deleteSelection"];
+    if(action) action();
+};
+
 export default WorldEditor;

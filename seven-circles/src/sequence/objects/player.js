@@ -12,9 +12,10 @@ const Player = {
         if(!isEditor) {
             sprite = world.addPlayer(x,y);
         } else {
-            sprite = world.addNPC(
-                x,y,files.getImage("player/default")
+            sprite = new Eleven.AnimatedSprite(
+                files.getImage("player/default"),x,y
             );
+            world.spriteLayer.add(sprite);
         }
         sprite.direction = direction;
         self.sprite = sprite;

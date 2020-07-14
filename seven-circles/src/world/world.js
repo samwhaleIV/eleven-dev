@@ -3,7 +3,6 @@ import Constants from "../constants.js";
 import ScriptBook from "../scripts/script-book.js";
 import ZIndexBook from "./z-indices.js";
 import FaderList from "./fader-list.js";
-import Template from "../dynamic-map/template.js";
 import GetDecorator from "../dynamic-map/get-decorator.js";
 import Decorators from "../dynamic-map/decorators.js";
 import SQContainer from "../sequence/sq-container.js";
@@ -418,7 +417,7 @@ World.prototype.getGridTileRenderer = function(mapName) {
 World.prototype.getImageTileRenderer = function(
     image,decorator,tileMap
 ) {
-    const decoratorData = decorator({image,template:new Template(image)});
+    const decoratorData = decorator(image);
     image = decoratorData.image;
 
     const tileCollision = decoratorData.tileCollision;

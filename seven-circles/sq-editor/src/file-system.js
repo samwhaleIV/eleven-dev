@@ -3,22 +3,30 @@ const path = require("path");
 
 const FileSystem = new (function(){
     const containerFolder = __dirname.split("sq-editor\\")[0] + "resources/data/sq-containers/";
+    this.containerFolder = containerFolder;
 
-    this.saveContainer = (name,data) => {
+    this.readFile = path => {
+        return new Promise((resolve,reject) => {
+            fs.readFile(path,"utf8",function(err,data) {
+                if(err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    data = data.toString();
+                    resolve(data);
+                }
+            })
+        });
+    };
+
+    this.writeFile = (path,data) => {
         return new Promise(resolve => {
             data = new Uint8Array(Buffer.from(data));
-            fs.writeFile(`${containerFolder}${name}.json`,data,resolve);
+            fs.writeFile(path,data,resolve);
         });
     };
 
-    this.getContainers = () => {
-        const containers = [];
-        fs.readdirSync(containerFolder).forEach(file => {
-            const containerName = path.basename(file,".json");
-            containers.push(containerName);
-        });
-        return containers
-    };
+    this.baseName = filePath => path.basename(filePath);
 })();
 globalThis.FileSystem = FileSystem;
 
