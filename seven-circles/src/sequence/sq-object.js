@@ -69,10 +69,10 @@ SQObject.prototype.setProperty = function(property,value) {
     this.self.properties[property].set(this.parameterHeader,value);
     this.watchers[property].fire(value);
 };
-SQObject.prototype.watchProperty = function(property,handler) {
+SQObject.prototype.addPropertyWatcher = function(property,handler) {
     return this.watchers[property].add(handler);
 };
-SQObject.prototype.unwatchProperty = function(property,ID) {
+SQObject.prototype.removePropertyWatcher = function(property,ID) {
     this.watchers[property].remove(ID);
 };
 SQObject.prototype.getProperties = function() {

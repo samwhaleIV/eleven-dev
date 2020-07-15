@@ -2,48 +2,31 @@ import GetSafeColor from "./color-safety.js";
 const element = document.getElementById("property-editor");
 const propertyContainer = element.querySelector("div.properties");
 
-const KnownNames = {
-    "x": "X",
-    "y": "Y",
-    "direction": "Direction",
-    "color": "Color"
-};
-
-const KnownTypes = {
-    "x": "number",
-    "y": "number",
-    "color": "color",
-    "direction": "number"
-};
+import {KnownNames,KnownTypes} from "../property-parsing.js";
 
 const ValidInputTypes = {
-    "text": true,
-    "number": true,
-    "color": true,
-    "checkbox": true
+    "text": true, "number": true,
+    "color": true, "checkbox": true
 };
 
-let panelUpdaterID = null;
-
-const propertyWatchers = [];
-const addPropertyWatcher = (object,property,handler) => {
-    const ID = object.watchProperty(property,handler);
-    propertyWatchers.push({ID,object,property});
+const addPropertyWatcher = (world,object,property,handler) => {
+    const ID = object.addPropertyWatcher(property,handler);
+    world.propertyWatchers.push({ID,object,property});
 };
 
 const clearProperties = world => {
     element.classList.add("hidden");
-    if(panelUpdaterID !== null) {
-        world.dispatchRenderer.removeFinalize(panelUpdaterID);
-        panelUpdaterID = null;
+    if(world.panelUpdaterID !== null) {
+        world.dispatchRenderer.removeFinalize(world.panelUpdaterID);
+        world.panelUpdaterID = null;
     };
     while(propertyContainer.lastChild) {
         propertyContainer.removeChild(propertyContainer.lastChild);
     }
-    for(const {ID,object,property} of propertyWatchers) {
-        object.unwatchProperty(property,ID);
+    for(const {ID,object,property} of world.propertyWatchers) {
+        object.removePropertyWatcher(property,ID);
     }
-    propertyWatchers.splice(0);
+    world.propertyWatchers.splice(0);
 };
 const getPropertyDisplayName = (key,data) => {
     if(data.name) {
@@ -121,7 +104,9 @@ const getPropertyElement = (
         input[valueProperty] = newValue;
     };
 
-    addPropertyWatcher(object,key,updatePropertyDisplay);
+    addPropertyWatcher(
+        world,object,key,updatePropertyDisplay
+    );
     updatePropertyDisplay(object.getProperty(key));
 
     wrapper.appendChild(inputLabel);
@@ -158,12 +143,13 @@ const installProperties = object => {
             element.style.left = Math.floor(location.x) + "px";
             element.style.top = Math.floor(location.y) + "px";
         };
-        panelUpdaterID = world.dispatchRenderer.addFinalize(updateLocation);
+        world.panelUpdaterID = world.dispatchRenderer.addFinalize(updateLocation);
     }
 };
 
 function InstallPropertyEditor(world) {
     let item = null, hasItem = false;
+    world.propertyWatchers = [];
     world.selectionChanged = newItem => {
         item = newItem;
         hasItem = item !== null;
