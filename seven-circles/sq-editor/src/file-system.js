@@ -2,8 +2,12 @@ const fs = require("fs");
 const path = require("path");
 
 const FileSystem = new (function(){
-    const containerFolder = __dirname.split("sq-editor\\")[0] + "resources/data/sq-containers/";
-    this.containerFolder = containerFolder;
+    const resourceRoot = __dirname.split("sq-editor\\")[0] + "resources\\";
+
+    const containerFolder = resourceRoot + "data\\sq-containers\\";
+    const mapImageFolder = resourceRoot + "images\\maps\\";
+
+    Object.assign(this,{containerFolder,mapImageFolder});
 
     this.readFile = path => {
         return new Promise((resolve,reject) => {
@@ -26,7 +30,7 @@ const FileSystem = new (function(){
         });
     };
 
-    this.baseName = filePath => path.basename(filePath);
+    this.baseName = (filePath,extestion) => path.basename(filePath,extestion);
 })();
 globalThis.FileSystem = FileSystem;
 

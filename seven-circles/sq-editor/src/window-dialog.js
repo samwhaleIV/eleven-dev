@@ -18,6 +18,17 @@ const WindowDialog = new (function() {
         return Object.assign(result,{filePath:result.filePaths[0]});
     };
 
+    this.selectMapImage = async () => {
+        const result = await dialog.showOpenDialog(getWindow(),{
+            title: "Select Map",
+            buttonLabel: "Select",
+            defaultPath: FileSystem.mapImageFolder,
+            filters: [{name: "PNG Image", extensions: ["png"]}],
+            properties: ["openFile","dontAddToRecent"]
+        });
+        return Object.assign(result,{filePath:result.filePaths[0]});
+    };
+
     this.saveAs = async () => {
         const result = await dialog.showSaveDialog(getWindow(),{
             title: "Save Container",
@@ -27,6 +38,19 @@ const WindowDialog = new (function() {
             properties: ["dontAddToRecent"]
         });
         return result;
+    };
+
+    this.alert = async text => {
+        return dialog.showMessageBox(getWindow(),{
+            title: "Sequence",
+            type: "info",
+            message: text,
+            defaultId: 0,
+            cancelId: 0,
+            normalizeAccessKeys: false,
+            noLink: false,
+            buttons: ["Okay"]
+        });
     };
 
     this.prompt = async text => {

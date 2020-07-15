@@ -6,6 +6,7 @@ import InstallContainer from "./components/container-manager.js";
 import InstallFileTracker from "./components/file-tracker.js";
 import InstallHandjob from "./components/hand-job.js";
 import GetObject from "../../src/sequence/objects.js";
+import {DecoratorList} from "../../src/dynamic-map/decorators.js";
 
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
@@ -25,7 +26,10 @@ const CommandRouting = {
 
     "edit-copy": "copy",
     "edit-paste": "paste",
-    "edit-cut": "cut"
+    "edit-cut": "cut",
+
+    "set-map": "selectMapImage",
+    "cycle-decorator": "cycleDecorator"
 };
 
 const ControlCommands = {
@@ -43,9 +47,18 @@ const ControlCommands = {
     "KeyV": "edit-paste",
     "KeyX": "edit-cut"
 };
+
 const NonControlCommands = {
     "Backspace": {
         command: "edit-delete",
+        canRepeat: false
+    },
+    "KeyD": {
+        command: "cycle-decorator",
+        canRepeat: false
+    },
+    "KeyM": {
+        command: "set-map",
         canRepeat: false
     }
 };
@@ -209,7 +222,13 @@ WorldEditor.prototype.resetMap = function() {
     this.camera.scale = DEFAULT_SCALE;
 };
 WorldEditor.prototype.save = async function() {
-    if(!this.unsaved) return true;
+    if(!this.unsaved) {
+        if(!this.hasRealPath) {
+            return this.saveAs();
+        } else {
+            return true;
+        }
+    }
 
     let path;
     if(!this.hasRealPath) {
@@ -228,11 +247,11 @@ WorldEditor.prototype.save = async function() {
 };
 WorldEditor.prototype.saveAs = async function() {
     const {canceled,filePath} = await WindowDialog.saveAs();
-    if(canceled) return;
+    if(canceled) return false;
     this.filePath = filePath;
     this.unsaved = true;
     this.hasRealPath = true;
-    await this.save();
+    return await this.save();
 };
 WorldEditor.prototype.openFile = async function() {
     if(!(await this.fileChangeCanContinue())) return;
@@ -250,7 +269,7 @@ WorldEditor.prototype.openFile = async function() {
 };
 WorldEditor.prototype.fileChangeCanContinue = async function() {
     if(this.unsaved) {
-        if(await WindowDialog.prompt("Would you like to save your unsaved changes?")) {
+        if(await WindowDialog.prompt("Would you like to save your changes?")) {
             const didSave = await this.save();
             if(!didSave) return false;
         }
@@ -258,14 +277,17 @@ WorldEditor.prototype.fileChangeCanContinue = async function() {
     return true;
 };
 WorldEditor.prototype.newFile = async function() {
-    const setDefault = () => {
+    const setDefault = async () => {
         this.resetMap();
         this.filePath = "Untitled.json";
         this.unsaved = false;
         this.hasRealPath = false;
+        if(!this.container.map) {
+            await this.selectMapImage();
+        }
     };
     if(this.filePath === null || await this.fileChangeCanContinue()) {
-        setDefault();
+        await setDefault();
     }
 };
 WorldEditor.prototype.installKeyHandlers = function() {
@@ -313,5 +335,37 @@ WorldEditor.prototype.deleteSelection = function() {this.sendAction("deleteSelec
 WorldEditor.prototype.paste = function() {this.sendAction("paste")};
 WorldEditor.prototype.copy = function() {this.sendAction("copy")};
 WorldEditor.prototype.cut = function() {this.sendAction("cut")};
+
+WorldEditor.prototype.cycleDecorator = function() {
+    const {container} = this;
+    const currentDecorator = container.decorator || "none";
+
+    let index = DecoratorList.indexOf(currentDecorator);
+    if(index < 0) {
+        index = 0;
+    } else {
+        index += 1;
+    }
+    if(index >= currentDecorator.length) index = 0;
+
+    container.decorator = DecoratorList[index];
+    this.unsaved = true;
+};
+WorldEditor.prototype.selectMapImage = async function() {
+    if(!this.filePath) {
+        await this.newFile();
+        return;
+    }
+    const {canceled,filePath} = await WindowDialog.selectMapImage();
+    if(canceled) return;
+    if(!filePath.startsWith(FileSystem.mapImageFolder)) {
+        await WindowDialog.alert("Map image must be located in 'resources/images/maps' folder!");
+        return;
+    }
+    const mapName = FileSystem.baseName(filePath,".png");
+    this.container.map = mapName;
+
+    this.unsaved = true;
+};
 
 export default WorldEditor;

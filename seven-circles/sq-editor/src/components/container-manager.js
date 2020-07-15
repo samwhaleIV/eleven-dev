@@ -9,7 +9,7 @@ function InstallContainer(target) {
     target.container = container;
     const {dispatchRenderer,grid} = target;
 
-    let decorator = Decorators.none, map = null, backgroundID = null;
+    let decorator = null, map = null, backgroundID = null;
 
     const setBackground = image => {
         if(backgroundID !== null) {
@@ -51,6 +51,8 @@ function InstallContainer(target) {
         decorator = GetDecorator(operations);
         paintMap();
     };
+
+    setDecorator("none");
 
     container.on("map-changed",async map => {
         if(!map) {

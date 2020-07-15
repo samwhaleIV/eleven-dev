@@ -59,6 +59,10 @@ const menuActions = {
         ["Copy","Control+C","edit-copy"],
         ["Cut","Control+X","edit-cut"],
         ["Paste","Control+V","edit-past"]
+    ],
+    Map: [
+        ["Select Map","M","set-map"],
+        ["Cycle Decorator","D","cycle-decorator"]
     ]
 };
 

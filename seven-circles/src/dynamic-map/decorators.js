@@ -9,6 +9,16 @@ const TheOG = ({image}) => [
     ["Shadow",2,3,3,3/5],
     ["CollisionMap",3]
 ];
+const c2 = () => [
+    ["Color",1,"#980404"],
+    ["Outline",1,"#740303"],
+    ["Color",2,"#3C0101"],
+    ["Color",3,"#F70000"],
+    ["Outline",3,"#C60000"],
+    ["Shadow",1,3,4,3/5],
+    ["Shadow",2,3,4,3/5],
+    ["CollisionMap",3]
+];
 
 const Decorators = {
     none: () => [
@@ -20,15 +30,11 @@ const Decorators = {
     c1: TheOG,
     og: TheOG,
     classic: TheOG,
-    c2: () => [
-        ["Color",1,"#980404"],
-        ["Outline",1,"#740303"],
-        ["Color",2,"#3C0101"],
-        ["Color",3,"#F70000"],
-        ["Outline",3,"#C60000"],
-        ["Shadow",1,3,4,3/5],
-        ["Shadow",2,3,4,3/5],
-        ["CollisionMap",3]
-    ]
+    c2: c2
 };
+
+const DecoratorList = [
+    "none","classic","c2"
+];
 export default Decorators;
+export {Decorators, DecoratorList};
