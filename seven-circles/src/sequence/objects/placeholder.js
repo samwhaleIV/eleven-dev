@@ -1,22 +1,34 @@
 const Placeholder = {
     width: 1, height: 1,
 
-    defaults: `{"x":0,"y":0}`,
+    defaults: `{"x":0,"y":0,"color":"blue","square":true}`,
     sprite: null,
 
     create: ({world,self},data) => {
-        const {x,y} = data;
+        const {x,y,color,square} = data;
 
         const sprite = new (function(x,y) {
             this.x = x, this.y = y;
-            this.width = self.width, this.height = self.height;
+
+            this.width = self.width;
+            this.height = self.height;
+
+            this.color = color;
             this.collides = true;
+            this.square = square;
+
             this.interact = () => {
-                world.message("I am a placeholder square!");
+                world.message(`I am a placeholder ${this.square ? "square" : "circle"}!`);
             };
             this.render = (context,x,y,width,height) => {
-                context.fillStyle = "blue";
-                context.fillRect(x,y,width,height);
+                context.fillStyle = this.color;
+                if(this.square) {
+                    context.fillRect(x,y,width,height);
+                } else {
+                    context.beginPath();
+                    context.arc(x+width/2,y+height/2,width/2,0,Math.PI*2);
+                    context.fill();
+                }
             };
         })(x,y);
 
@@ -36,7 +48,7 @@ const Placeholder = {
             },
             set: ({self},value) => {
                 self.sprite.x = value;
-            }
+            },
         },
         y: {
             get: ({self}) => {
@@ -44,6 +56,23 @@ const Placeholder = {
             },
             set: ({self},value) => {
                 self.sprite.y = value;
+            }
+        },
+        color: {
+            get: ({self}) => {
+                return self.sprite.color
+            },
+            set: ({self},value) => {
+                self.sprite.color = value;
+            }
+        },
+        square: {
+            name: "Square",
+            get: ({self}) => {
+                return self.sprite.square;
+            },
+            set: ({self},value) => {
+                self.sprite.square = value;
             }
         }
     }

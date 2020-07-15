@@ -26,18 +26,33 @@ function ObjectPlacer(world) {
         }
     };
 
-    world.singleItemSelection = null;
-
+    let lastSelection = null;
     const updateSelectionRenderData = () => {
         selectionRenderData = Object.keys(selectionData);
+        let singleItem;
         if(selectionRenderData.length === 1) {
-            world.singleItemSelection = selectionRenderData[0];
+            singleItem = container.getObject(selectionRenderData[0]);
         } else {
-            world.singleItemSelection = null;
+           singleItem = null;
+        }
+        if(singleItem) {
+            if(lastSelection) {
+                lastSelection.onDelete = null;
+            }
+            lastSelection = null;
+            singleItem.onDelete = () => {
+                world.selectionChanged(null);
+            };
+            lastSelection = singleItem;
         }
         if(world.selectionChanged) {
-            world.selectionChanged(world.singleItemSelection);
+            world.selectionChanged(singleItem);
         }
+    };
+
+    world.objectIDReused = () => {
+        if(lastSelection === null) return;
+        updateSelectionRenderData();
     };
 
     const removeFromSelection = object => {
@@ -120,12 +135,10 @@ function ObjectPlacer(world) {
         selectionEnd.x = x, selectionEnd.y = y; 
         
         if(ctrlKey) {
-            if(!object) return;
-            if(inSelection(object)) {
-                removeFromSelection(object);
-            } else {
-                addToSelection(object,shiftKey);
+            if(!object) {
+                return;
             }
+            addToSelection(object,shiftKey);
         } else {
             clearSelection();
             if(object) {

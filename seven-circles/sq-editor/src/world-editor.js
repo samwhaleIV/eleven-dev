@@ -126,7 +126,7 @@ function WorldEditor() {
 function propertyActionProcessor(action) {
     let {objectID,property,newValue,value,oldValue} = action;
     const object = this.container.getObject(objectID);
-    if(!newValue && value) {
+    if(!newValue && value !== undefined) {
         action.newValue = value;
         newValue = value;
     }
@@ -153,19 +153,20 @@ function deleteActionProcessorReverse(action) {
     const {objectID,objectType,serialData} = action;
     const object = GetObject(this.container,objectType,objectID);
     object.create(serialData);
+    if(this.objectIDReused) this.objectIDReused(objectID);
 }
 
 function createActionProcessor(action) {
-    const {serialData,objectType} = action;
-    const objectID = this.container.IDCounter++;
-    action.objectID = objectID;
+    const {serialData,objectType,beenHereBeforeID} = action;
+    let objectID;
+    if(beenHereBeforeID) {
+        objectID = beenHereBeforeID;
+    } else {
+        objectID = this.container.IDCounter++;
+    }
+    action.objectID = objectID, action.beenHereBeforeID = objectID;
     const object = GetObject(this.container,objectType,objectID);
     object.create(serialData);
-}
-function createActionProcessorReverse(action) {
-    const {objectID} = action;
-    const object = this.container.getObject(objectID);
-    object.delete();
 }
 
 const actionProcessors = {
@@ -174,12 +175,15 @@ const actionProcessors = {
         reverse: propertyActionProcessorReverse
     },
     create: {
-        forward: createActionProcessor,
-        reverse: createActionProcessorReverse
+        forward: createActionProcessor
     },
     delete: {
         forward: deleteActionProcessor,
         reverse: deleteActionProcessorReverse
+    },
+    reverseDelete: {
+        forward: deleteActionProcessorReverse,
+        reverse: deleteActionProcessor
     }
 };
 function getActionProcessor(type,reverse) {
@@ -188,6 +192,9 @@ function getActionProcessor(type,reverse) {
 
 WorldEditor.prototype.processAction = function(action,reverse) {
     const processor = getActionProcessor(action.type,reverse);
+    if(action.type === "create") {
+        action.type = "reverseDelete";
+    }
     const {object} = action;
     if(object) {
         action.objectID = object.ID;
@@ -198,6 +205,7 @@ WorldEditor.prototype.processAction = function(action,reverse) {
 
 WorldEditor.prototype.addEvents = function(actions) {
     if(!actions.length) return;
+    console.log("ADD EVENT");
     for(const action of actions) {
         this.processAction(action,false);
     }
@@ -208,6 +216,7 @@ WorldEditor.prototype.addEvents = function(actions) {
 
 WorldEditor.prototype.undo = function() {
     if(!this.undoStack.length) return;
+    console.log("UNDO EVENT");
     const eventStack = this.undoStack.pop();
     for(const action of eventStack) {
         this.processAction(action,true);
@@ -218,6 +227,7 @@ WorldEditor.prototype.undo = function() {
 
 WorldEditor.prototype.redo = function() {
     if(!this.redoStack.length) return;
+    console.log("REDO EVENT");
     const eventStack = this.redoStack.pop();
     for(const action of eventStack) {
         this.processAction(action,false);
@@ -228,6 +238,10 @@ WorldEditor.prototype.redo = function() {
 
 WorldEditor.prototype.resetMap = function() {
     this.container.clear();
+
+    this.undoStack.splice(0);
+    this.redoStack.splice(0);
+
     this.container.map = null;
 
     this.camera.reset();

@@ -79,7 +79,6 @@ SQContainer.prototype.clear = function() {
     for(const ID in this.objects) {
         this.objects[ID].delete();
     }
-    this.IDCounter = 0;
 };
 SQContainer.prototype.getObject = function(ID) {
     const object = this.objects[ID];
@@ -91,9 +90,6 @@ SQContainer.prototype.getObjects = function() {
 SQContainer.prototype.addObject = async function(name,data) {
     const object = GetObject(this,name);
     await object.loadFiles();
-
-    const defaults = JSON.parse(object.self.defaults);
-    data = Object.assign(defaults,data ? data : {});
     object.create(data);
 };
 export default SQContainer;
