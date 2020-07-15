@@ -62,7 +62,10 @@ const menuActions = {
     ],
     Map: [
         ["Select Map","M","set-map"],
-        ["Cycle Decorator","D","cycle-decorator"]
+        ["Cycle Decorator","D","cycle-decorator"],
+        {type: "separator"},
+        ["Toggle Browser","O","toggle-browser"],
+        ["Exit Browser","Escape","exit-browser"]
     ]
 };
 

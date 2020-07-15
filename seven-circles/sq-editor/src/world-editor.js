@@ -7,6 +7,8 @@ import InstallFileTracker from "./components/file-tracker.js";
 import InstallHandjob from "./components/hand-job.js";
 import GetObject from "../../src/sequence/objects.js";
 import {DecoratorList} from "../../src/dynamic-map/decorators.js";
+import InstallPropertyEditor from "./components/property-editor.js";
+import InstallObjectBrowser from "./components/object-browser.js";
 
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
@@ -29,7 +31,10 @@ const CommandRouting = {
     "edit-cut": "cut",
 
     "set-map": "selectMapImage",
-    "cycle-decorator": "cycleDecorator"
+    "cycle-decorator": "cycleDecorator",
+
+    "toggle-browser": "toggleBrowser",
+    "exit-browser": "exitBrowser"
 };
 
 const ControlCommands = {
@@ -59,6 +64,14 @@ const NonControlCommands = {
     },
     "KeyM": {
         command: "set-map",
+        canRepeat: false
+    },
+    "KeyO": {
+        command: "toggle-browser",
+        canRepeat: false
+    },
+    "Escape": {
+        command: "exit-browser",
         canRepeat: false
     }
 };
@@ -100,8 +113,8 @@ function WorldEditor() {
         await ResourceManager.queueImage(TILESET).load();
         this.tileset = ResourceManager.getImage(TILESET);
 
-        InstallContainer(this);
-        InstallHandjob(this);
+        InstallContainer(this); InstallHandjob(this);
+        InstallPropertyEditor(this); InstallObjectBrowser(this);
     };
 
     this.undoStack = [];
@@ -335,6 +348,9 @@ WorldEditor.prototype.deleteSelection = function() {this.sendAction("deleteSelec
 WorldEditor.prototype.paste = function() {this.sendAction("paste")};
 WorldEditor.prototype.copy = function() {this.sendAction("copy")};
 WorldEditor.prototype.cut = function() {this.sendAction("cut")};
+
+WorldEditor.prototype.toggleBrowser = function(){this.sendAction("toggle-browser")};
+WorldEditor.prototype.exitBrowser = function(){this.sendAction("exit-browser")};
 
 WorldEditor.prototype.cycleDecorator = function() {
     const {container} = this;

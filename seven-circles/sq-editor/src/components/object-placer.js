@@ -26,8 +26,18 @@ function ObjectPlacer(world) {
         }
     };
 
+    world.singleItemSelection = null;
+
     const updateSelectionRenderData = () => {
         selectionRenderData = Object.keys(selectionData);
+        if(selectionRenderData.length === 1) {
+            world.singleItemSelection = selectionRenderData[0];
+        } else {
+            world.singleItemSelection = null;
+        }
+        if(world.selectionChanged) {
+            world.selectionChanged(world.singleItemSelection);
+        }
     };
 
     const removeFromSelection = object => {
