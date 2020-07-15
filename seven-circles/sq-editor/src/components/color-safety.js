@@ -1,4 +1,4 @@
-/* Thanks to https://stackoverflow.com/a/24390910 for some reworked code */
+/* Thanks to https://stackoverflow.com/a/24390910 for the original implementation */
 
 function ByteToHex(value) {
     return ("0"+value.toString(16)).slice(-2);

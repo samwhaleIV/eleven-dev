@@ -1,8 +1,8 @@
-const {ResourceManager} = Eleven;
-
 import SQContainer from "../../../src/sequence/sq-container.js";
 import Decorators from "../../../src/dynamic-map/decorators.js";
 import GetDecorator from "../../../src/dynamic-map/get-decorator.js";
+
+const {ResourceManager} = Eleven;
 
 function InstallContainer(target) {
     const container = new SQContainer(target,true);

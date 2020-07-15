@@ -1,16 +1,8 @@
-const {ResourceManager} = Eleven;
-const previouslyLoadedTypes = {};
+import MirrorProperty from "./mirror-property.js";
 
-const DefineProperty = (target,key) => {
-    target.propertyWatchers[key] = {
-        counter: 0, handlers: {}, list: []
-    };
-    Object.defineProperty(target,key,{
-        get: () => target.getProperty(key),
-        set: value => target.setProperty(key,value),
-        enumerable: true
-    });
-};
+const {ResourceManager} = Eleven;
+const PreviouslyLoadedTypes = {};
+
 function SQObject(container,self,type,overrideID) {
     const {isEditor,world} = container;
     const parameterHeader = {
@@ -27,28 +19,28 @@ function SQObject(container,self,type,overrideID) {
     }
     container.objects[this.ID] = this;
 
-    this.onDelete = null;
+    this.deletionCallback = null;
 
-    this.propertyWatchers = {};
+    this.watchers = {};
     for(const key in self.properties) {
-        DefineProperty(this,key);
+        MirrorProperty(this.watchers,this,key);
     }
 }
 
 SQObject.prototype.canLoadFiles = function() {
-    return this.self.files && !(this.type in previouslyLoadedTypes);
+    return this.self.files && !(this.type in PreviouslyLoadedTypes);
 };
 SQObject.prototype.loadFiles = async function() {
     if(!this.canLoadFiles()) return;
 
     await ResourceManager.queueManifest(this.self.files).load();
-    previouslyLoadedTypes[this.type] = true;
+    PreviouslyLoadedTypes[this.type] = true;
 };
 SQObject.prototype.queueFiles = function() {
     if(!this.canLoadFiles()) return;
 
     ResourceManager.queueManifest(this.self.files);
-    previouslyLoadedTypes[this.type] = true;
+    PreviouslyLoadedTypes[this.type] = true;
 };
 SQObject.prototype.create = function(data) {
     const defaults = JSON.parse(this.self.defaults);
@@ -59,7 +51,9 @@ SQObject.prototype.create = function(data) {
 SQObject.prototype.delete = function() {
     this.self.delete(this.parameterHeader);
     delete this.container.objects[this.ID];
-    if(this.onDelete) this.onDelete();
+    if(this.deletionCallback) {
+        this.deletionCallback();
+    }
 };
 SQObject.prototype.serialize = function() {
     const data = {};
@@ -73,26 +67,13 @@ SQObject.prototype.getProperty = function(property) {
 };
 SQObject.prototype.setProperty = function(property,value) {
     this.self.properties[property].set(this.parameterHeader,value);
-
-    const watcherList = this.propertyWatchers[property].list
-    for(const handler of watcherList) handler(value);
+    this.watchers[property].fire(value);
 };
 SQObject.prototype.watchProperty = function(property,handler) {
-    const wathcherSet = this.propertyWatchers[property];
-
-    const ID = wathcherSet.counter + 1;
-    wathcherSet.counter = ID;
-
-    wathcherSet.handlers[ID] = handler;
-    wathcherSet.list = Object.values(wathcherSet.handlers);
-
-    return ID;
+    return this.watchers[property].add(handler);
 };
 SQObject.prototype.unwatchProperty = function(property,ID) {
-    const wathcherSet = this.propertyWatchers[property];
-
-    delete wathcherSet.handlers[ID];
-    wathcherSet.list = Object.values(wathcherSet.handlers);
+    this.watchers[property].remove(ID);
 };
 SQObject.prototype.getProperties = function() {
     return Object.entries(this.self.properties);

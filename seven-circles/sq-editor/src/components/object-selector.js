@@ -1,5 +1,7 @@
-function ObjectPlacer(world) {
+const SELECTION_COLOR = "#1489FF8C";
+const CATERPILLAR_TIME = 30;
 
+function ObjectSelector(world) {
     const {grid,container} = world;
 
     const getObjectBounds = object => {
@@ -15,98 +17,6 @@ function ObjectPlacer(world) {
         width *= grid.tileSize, height *= grid.tileSize;
         return [screenLocation.x,screenLocation.y,width,height];
     };
-
-    const selectionData = {};
-    let selectionRenderData = [];
-
-    const getSelections = function*() {
-        for(const ID of selectionRenderData) {
-            const object = container.getObject(ID);
-            if(object) yield object;
-        }
-    };
-
-    let lastSelection = null;
-    const updateSelectionRenderData = () => {
-        selectionRenderData = Object.keys(selectionData);
-        let singleItem;
-        if(selectionRenderData.length === 1) {
-            singleItem = container.getObject(selectionRenderData[0]);
-        } else {
-           singleItem = null;
-        }
-        if(singleItem) {
-            if(lastSelection) {
-                lastSelection.onDelete = null;
-            }
-            lastSelection = null;
-            singleItem.onDelete = () => {
-                world.selectionChanged(null);
-            };
-            lastSelection = singleItem;
-        }
-        if(world.selectionChanged) {
-            world.selectionChanged(singleItem);
-        }
-    };
-
-    world.objectIDReused = () => {
-        if(lastSelection === null) return;
-        updateSelectionRenderData();
-    };
-
-    const removeFromSelection = object => {
-        delete selectionData[object.ID];
-        updateSelectionRenderData();
-    };
-    const addToSelection = (object,shiftKey) => {
-        selectionData[object.ID] = true;
-        if(shiftKey) {
-            for(const {ID,type} of container.getObjects()) {
-                if(type === object.type) selectionData[ID] = true;
-            }
-        }
-        updateSelectionRenderData();
-    };
-    const inSelection = object => {
-        return object.ID in selectionData;
-    };
-    const clearSelection = () => {
-        for(const ID in selectionData) {
-            delete selectionData[ID];
-        }
-        updateSelectionRenderData();
-    };
-
-    const selectionRenderer = (context,size,time) => {
-        if(!selectionRenderData.length) return;
-        context.fillStyle = "#1489FF8C";
-        context.strokeStyle = "white";
-        context.lineWidth = 1;
-        context.lineJoin = "miter";
-
-        context.setLineDash([4,2]);
-        context.lineDashOffset = -(time.now / 30) % 6;
-
-        for(const object of getSelections()) {
-    
-            let [x,y,width,height] = getObjectRenderLocation(object);
-
-            x = Math.floor(x) + 0.5, y = Math.floor(y) + 0.5;
-
-            context.fillRect(x,y,width,height);
-
-            context.strokeStyle = "black";
-            context.strokeRect(x,y,width,height);
-
-            context.lineDashOffset += 3;
-            context.strokeStyle = "white";
-            context.strokeRect(x,y,width,height);
-            context.lineDashOffset -= 3;
-        }
-    };
-
-    world.dispatchRenderer.addFinalize(selectionRenderer);
 
     const inBounds = (x,y,bounds) => {
         const [left,top,right,bottom] = bounds;
@@ -126,7 +36,93 @@ function ObjectPlacer(world) {
         return null;
     };
 
-    const selectionStart = {x:null,y:null}, selectionEnd = {x:null,y:null};
+    const selectionData = new Object();
+    let selectionList = new Array();
+
+    const getSelections = function*() {
+        for(const ID of selectionList) {
+            const object = container.getObject(ID);
+            if(object) yield object;
+        }
+    };
+
+    let lastSelection = null;
+    const updateSelectionList = () => {
+        selectionList = Object.keys(selectionData);
+        let singleItem;
+        if(selectionList.length === 1) {
+            singleItem = container.getObject(selectionList[0]);
+        } else {
+           singleItem = null;
+        }
+        if(singleItem) {
+            if(lastSelection) {
+                lastSelection.deletionCallback = null;
+            }
+            lastSelection = null;
+            singleItem.deletionCallback = () => {
+                world.selectionChanged(null);
+            };
+            lastSelection = singleItem;
+        }
+        if(world.selectionChanged) {
+            world.selectionChanged(singleItem);
+        }
+    };
+
+    world.objectIDReused = () => {
+        if(lastSelection !== null) {
+            updateSelectionList();
+        }
+    };
+
+    const addToSelection = (object,shiftKey) => {
+        selectionData[object.ID] = true;
+        if(shiftKey) {
+            for(const {ID,type} of container.getObjects()) {
+                if(type === object.type) selectionData[ID] = true;
+            }
+        }
+        updateSelectionList();
+    };
+    const clearSelection = () => {
+        for(const ID in selectionData) {
+            delete selectionData[ID];
+        }
+        updateSelectionList();
+    };
+
+    const selectionRenderer = (context,_,time) => {
+        if(!selectionList.length) return;
+        context.fillStyle = SELECTION_COLOR;
+        context.strokeStyle = "white";
+        context.lineWidth = 1;
+        context.lineJoin = "miter";
+
+        context.setLineDash([4,2]);
+        context.lineDashOffset = -(time.now / CATERPILLAR_TIME) % 6;
+
+        for(const object of getSelections()) {
+    
+            let [x,y,width,height] = getObjectRenderLocation(object);
+
+            x = Math.floor(x) + 0.5, y = Math.floor(y) + 0.5;
+
+            context.fillRect(x,y,width,height);
+
+            context.strokeStyle = "black";
+            context.strokeRect(x,y,width,height);
+
+            context.lineDashOffset += 3;
+            context.strokeStyle = "white";
+            context.strokeRect(x,y,width,height);
+            context.lineDashOffset -= 3;
+        }
+    };
+    world.dispatchRenderer.addFinalize(selectionRenderer);
+
+    const selectionStart = {x:null,y:null};
+    const selectionEnd = {x:null,y:null};
 
     const clickDown = ({x,y,ctrlKey,shiftKey}) => {
 
@@ -176,7 +172,7 @@ function ObjectPlacer(world) {
     };
     const pointerMove = ({x,y}) => {
         selectionEnd.x = x, selectionEnd.y = y;
-        if(!selectionRenderData.length) return;
+        if(!selectionList.length) return;
 
         const tileLocation = grid.getTileLocation(x,y);
         const selectionStartTile = grid.getTileLocation(
@@ -216,7 +212,7 @@ function ObjectPlacer(world) {
         for(const object of container.getObjects()) {
             selectionData[object.ID] = true;
         }
-        updateSelectionRenderData();
+        updateSelectionList();
     });
 
     let copyData = null;
@@ -272,34 +268,38 @@ function ObjectPlacer(world) {
 
         world.addEvents(events);
         
-        let newObjects = Object.values(container.objects);
-        newObjects = newObjects.slice(newObjects.length-events.length);
+        let newObjects = Object.values(
+            container.objects
+        );
+        newObjects = newObjects.slice(
+            newObjects.length-events.length
+        );
 
         if(!newObjects.length) return;
         clearSelection();
         for(const {ID} of newObjects) {
             selectionData[ID] = true;
         }
-        updateSelectionRenderData();
+        updateSelectionList();
     };
 
     world.setAction("copy",()=>{
-        if(!selectionRenderData.length) return;
+        if(!selectionList.length) return;
         copyData = getCopyData();
     });
     world.setAction("paste",()=>{
         if(copyData) pasteData(copyData);
     });
     world.setAction("cut",()=>{
-        if(!selectionRenderData.length) return;
+        if(!selectionList.length) return;
         copyData = getCopyData();
         deleteSelection();
     });
 
     this.bindToFrame = target => {
-        Object.assign(target,{
-            clickDown,clickUp,pointerMove
-        });
+        Object.assign(
+            target,{clickDown,clickUp,pointerMove}
+        );
     };
 }
-export default ObjectPlacer;
+export default ObjectSelector;

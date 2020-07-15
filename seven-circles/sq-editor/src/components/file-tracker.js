@@ -1,4 +1,4 @@
-import TitleBar from "../title-bar.js";
+import TitleBar from "../remote/title-bar.js";
 
 function InstallFileTracker(target) {
     let unsaved = false, filePath = null;

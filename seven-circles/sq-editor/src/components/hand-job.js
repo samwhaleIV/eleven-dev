@@ -1,14 +1,14 @@
-import ObjectPlacer from "./object-placer.js";
+import ObjectSelector from "./object-selector.js";
 
 function InstallHandJob(world) {
 
     const panZoom = world.grid.getPanZoom();
-    const objectPlacer = new ObjectPlacer(world);
+    const objectSelector = new ObjectSelector(world);
 
     const panTarget = {}, placeTarget = {};
 
     panZoom.bindToFrame(panTarget);
-    objectPlacer.bindToFrame(placeTarget);
+    objectSelector.bindToFrame(placeTarget);
 
     let panning = false, placing = false;
 

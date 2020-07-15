@@ -1,80 +1,29 @@
 const {Grid2D,DispatchRenderer,SpriteLayer,ResourceManager} = Eleven;
 
-import IPCCommands from "./ipc-commands.js";
-import WindowDialog from "./window-dialog.js";
+import {
+    ControlCommands,
+    NonControlCommands,
+    CommandRouting,
+    PassthroughActions
+} from "./commands-list.js";
+
+import {DecoratorList} from "../../src/dynamic-map/decorators.js";
+
+import IPCCommands from "./remote/ipc-commands.js";
+
 import InstallContainer from "./components/container-manager.js";
 import InstallFileTracker from "./components/file-tracker.js";
+
 import InstallHandjob from "./components/hand-job.js";
-import GetObject from "../../src/sequence/objects.js";
-import {DecoratorList} from "../../src/dynamic-map/decorators.js";
 import InstallPropertyEditor from "./components/property-editor.js";
 import InstallObjectBrowser from "./components/object-browser.js";
+
+import AddFileActions from "./components/file-actions.js";
+import AddEventProcessing from "./components/event-processing.js";
 
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
 const MIDDLE_GRAY = "#777777";
-
-const CommandRouting = {
-    "file-save": "save",
-    "file-save-as": "saveAs",
-    "file-open": "openFile",
-    "file-new": "newFile",
-
-    "edit-undo": "undo",
-    "edit-redo": "redo",
-
-    "edit-select-all": "selectAll",
-    "edit-delete": "deleteSelection",
-
-    "edit-copy": "copy",
-    "edit-paste": "paste",
-    "edit-cut": "cut",
-
-    "set-map": "selectMapImage",
-    "cycle-decorator": "cycleDecorator",
-
-    "toggle-browser": "toggleBrowser",
-    "exit-browser": "exitBrowser"
-};
-
-const ControlCommands = {
-    "KeyO": "file-open",
-    "KeyN": "file-new",
-    "KeyS": "file-save",
-    "ShiftKeyS": "file-save-as",
-
-    "KeyZ": "edit-undo",
-    "KeyR": "edit-redo",
-
-    "KeyA": "edit-select-all",
-
-    "KeyC": "edit-copy",
-    "KeyV": "edit-paste",
-    "KeyX": "edit-cut"
-};
-
-const NonControlCommands = {
-    "Backspace": {
-        command: "edit-delete",
-        canRepeat: false
-    },
-    "KeyD": {
-        command: "cycle-decorator",
-        canRepeat: false
-    },
-    "KeyM": {
-        command: "set-map",
-        canRepeat: false
-    },
-    "KeyO": {
-        command: "toggle-browser",
-        canRepeat: false
-    },
-    "Escape": {
-        command: "exit-browser",
-        canRepeat: false
-    }
-};
 
 function WorldEditor() {
     const dispatchRenderer = new DispatchRenderer();
@@ -117,124 +66,10 @@ function WorldEditor() {
         InstallPropertyEditor(this); InstallObjectBrowser(this);
     };
 
-    this.undoStack = [];
-    this.redoStack = [];
+    this.undoStack = [], this.redoStack = [];
 
     InstallFileTracker(this);
 }
-
-function propertyActionProcessor(action) {
-    let {objectID,property,newValue,value,oldValue} = action;
-    const object = this.container.getObject(objectID);
-    if(!newValue && value !== undefined) {
-        action.newValue = value;
-        newValue = value;
-    }
-    if(!oldValue) {
-        action.oldValue = object.getProperty(property);
-    }
-    object.setProperty(property,newValue);
-}
-function propertyActionProcessorReverse(action) {
-    const {objectID,property,oldValue} = action;
-    const object = this.container.getObject(objectID);
-    object.setProperty(property,oldValue);
-}
-
-function deleteActionProcessor(action) {
-    const {objectID} = action;
-    const object = this.container.getObject(objectID);
-    const serialData = object.serialize();
-    action.serialData = serialData;
-    action.objectType = object.type;
-    object.delete();
-}
-function deleteActionProcessorReverse(action) {
-    const {objectID,objectType,serialData} = action;
-    const object = GetObject(this.container,objectType,objectID);
-    object.create(serialData);
-    if(this.objectIDReused) this.objectIDReused(objectID);
-}
-
-function createActionProcessor(action) {
-    const {serialData,objectType,beenHereBeforeID} = action;
-    let objectID;
-    if(beenHereBeforeID) {
-        objectID = beenHereBeforeID;
-    } else {
-        objectID = this.container.IDCounter++;
-    }
-    action.objectID = objectID, action.beenHereBeforeID = objectID;
-    const object = GetObject(this.container,objectType,objectID);
-    object.create(serialData);
-}
-
-const actionProcessors = {
-    property: {
-        forward: propertyActionProcessor,
-        reverse: propertyActionProcessorReverse
-    },
-    create: {
-        forward: createActionProcessor
-    },
-    delete: {
-        forward: deleteActionProcessor,
-        reverse: deleteActionProcessorReverse
-    },
-    reverseDelete: {
-        forward: deleteActionProcessorReverse,
-        reverse: deleteActionProcessor
-    }
-};
-function getActionProcessor(type,reverse) {
-    return actionProcessors[type][reverse ? "reverse" : "forward"];
-}
-
-WorldEditor.prototype.processAction = function(action,reverse) {
-    const processor = getActionProcessor(action.type,reverse);
-    if(action.type === "create") {
-        action.type = "reverseDelete";
-    }
-    const {object} = action;
-    if(object) {
-        action.objectID = object.ID;
-        delete action.object;
-    }
-    processor.call(this,action);
-}
-
-WorldEditor.prototype.addEvents = function(actions) {
-    if(!actions.length) return;
-    console.log("ADD EVENT");
-    for(const action of actions) {
-        this.processAction(action,false);
-    }
-    this.undoStack.push(actions);
-    this.redoStack.splice(0);
-    this.unsaved = true;
-};
-
-WorldEditor.prototype.undo = function() {
-    if(!this.undoStack.length) return;
-    console.log("UNDO EVENT");
-    const eventStack = this.undoStack.pop();
-    for(const action of eventStack) {
-        this.processAction(action,true);
-    }
-    this.redoStack.push(eventStack);
-    this.unsaved = true;
-};
-
-WorldEditor.prototype.redo = function() {
-    if(!this.redoStack.length) return;
-    console.log("REDO EVENT");
-    const eventStack = this.redoStack.pop();
-    for(const action of eventStack) {
-        this.processAction(action,false);
-    }
-    this.undoStack.push(eventStack);
-    this.unsaved = true;
-};
 
 WorldEditor.prototype.resetMap = function() {
     this.container.clear();
@@ -248,75 +83,22 @@ WorldEditor.prototype.resetMap = function() {
     this.camera.x = 2, this.camera.y = 2;
     this.camera.scale = DEFAULT_SCALE;
 };
-WorldEditor.prototype.save = async function() {
-    if(!this.unsaved) {
-        if(!this.hasRealPath) {
-            return this.saveAs();
-        } else {
-            return true;
-        }
-    }
+WorldEditor.prototype.cycleDecorator = function() {
+    const {container} = this;
+    const currentDecorator = container.decorator || "none";
 
-    let path;
-    if(!this.hasRealPath) {
-        const {canceled,filePath} = await WindowDialog.saveAs();
-        if(canceled) return false;
-        path = filePath;
+    let index = DecoratorList.indexOf(currentDecorator);
+    if(index < 0) {
+        index = 0;
     } else {
-        path = this.filePath;
+        index += 1;
     }
+    if(index >= currentDecorator.length) index = 0;
 
-    const exportData = this.container.export();
-    await FileSystem.writeFile(path,JSON.stringify(exportData,null,4));
-    this.unsaved = false;
-
-    return true;
-};
-WorldEditor.prototype.saveAs = async function() {
-    const {canceled,filePath} = await WindowDialog.saveAs();
-    if(canceled) return false;
-    this.filePath = filePath;
+    container.decorator = DecoratorList[index];
     this.unsaved = true;
-    this.hasRealPath = true;
-    return await this.save();
 };
-WorldEditor.prototype.openFile = async function() {
-    if(!(await this.fileChangeCanContinue())) return;
 
-    const {canceled,filePath} = await WindowDialog.selectFile();
-    if(canceled) return;
-
-    const fileData = await FileSystem.readFile(filePath);
-    this.filePath = filePath;
-    this.unsaved = false;
-    this.hasRealPath = true;
-
-    this.resetMap();
-    this.container.import(JSON.parse(fileData));
-};
-WorldEditor.prototype.fileChangeCanContinue = async function() {
-    if(this.unsaved) {
-        if(await WindowDialog.prompt("Would you like to save your changes?")) {
-            const didSave = await this.save();
-            if(!didSave) return false;
-        }
-    }
-    return true;
-};
-WorldEditor.prototype.newFile = async function() {
-    const setDefault = async () => {
-        this.resetMap();
-        this.filePath = "Untitled.json";
-        this.unsaved = false;
-        this.hasRealPath = false;
-        if(!this.container.map) {
-            await this.selectMapImage();
-        }
-    };
-    if(this.filePath === null || await this.fileChangeCanContinue()) {
-        await setDefault();
-    }
-};
 WorldEditor.prototype.installKeyHandlers = function() {
     const handleControl = (code,shiftKey,repeat) => {
         const command = ControlCommands[shiftKey ? `Shift${code}` : code];
@@ -356,46 +138,13 @@ WorldEditor.prototype.sendAction = function(name) {
     if(action) action();
 };
 
-WorldEditor.prototype.selectAll = function() {this.sendAction("selectAll")};
-WorldEditor.prototype.deleteSelection = function() {this.sendAction("deleteSelection")};
-
-WorldEditor.prototype.paste = function() {this.sendAction("paste")};
-WorldEditor.prototype.copy = function() {this.sendAction("copy")};
-WorldEditor.prototype.cut = function() {this.sendAction("cut")};
-
-WorldEditor.prototype.toggleBrowser = function(){this.sendAction("toggle-browser")};
-WorldEditor.prototype.exitBrowser = function(){this.sendAction("exit-browser")};
-
-WorldEditor.prototype.cycleDecorator = function() {
-    const {container} = this;
-    const currentDecorator = container.decorator || "none";
-
-    let index = DecoratorList.indexOf(currentDecorator);
-    if(index < 0) {
-        index = 0;
-    } else {
-        index += 1;
+for(const actionName of PassthroughActions) {
+    WorldEditor.prototype[actionName] = function() {
+        this.sendAction(actionName);
     }
-    if(index >= currentDecorator.length) index = 0;
+}
 
-    container.decorator = DecoratorList[index];
-    this.unsaved = true;
-};
-WorldEditor.prototype.selectMapImage = async function() {
-    if(!this.filePath) {
-        await this.newFile();
-        return;
-    }
-    const {canceled,filePath} = await WindowDialog.selectMapImage();
-    if(canceled) return;
-    if(!filePath.startsWith(FileSystem.mapImageFolder)) {
-        await WindowDialog.alert("Map image must be located in 'resources/images/maps' folder!");
-        return;
-    }
-    const mapName = FileSystem.baseName(filePath,".png");
-    this.container.map = mapName;
-
-    this.unsaved = true;
-};
+AddFileActions(WorldEditor.prototype);
+AddEventProcessing(WorldEditor.prototype);
 
 export default WorldEditor;

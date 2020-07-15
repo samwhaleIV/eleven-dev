@@ -1,5 +1,4 @@
 import GetSafeColor from "./color-safety.js";
-
 const element = document.getElementById("property-editor");
 const propertyContainer = element.querySelector("div.properties");
 
@@ -15,6 +14,13 @@ const KnownTypes = {
     "y": "number",
     "color": "color",
     "direction": "number"
+};
+
+const ValidInputTypes = {
+    "text": true,
+    "number": true,
+    "color": true,
+    "checkbox": true
 };
 
 let panelUpdaterID = null;
@@ -60,14 +66,6 @@ const getPropertyType = (key,data,object) => {
         default:
             return null;
     }
-};
-
-
-const ValidInputTypes = {
-    "text": true,
-    "number": true,
-    "color": true,
-    "checkbox": true
 };
 
 const getPropertyElement = (
@@ -161,7 +159,6 @@ const installProperties = object => {
             element.style.top = Math.floor(location.y) + "px";
         };
         panelUpdaterID = world.dispatchRenderer.addFinalize(updateLocation);
-        //updateLocation();
     }
 };
 
@@ -174,6 +171,5 @@ function InstallPropertyEditor(world) {
         clearProperties(world);
         if(hasItem) installProperties(item);
     };
-
 }
 export default InstallPropertyEditor;

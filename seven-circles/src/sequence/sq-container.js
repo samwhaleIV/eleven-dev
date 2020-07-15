@@ -6,22 +6,29 @@ const MapChanged = "map-changed";
 const DecoratorChanged = "decorator-changed";
 
 function SQContainer(world,isEditor = false) {
+    const objects = new Object();
     Object.assign(this,{
-        world, isEditor, objects: {},
-        IDCounter: 0, map: null, decorator: null
+        world: world,
+        isEditor: isEditor,
+        objects: objects,
+        IDCounter: 0,
+        map: null,
+        decorator: null,
+        eventHandlers: {},
+        frozenEventBuffer: {},
+        eventsFrozen: false
     });
-    this.eventHandlers = {};
+    AddMapDecoratorProperties(this);
+}
 
-    this.frozenEventBuffer = {};
-    this.eventsFrozen = false;
-
+function AddMapDecoratorProperties(target) {
     let map = null, decorator = null;
-    Object.defineProperties(this,{
+    Object.defineProperties(target,{
         map: {
             get: () => map,
             set: value => {
                 map = value;
-                this.fireEvent(MapChanged,value);
+                target.fireEvent(MapChanged,value);
                 return value;
             }
         },
@@ -29,12 +36,13 @@ function SQContainer(world,isEditor = false) {
             get: () => decorator,
             set: value => {
                 decorator = value;
-                this.fireEvent(DecoratorChanged,value);
+                target.fireEvent(DecoratorChanged,value);
                 return value;
             }
         }
     });
 }
+
 SQContainer.prototype.freezeEvents = function() {
     this.eventsFrozen = true;
 };
