@@ -5,16 +5,16 @@
         {
             "type": "Player",
             "data": {
-                "x": 2.41875,
-                "y": 2.04375,
-                "direction": 2
+                "x": 11.568750000000001,
+                "y": 7.9921875,
+                "direction": 3
             }
         },
         {
             "type": "MysteriousLamp",
             "data": {
-                "x": 1.21875,
-                "y": 3.0234375,
+                "x": 10.2890625,
+                "y": 8.2234375,
                 "message": "Hello, world!"
             }
         }

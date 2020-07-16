@@ -8,7 +8,7 @@
     justify-content: center;
     overflow: scroll;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     width: 800px;
     height: 600px;
     background-color: white !important;
