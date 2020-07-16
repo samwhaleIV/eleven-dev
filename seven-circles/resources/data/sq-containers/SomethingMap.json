@@ -1,0 +1,68 @@
+{
+    "map": "test",
+    "decorator": "c2",
+    "objects": [
+        {
+            "type": "Player",
+            "data": {
+                "x": 11.67380736714976,
+                "y": 8.533506944444445,
+                "direction": 3
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 10.031770833333333,
+                "y": 4.000868055555555,
+                "color": "blue",
+                "square": true
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 0.921875,
+                "y": 1.5859375,
+                "color": "blue",
+                "square": true
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 1.671875,
+                "y": 0.3671875,
+                "color": "#00ff1e",
+                "square": false
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 3.2421875,
+                "y": 0.34375,
+                "color": "blue",
+                "square": false
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 9.225347222222222,
+                "y": 8.356944444444444,
+                "color": "#00ff4c",
+                "square": true
+            }
+        },
+        {
+            "type": "Placeholder",
+            "data": {
+                "x": 11.295833333333334,
+                "y": 5.8046875,
+                "color": "#ff0000",
+                "square": true
+            }
+        }
+    ]
+}

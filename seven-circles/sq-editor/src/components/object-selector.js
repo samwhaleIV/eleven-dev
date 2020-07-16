@@ -1,6 +1,6 @@
 const SELECTION_COLOR = "#1489FF8C";
 const CATERPILLAR_TIME = 30;
-const DOUBLE_CLICK_TIMEOUT = 200;
+const DOUBLE_CLICK_TIMEOUT = 500;
 
 function ObjectSelector(world) {
     const {grid,container} = world;
