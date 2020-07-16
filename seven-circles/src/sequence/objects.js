@@ -1,9 +1,7 @@
 import SQObject from "./sq-object.js";
-import Player from "./objects/player.js";
-import Placeholder from "./objects/placeholder.js";
+import Objects from "./objects/object-manifest.js";
+import Placeholder from "./objects/types/placeholder.js";
 const FallbackType = Placeholder;
-
-const Objects = {Player,Placeholder};
 
 const GetObject = (container,type,overrideID) => {
     let baseObject = Objects[type];

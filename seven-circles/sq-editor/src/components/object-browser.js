@@ -4,7 +4,7 @@ import SQContainer from "../../../src/sequence/sq-container.js";
 const {ResourceManager,DOMInterface,CanvasManager} = Eleven;
 const MISSING_IMAGE = "editor/missing";
 
-const getObjectList = async () => {
+const getObjectList = async world => {
 
     let missingImage = null;
 
@@ -14,16 +14,24 @@ const getObjectList = async () => {
     const getThumbnail = data => {
         let image = null;
         const {thumbnail} = data;
-        if(thumbnail) {
-            image = ResourceManager.getImage(thumbnail);
-        } else {
-            image = missingImage;
-        }
-        if(!image) {
-            image = missingImage;
-        }
+        const thumbnailType = typeof thumbnail;
+
         context.clearRect(0,0,16,16);
-        context.drawImage(image,0,0,16,16,0,0,16,16);
+        if(thumbnailType === "function") {
+            thumbnail({
+                world,tileset:world.tileset,context
+            });
+        } else {
+            if(thumbnailType === "string") {
+                image = ResourceManager.getImage(thumbnail);
+            } else {
+                image = missingImage;
+            }
+            if(!image) {
+                image = missingImage;
+            }
+            context.drawImage(image,0,0,16,16,0,0,16,16);
+        }
         return buffer.transferToImageBitmap();
     };
 
@@ -100,12 +108,19 @@ function DomBrowser(
         }
     };
 
+    const {frame} = Eleven.CanvasManager;
+
+    proxyFrame.clickDown = data => {
+        callback(null);
+        if(frame.clickDown) frame.clickDown(data);
+    };
+
     return browser;
 }
 
 async function InstallObjectBrowser(world) {
 
-    const objectList = await getObjectList();
+    const objectList = await getObjectList(world);
 
     let browserShown = false;
     const menu = DOMInterface.getMenu(DomBrowser);

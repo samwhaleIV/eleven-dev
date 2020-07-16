@@ -30,12 +30,13 @@ const clearProperties = world => {
     world.propertyWatchers.splice(0);
 };
 const getPropertyDisplayName = (key,data) => {
-    if(data.name) {
-        return data.name;
+    const {name} = data;
+    if(name) {
+        return name;
     } else if(key in KnownNames) {
         return KnownNames[key];
     }
-    return key;
+    return key.charAt(0).toUpperCase() + key.slice(1);
 };
 const getPropertyType = (key,data,object) => {
     if(data.type) return data.type;

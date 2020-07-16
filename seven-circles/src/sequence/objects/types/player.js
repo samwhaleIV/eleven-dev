@@ -1,11 +1,14 @@
+import Shorthand from "../shorthand.js";
+
 const Player = {
     width: 1, height: 1,
 
     files: `{"Image": ["player/default"]}`,
     defaults: `{"x":0,"y":0,"direction":"down"}`,
-    sprite: null,
 
     thumbnail: "player/default",
+
+    sprite: null,
 
     create: ({isEditor,world,self,files},data) => {
         const {x,y,direction} = data;
@@ -28,22 +31,7 @@ const Player = {
     },
 
     properties: {
-        x: {
-            get: ({self}) => {
-                return self.sprite.x;
-            },
-            set: ({self},value) => {
-                self.sprite.x = value;
-            }
-        },
-        y: {
-            get: ({self}) => {
-                return self.sprite.y;
-            },
-            set: ({self},value) => {
-                self.sprite.y = value;
-            }
-        },
+        x: Shorthand.XProp, y: Shorthand.YProp,
         direction: {
             get: ({self}) => {
                 return self.sprite.direction;

@@ -1,0 +1,22 @@
+{
+    "map": "test",
+    "decorator": "c2",
+    "objects": [
+        {
+            "type": "MysteriousLamp",
+            "data": {
+                "x": 1.140625,
+                "y": 3.0546875,
+                "message": "Looks like it's just you and me."
+            }
+        },
+        {
+            "type": "Player",
+            "data": {
+                "x": 2.328125,
+                "y": 2.234375,
+                "direction": 2
+            }
+        }
+    ]
+}

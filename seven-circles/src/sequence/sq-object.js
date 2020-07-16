@@ -5,9 +5,12 @@ const PreviouslyLoadedTypes = {};
 
 function SQObject(container,self,type,overrideID) {
     const {isEditor,world} = container;
+
+    const tileset = isEditor ? world.tileset : world.defaultTileset;
+
     const parameterHeader = {
         self,container,isEditor,type,
-        files: ResourceManager, world
+        files: ResourceManager, world, tileset
     };
     Object.assign(this,{
         container,self,type,parameterHeader
@@ -39,8 +42,10 @@ SQObject.prototype.queueFiles = function() {
 
     let queuedFiles = false;
 
-    if(container.isEditor && self.thumbnail) {
-        ResourceManager.queueImage(self.thumbnail);
+    const {thumbnail} = self;
+
+    if(container.isEditor && typeof thumbnail === "string") {
+        ResourceManager.queueImage(thumbnail);
         queuedFiles = true;
     }
     if(self.files) {
