@@ -97,9 +97,11 @@ function ObjectSelector(world) {
     const selectionRenderer = (context,_,time) => {
         if(!selectionList.length) return;
         context.fillStyle = SELECTION_COLOR;
+
         context.strokeStyle = "white";
         context.lineWidth = 1;
         context.lineJoin = "miter";
+        context.lineDashOffset = 0;
 
         context.setLineDash([4,2]);
         context.lineDashOffset = -(time.now / CATERPILLAR_TIME) % 6;
@@ -219,6 +221,16 @@ function ObjectSelector(world) {
 
             object.x = tileLocation.x - object.selectionData.x;
             object.y = tileLocation.y - object.selectionData.y;
+        }
+
+        if(world.gridVisible && selectionList.length === 1) {
+            
+            const object = container.getObject(selectionList[0]);
+            if(!object) return;
+
+            const gridScale = 1 / world.gridScale;
+            object.x = Math.round(object.x * gridScale) / gridScale;
+            object.y = Math.round(object.y * gridScale) / gridScale;
         }
     };
 

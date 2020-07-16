@@ -3,19 +3,19 @@
     "decorator": "c2",
     "objects": [
         {
-            "type": "MysteriousLamp",
+            "type": "Player",
             "data": {
-                "x": 1.140625,
-                "y": 3.0546875,
-                "message": "Looks like it's just you and me."
+                "x": 2.41875,
+                "y": 2.04375,
+                "direction": 2
             }
         },
         {
-            "type": "Player",
+            "type": "MysteriousLamp",
             "data": {
-                "x": 2.328125,
-                "y": 2.234375,
-                "direction": 2
+                "x": 1.21875,
+                "y": 3.0234375,
+                "message": "Hello, world!"
             }
         }
     ]

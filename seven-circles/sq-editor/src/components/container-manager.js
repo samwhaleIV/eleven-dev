@@ -18,6 +18,8 @@ function InstallContainer(target) {
         const cacheRenderer = grid.drawCache.bind(
             null,{data:{buffer:image}}
         );
+        grid.width = Math.ceil(image.width / 16);
+        grid.height = Math.ceil(image.height / 16);
         backgroundID = dispatchRenderer.addBackground(cacheRenderer,1);
     };
 

@@ -18,7 +18,11 @@ const CommandRouting = {
     "cycle-decorator": "cycleDecorator",
 
     "toggle-browser": "toggleBrowser",
-    "exit-browser": "exitBrowser"
+    "exit-browser": "exitBrowser",
+    "grid-toggle": "toggleGrid",
+
+    "grid-shrink": "shrinkGrid",
+    "grid-grow": "growGrid"
 };
 
 const ControlCommands = {
@@ -57,12 +61,25 @@ const NonControlCommands = {
     "Escape": {
         command: "exit-browser",
         canRepeat: false
+    },
+    "KeyG": {
+        command: "grid-toggle",
+        canRepeat: false
+    },
+    "Equal": {
+        command: "grid-grow",
+        canRepeat: true
+    },
+    "Minus": {
+        command: "grid-shrink",
+        canRepeat: true
     }
 };
 
 const PassthroughActions = [
     "selectAll","deleteSelection","paste",
-    "cut","copy","toggleBrowser","exitBrowser"
+    "cut","copy","toggleBrowser",
+    "exitBrowser"
 ];
 
 export {

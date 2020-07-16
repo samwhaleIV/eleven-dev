@@ -21,6 +21,8 @@ import InstallObjectBrowser from "./components/object-browser.js";
 import AddFileActions from "./components/file-actions.js";
 import AddEventProcessing from "./components/event-processing.js";
 
+import InstallGridView from "./components/grid-view.js";
+
 const TILESET = "world-tileset";
 const DEFAULT_SCALE = 8;
 const MIDDLE_GRAY = "#777777";
@@ -69,6 +71,7 @@ function WorldEditor() {
     this.undoStack = [], this.redoStack = [];
 
     InstallFileTracker(this);
+    InstallGridView(this);
 
     this.onDoubleClick = () => {
         this.sendAction("toggleBrowser");
@@ -144,6 +147,17 @@ WorldEditor.prototype.setAction = function(name,handler) {
 WorldEditor.prototype.sendAction = function(name) {
     const action = this.actions[name];
     if(action) action();
+};
+WorldEditor.prototype.toggleGrid = function() {
+    if(this.gridToggler) {
+        this.gridToggler();
+    }
+};
+WorldEditor.prototype.growGrid = function() {
+    this.gridScale *= 2;
+};
+WorldEditor.prototype.shrinkGrid = function() {
+    this.gridScale /= 2;
 };
 
 for(const actionName of PassthroughActions) {

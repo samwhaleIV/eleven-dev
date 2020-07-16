@@ -60,12 +60,18 @@ const menuActions = {
         ["Cut","Control+X","edit-cut"],
         ["Paste","Control+V","edit-past"]
     ],
-    Map: [
-        ["Select Map","M","set-map"],
-        ["Cycle Decorator","D","cycle-decorator"],
+
+    View: [
+        ["Toggle Grid","G","grid-toggle"],
+        ["Enlarge Grid","=","grid-grow"],
+        ["Shrink Grid","-","grid-shrink"],
         {type: "separator"},
         ["Toggle Browser","O","toggle-browser"],
         ["Exit Browser","Escape","exit-browser"]
+    ],
+    Map: [
+        ["Select Map","M","set-map"],
+        ["Cycle Decorator","D","cycle-decorator"],
     ]
 };
 
