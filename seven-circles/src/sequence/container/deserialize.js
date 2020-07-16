@@ -1,13 +1,13 @@
-import GetObject from "../objects.js";
+import {SortObjects,GetObject} from "../objects.js";
 const {ResourceManager} = Eleven;
 
 async function DeserializeAsync(container,data) {
-    const {map,decorator,objects} = data;
+    let {map,decorator,objects} = data;
     Object.assign(container,{map,decorator});
+    if(!objects) return;
 
     const newObjects = [];
-
-    for(const {type,data} of objects) {
+    for(const {type,data} of SortObjects(objects)) {
         const object = GetObject(container,type);
         newObjects.push({object,data});
 

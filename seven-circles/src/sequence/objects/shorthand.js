@@ -42,7 +42,12 @@ const SpriteDeleter = ({world,self}) => {
     world.spriteLayer.remove(self.sprite.ID);
 };
 
+const XYDefaults = `{"x":0,"y":0}`;
+const XYProp = {x:XProp,y:YProp};
+
 const Shorthand = {
-    XProp,YProp,SpriteDeleter,ColorProp,GetBoolProp
+    XProp,YProp,SpriteDeleter,XYProp,
+    ColorProp,GetBoolProp,XYDefaults
 };
+
 export default Shorthand;

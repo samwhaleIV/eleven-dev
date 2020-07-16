@@ -2,13 +2,9 @@ import Shorthand from "../shorthand.js";
 
 const Player = {
     width: 1, height: 1,
-
     files: `{"Image": ["player/default"]}`,
     defaults: `{"x":0,"y":0,"direction":"down"}`,
-
     thumbnail: "player/default",
-
-    sprite: null,
 
     create: ({isEditor,world,self,files},data) => {
         const {x,y,direction} = data;
@@ -26,9 +22,7 @@ const Player = {
         self.sprite = sprite;
     },
 
-    delete: ({world,self}) => {
-        world.spriteLayer.remove(self.sprite.ID);
-    },
+    delete: Shorthand.SpriteDeleter,
 
     properties: {
         x: Shorthand.XProp, y: Shorthand.YProp,

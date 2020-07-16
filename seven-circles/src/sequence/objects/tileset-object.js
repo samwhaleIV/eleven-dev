@@ -24,6 +24,8 @@ const GetThumbnailGenerator = (tilesetX,tilesetY) => {
 const GetTilesetObject = (
     tilesetX,tilesetY,width,height,hasCollision
 ) => {
+    hasCollision = Boolean(hasCollision);
+
     const baseSize = 16;
     const objectWidth = width / baseSize, objectHeight = height / baseSize;
 
@@ -31,13 +33,8 @@ const GetTilesetObject = (
 
     return {
         width: objectWidth, height: objectHeight,
-
-        defaults: `{"x":0,"y":0}`,
-    
+        defaults: Shorthand.XYDefaults,
         thumbnail: thumbnailGenerator,
-    
-        sprite: null,
-    
         create: ({self,tileset},data) => {
             const {x,y} = data;
     
@@ -45,20 +42,13 @@ const GetTilesetObject = (
                 x,y,self.width,self.height,
                 tileset,textureX,textureY,width,height
             );
-            if(hasCollision) {
-                sprite.collides = true;
-            }
+
+            sprite.collides = hasCollision;
 
             self.sprite = sprite;
         },
-    
-        delete: ({world,self}) => {
-            world.spriteLayer.remove(self.sprite.ID);
-        },
-    
-        properties: {
-            x: Shorthand.XProp, y: Shorthand.YProp
-        }
+        delete: Shorthand.SpriteDeleter,
+        properties: Shorthand.XYProp
     };
 };
 export default GetTilesetObject;

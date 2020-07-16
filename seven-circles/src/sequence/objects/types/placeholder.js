@@ -26,10 +26,7 @@ function PlaceholderSprite(world,x,y,color,square) {
 
 const Placeholder = {
     width: 1, height: 1,
-
     defaults: `{"x":0,"y":0,"color":"blue","square":true}`,
-    sprite: null,
-
     thumbnail: "editor/blue-square",
 
     create: ({world,self},data) => {

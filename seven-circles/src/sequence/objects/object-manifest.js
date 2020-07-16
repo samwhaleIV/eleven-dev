@@ -1,9 +1,11 @@
-import Player from "./types/player.js";
+import Player from "./types/sq-player.js";
 import MysteriousLamp from "./types/mysterious-lamp.js";
+import SaveStone from "./typs/sq-save-stone.js";
 
 const ObjectManifest = {
     Player,
-    MysteriousLamp
+    MysteriousLamp,
+    SaveStone
 };
 
 /* Object Manifest */
