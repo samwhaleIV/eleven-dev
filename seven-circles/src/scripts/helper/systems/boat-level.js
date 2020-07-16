@@ -13,7 +13,7 @@ function BoatLevel({world}) {
     player.collides = false;
 
     const boat = new BoatSprite(world,player);
-    boat.roundRenderPosition = true;
+    boat.roundRenderLocation = true;
     boat.x = 0; boat.y = 0;
     boat.xOffset = (boat.width / -2) + 0.5; 
 

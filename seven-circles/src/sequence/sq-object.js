@@ -26,21 +26,31 @@ function SQObject(container,self,type,overrideID) {
         MirrorProperty(this.watchers,this,key);
     }
 }
-
-SQObject.prototype.canLoadFiles = function() {
-    return this.self.files && !(this.type in PreviouslyLoadedTypes);
-};
 SQObject.prototype.loadFiles = async function() {
-    if(!this.canLoadFiles()) return;
-
-    await ResourceManager.queueManifest(this.self.files).load();
-    PreviouslyLoadedTypes[this.type] = true;
+    if(!this.queueFiles()) return;
+    await ResourceManager.load();
 };
 SQObject.prototype.queueFiles = function() {
-    if(!this.canLoadFiles()) return;
+    if(this.type in PreviouslyLoadedTypes) {
+        return false;
+    }
 
-    ResourceManager.queueManifest(this.self.files);
+    const {container,self} = this;
+
+    let queuedFiles = false;
+
+    if(container.isEditor && self.thumbnail) {
+        ResourceManager.queueImage(self.thumbnail);
+        queuedFiles = true;
+    }
+    if(self.files) {
+        ResourceManager.queueManifest(this.self.files);
+        queuedFiles = true;
+    }
+
     PreviouslyLoadedTypes[this.type] = true;
+
+    return queuedFiles;
 };
 SQObject.prototype.create = function(data) {
     const defaults = JSON.parse(this.self.defaults);

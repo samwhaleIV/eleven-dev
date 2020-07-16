@@ -48,7 +48,7 @@ function BoatSprite(world,occupant,imageName=DEFAULT_IMAGE) {
 
     const {grid} = world;
 
-    this.roundRenderPosition = true;
+    this.roundRenderLocation = true;
 
     const updatePosition = ({deltaSecond}) => {
         this.x += grid.roundToPixels(deltaSecond * this.xVelocity);

@@ -69,6 +69,10 @@ function WorldEditor() {
     this.undoStack = [], this.redoStack = [];
 
     InstallFileTracker(this);
+
+    this.onDoubleClick = () => {
+        this.sendAction("toggleBrowser");
+    }
 }
 
 WorldEditor.prototype.resetMap = function() {
@@ -78,6 +82,10 @@ WorldEditor.prototype.resetMap = function() {
     this.redoStack.splice(0);
 
     this.container.map = null;
+
+    if(this.clearSelection) {
+        this.clearSelection();
+    }
 
     this.camera.reset();
     this.camera.x = 2, this.camera.y = 2;

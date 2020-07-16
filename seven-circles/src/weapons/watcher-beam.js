@@ -67,7 +67,7 @@ function BeamSprite(owner,world) {
         if(data.isPlayer) sendCollision();
     };
 
-    this.roundRenderPosition = true;
+    this.roundRenderLocation = true;
 
     this.render = (context,x,y,width,height) => {
         context.fillStyle = beamColor;

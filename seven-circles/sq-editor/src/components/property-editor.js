@@ -1,6 +1,7 @@
 import GetSafeColor from "./color-safety.js";
 const element = document.getElementById("property-editor");
 const propertyContainer = element.querySelector("div.properties");
+const editorHeading = element.querySelector("h1");
 
 import {KnownNames,KnownTypes} from "../property-parsing.js";
 
@@ -136,6 +137,7 @@ const installProperties = object => {
 
     if(elementCount > 0) {
         element.classList.remove("hidden");
+        editorHeading.textContent = object.type || "Properties";
         const updateLocation = () => {
             const location = world.grid.getLocation(
                 object.x + object.self.width / 2,object.y + object.self.height

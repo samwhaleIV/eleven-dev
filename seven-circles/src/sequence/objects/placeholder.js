@@ -4,6 +4,8 @@ const Placeholder = {
     defaults: `{"x":0,"y":0,"color":"blue","square":true}`,
     sprite: null,
 
+    thumbnail: "editor/blue-square",
+
     create: ({world,self},data) => {
         const {x,y,color,square} = data;
 
@@ -16,6 +18,8 @@ const Placeholder = {
             this.color = color;
             this.collides = true;
             this.square = square;
+
+            this.roundRenderLocation = true;
 
             this.interact = () => {
                 world.message(`I am a placeholder ${this.square ? "square" : "circle"}!`);

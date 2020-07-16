@@ -1,5 +1,6 @@
 const SELECTION_COLOR = "#1489FF8C";
 const CATERPILLAR_TIME = 30;
+const DOUBLE_CLICK_TIMEOUT = 200;
 
 function ObjectSelector(world) {
     const {grid,container} = world;
@@ -91,6 +92,7 @@ function ObjectSelector(world) {
         }
         updateSelectionList();
     };
+    world.clearSelection = clearSelection;
 
     const selectionRenderer = (context,_,time) => {
         if(!selectionList.length) return;
@@ -124,6 +126,32 @@ function ObjectSelector(world) {
     const selectionStart = {x:null,y:null};
     const selectionEnd = {x:null,y:null};
 
+    let lastClickTimeout = null;
+    let inDoubleClickFrame = false;
+
+    const clearDoubleClickFrame = () => {
+        clearTimeout(lastClickTimeout);
+        lastClickTimeout = null;
+        inDoubleClickFrame = false;
+    };
+
+    const doubleClickProcessor = () => {
+        if(selectionList.length || inDoubleClickFrame) {
+            if(!selectionList.length && inDoubleClickFrame) {
+                if(world.onDoubleClick) {
+                    world.onDoubleClick();
+                }
+            }
+            clearDoubleClickFrame();
+            return;
+        }
+
+        inDoubleClickFrame = true;
+        lastClickTimeout = setTimeout(
+            clearDoubleClickFrame,DOUBLE_CLICK_TIMEOUT
+        );
+    };
+
     const clickDown = ({x,y,ctrlKey,shiftKey}) => {
 
         const object = getObjectAtLocation(x,y); 
@@ -131,10 +159,9 @@ function ObjectSelector(world) {
         selectionEnd.x = x, selectionEnd.y = y; 
         
         if(ctrlKey) {
-            if(!object) {
-                return;
+            if(object) {
+                addToSelection(object,shiftKey);
             }
-            addToSelection(object,shiftKey);
         } else {
             clearSelection();
             if(object) {
@@ -143,6 +170,7 @@ function ObjectSelector(world) {
         }
     };
     const clickUp = () => {
+        doubleClickProcessor();
         if(selectionStart.x === selectionEnd.x && selectionStart.y === selectionEnd.y) {
             for(const object of getSelections()) {
                 delete object.selectionData;
@@ -248,6 +276,16 @@ function ObjectSelector(world) {
         return objects;
     };
 
+    const getRecentObjects = count => {
+        let newObjects = Object.values(
+            container.objects
+        );
+        newObjects = newObjects.slice(
+            newObjects.length-count
+        );
+        return newObjects;
+    };
+
     const pasteData = copyData => {
         const pasteLocation = getMouseTile();
 
@@ -268,12 +306,7 @@ function ObjectSelector(world) {
 
         world.addEvents(events);
         
-        let newObjects = Object.values(
-            container.objects
-        );
-        newObjects = newObjects.slice(
-            newObjects.length-events.length
-        );
+        const newObjects = getRecentObjects(events.length);
 
         if(!newObjects.length) return;
         clearSelection();
@@ -281,6 +314,12 @@ function ObjectSelector(world) {
             selectionData[ID] = true;
         }
         updateSelectionList();
+    };
+
+    world.browserPastedObject = () => {
+        clearSelection();
+        const newObject = getRecentObjects(1)[0];
+        addToSelection(newObject,false);
     };
 
     world.setAction("copy",()=>{

@@ -87,6 +87,7 @@ SQContainer.prototype.clear = function() {
     for(const ID in this.objects) {
         this.objects[ID].delete();
     }
+    this.IDCounter = 0;
 };
 SQContainer.prototype.getObject = function(ID) {
     const object = this.objects[ID];
