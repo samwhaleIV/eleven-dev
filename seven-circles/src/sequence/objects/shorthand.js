@@ -1,3 +1,5 @@
+import OptionGen from "./option-gen.js";
+
 const XProp = {
     type: "number",
     get: ({self}) => {
@@ -64,31 +66,9 @@ const HeightProp = {
     }
 };
 
-const Directions = {
+const DirectionProp = OptionGen("direction",{
     "Up": 0, "Right": 1, "Down": 2, "Left": 3
-};
-const InverseDirections = {
-    0: "Up", 1: "Right", 2: "Down", 3: "Left"
-};
-const DirectionList = ["Down","Right","Up","Left"]
-
-const DirectionProp = {
-    options: DirectionList,
-    set: ({self},value) => {
-        const {sprite} = self;
-        if(typeof value === "number") {
-            sprite.direction = Math.min(Math.max(value,0),3);
-        } else {
-            let newValue = Directions[value];
-            if(isNaN(newValue)) newValue = 0;
-            sprite.direction = newValue;
-        }
-    },
-    get: ({self}) => {
-        const direction = InverseDirections[self.sprite.direction];
-        return direction;
-    }
-};
+});
 
 const Shorthand = {
     XProp,YProp,SpriteDeleter,XYProp,
