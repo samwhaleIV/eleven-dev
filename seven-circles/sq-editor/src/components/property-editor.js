@@ -55,6 +55,19 @@ const getPropertyType = (key,data,object) => {
     }
 };
 
+const setObjectPropertySafely = (world,object,property,value) => {
+    const oldValue = object.getProperty(property);
+    object.setProperty(property,value);
+    const newValue = object.getProperty(property);
+    if(oldValue === newValue) {
+        return false;
+    }
+    world.addEvents([{
+        oldValue, newValue, type: "property", property, object
+    }]);
+    return true;
+};
+
 const getInputProperty = (object,key,propertyType) => {
     const {world} = object.container;
 
@@ -64,23 +77,16 @@ const getInputProperty = (object,key,propertyType) => {
 
     const valueProperty = propertyType === "checkbox" ? "checked" : "value";
 
-    let recursionBreak = false;
-
-    const updatePropertyDisplay = newValue => {
-        if(recursionBreak) {
-            recursionBreak = false;
-            return;
-        }
-
+    const updatePropertyDisplay = () => {
+        let value = object.getProperty(key);
         if(propertyType === "color") {
-            newValue = GetSafeColor(newValue);
+            value = GetSafeColor(value);
         } else if(propertyType === "checkbox") {
-            newValue = Boolean(newValue);
+            value = Boolean(value);
         } else if(propertyType === "number") {
-            newValue = Number(newValue.toFixed(2));
+            value = Number(value.toFixed(2));
         }
-
-        input[valueProperty] = newValue;
+        input[valueProperty] = value;
     };
 
     input.addEventListener("change",event => {
@@ -91,10 +97,9 @@ const getInputProperty = (object,key,propertyType) => {
         } else if(propertyType === "checkbox") {
             value = Boolean(value);
         }
-        world.addEvents([{
-            type: "property", property: key, object, value
-        }]);
-        updatePropertyDisplay(object.getProperty(key));
+        if(setObjectPropertySafely(world,object,key,value)) {
+            updatePropertyDisplay();
+        }
     });
 
     addPropertyWatcher(
@@ -105,6 +110,8 @@ const getInputProperty = (object,key,propertyType) => {
     return input;
 };
 const getSelectProperty = (object,key) => {
+    const {world} = object.container;
+
     const options = object.self.properties[key].options;
     const element = document.createElement("select");
     element.setAttribute("name",key);
@@ -117,27 +124,19 @@ const getSelectProperty = (object,key) => {
         optionList.push(optionElement);
     }
 
-    let recursionBreak = false;
-
-    const sendSelection = () => {
-        object.setProperty(key,element.value);
-        recursionBreak = true;
+    const setSelection = () => {
+        element.value = object.getProperty(key);
     };
 
-    const setSelection = () => {
-        if(recursionBreak) {
-            recursionBreak = false;
-            return;
+    const sendSelection = () => {
+        if(setObjectPropertySafely(world,object,key,element.value)) {
+            setSelection();
         }
-        const value = object.getProperty(key);
-        element.value = value;
     };
 
     element.onchange = sendSelection;
+    addPropertyWatcher(world,object,key,setSelection);
     setSelection();
-    addPropertyWatcher(
-        object.container.world,object,key,setSelection
-    );
 
     return element;
 };

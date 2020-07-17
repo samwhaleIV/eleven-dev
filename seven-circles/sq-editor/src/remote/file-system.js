@@ -30,7 +30,7 @@ const FileSystem = new (function(){
         });
     };
 
-    this.baseName = (filePath,extestion) => path.basename(filePath,extestion);
+    this.basename = (filePath,extestion) => path.basename(filePath,extestion);
 })();
 globalThis.FileSystem = FileSystem;
 

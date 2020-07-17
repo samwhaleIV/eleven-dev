@@ -29,7 +29,7 @@ const Chapter2 = [
     "PondHell",
     null,
     "DynamMap",
-    "MazeHell"
+    null
 ];
 
 const LevelBlocks = [Chapter1,Chapter2];

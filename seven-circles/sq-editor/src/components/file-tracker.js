@@ -16,7 +16,8 @@ function InstallFileTracker(target) {
             get: () => filePath,
             set: value => {
                 filePath = value;
-                baseFileName = FileSystem.baseName(filePath);
+                const splitResult = filePath.split("seven-circles\\");
+                baseFileName = splitResult.pop();
                 target.updateTitle();
             }
         }

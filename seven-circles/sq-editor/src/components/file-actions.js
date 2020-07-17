@@ -1,4 +1,5 @@
 import WindowDialog from "../remote/window-dialog.js";
+import FileSystem from "../remote/file-system.js";
 
 function AddFileActions(prototype) {
     prototype.save = async function() {
@@ -81,7 +82,7 @@ function AddFileActions(prototype) {
             await WindowDialog.alert("Map image must be located in 'resources/images/maps' folder!");
             return;
         }
-        const mapName = FileSystem.baseName(filePath,".png");
+        const mapName = FileSystem.basename(filePath,".png");
         this.container.map = mapName;
     
         this.unsaved = true;
