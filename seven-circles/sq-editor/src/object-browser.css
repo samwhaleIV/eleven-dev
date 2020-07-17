@@ -19,8 +19,9 @@
     display: flex;
     flex-direction: column;
     user-select: none;
-    height: 190px;
+    height: 152px;
     cursor: pointer;
+    padding: 4px;
 }
 .object p {
     margin: 0;
@@ -33,7 +34,7 @@
     display: block;
     image-rendering: pixelated;
     margin: auto;
-    zoom: 10;
+    zoom: 8;
     margin-top: 0;
     margin: 0;
 }

@@ -76,18 +76,6 @@ const getPropertyElement = (
     const valueProperty = propertyType === "checkbox" ? "checked" : "value";
 
     let recursionBreak = false;
-    input.addEventListener("change",event => {
-        event.stopPropagation();
-        let value = input[valueProperty];
-        if(propertyType === "number") {
-            value = Number(value);
-        } else if(propertyType === "checkbox") {
-            value = Boolean(value);
-        }
-        world.addEvents([{
-            type: "property", property: key, object, value
-        }]);
-    });
 
     const updatePropertyDisplay = newValue => {
         if(recursionBreak) {
@@ -105,6 +93,20 @@ const getPropertyElement = (
 
         input[valueProperty] = newValue;
     };
+
+    input.addEventListener("change",event => {
+        event.stopPropagation();
+        let value = input[valueProperty];
+        if(propertyType === "number") {
+            value = Number(value);
+        } else if(propertyType === "checkbox") {
+            value = Boolean(value);
+        }
+        world.addEvents([{
+            type: "property", property: key, object, value
+        }]);
+        updatePropertyDisplay(object.getProperty(key));
+    });
 
     addPropertyWatcher(
         world,object,key,updatePropertyDisplay
@@ -140,8 +142,9 @@ const installProperties = object => {
         element.classList.remove("hidden");
         editorHeading.textContent = object.type || "Properties";
         const updateLocation = () => {
+            const {width,height} = object.getSize();
             const location = world.grid.getLocation(
-                object.x + object.self.width / 2,object.y + object.self.height
+                object.x + width / 2,object.y + height
             );
             element.style.left = Math.floor(location.x) + "px";
             element.style.top = Math.floor(location.y) + "px";

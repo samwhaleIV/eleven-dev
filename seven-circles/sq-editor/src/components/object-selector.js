@@ -7,14 +7,14 @@ function ObjectSelector(world) {
 
     const getObjectBounds = object => {
         const x = object.x, y = object.y;
-        const {width,height} = object.self;
+        const {width,height} = object.getSize();
         return [x,y,x+width,y+height];
     };
 
     const getObjectRenderLocation = object => {
         const x = object.x, y = object.y;
         const screenLocation = grid.getLocation(x,y);
-        let {width,height} = object.self;
+        let {width,height} = object.getSize();
         width *= grid.tileSize, height *= grid.tileSize;
         return [screenLocation.x,screenLocation.y,width,height];
     };
@@ -274,8 +274,7 @@ function ObjectSelector(world) {
             const objectType = object.type;
 
             const {x,y} = object;
-            const {width,height} = object.self;
-
+            const {width,height} = object.getSize();
             serialData.x = x - copyLocation.x;
             serialData.y = y - copyLocation.y;
 

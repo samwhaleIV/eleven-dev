@@ -63,7 +63,6 @@ function BeamSprite(owner,world) {
         if(collisionResult.isPlayer) sendCollision();
     };
     this.trigger = data => {
-        console.log(data);
         if(data.isPlayer) sendCollision();
     };
 

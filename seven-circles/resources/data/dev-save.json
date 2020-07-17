@@ -9,11 +9,11 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 0, "y": 0, "scriptID": "DynamMap",
+                "x": 5, "y": 5, "scriptID": "DynamMap",
                 "direction": 0,
                 "_deserialize": true
             }
-        },
+        }, 
 
         "BombTest": {
             "PlayerPosition": {

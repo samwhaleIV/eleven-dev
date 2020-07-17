@@ -39,15 +39,35 @@ const GetBoolProp = name => {
 };
 
 const SpriteDeleter = ({world,self}) => {
-    world.spriteLayer.remove(self.sprite.ID);
+    const {sprite} = self; if(!sprite) return;
+    world.spriteLayer.remove(sprite.ID);
 };
 
 const XYDefaults = `{"x":0,"y":0}`;
 const XYProp = {x:XProp,y:YProp};
 
+const LowestSize = 0.5;
+
+const WidthProp = {
+    type: "number",
+    get: ({self}) => self.sprite.width,
+    set: ({self},value) => {
+        self.sprite.width = Math.max(value,LowestSize);
+    }
+};
+
+const HeightProp = {
+    type: "number",
+    get: ({self}) => self.sprite.height,
+    set: ({self},value) => {
+        self.sprite.height = Math.max(value,LowestSize);
+    }
+};
+
 const Shorthand = {
     XProp,YProp,SpriteDeleter,XYProp,
-    ColorProp,GetBoolProp,XYDefaults
+    ColorProp,GetBoolProp,XYDefaults,
+    WidthProp,HeightProp
 };
 
 export default Shorthand;

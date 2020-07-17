@@ -84,6 +84,23 @@ SQObject.prototype.setProperty = function(property,value) {
     this.self.properties[property].set(this.parameterHeader,value);
     this.watchers[property].fire(value);
 };
+SQObject.prototype.hasProperty = function(property) {
+    return property in this.self.properties;
+};
+SQObject.prototype.getSize = function() {
+    let width, height;
+    if(this.hasProperty("width")) {
+        width = this.width;
+    } else {
+        width = this.self.width;
+    }
+    if(this.hasProperty("height")) {
+        height = this.height;
+    } else {
+        height = this.self.height;
+    }
+    return {width,height};
+};
 SQObject.prototype.addPropertyWatcher = function(property,handler) {
     return this.watchers[property].add(handler);
 };

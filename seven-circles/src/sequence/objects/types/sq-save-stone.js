@@ -5,6 +5,7 @@ import SaveStone from "../../../scripts/helper/interactables/save-stone.js";
 const TEXTURE_X = 224, TEXTURE_Y = 0;
 
 const SQSaveStone = {
+    width: 1, height: 1,
     thumbnail: GetThumbnailGenerator(TEXTURE_X,TEXTURE_Y),
     defaults: Shorthand.XYDefaults,
 
