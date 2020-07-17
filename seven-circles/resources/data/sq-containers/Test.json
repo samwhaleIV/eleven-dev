@@ -5,9 +5,9 @@
         {
             "type": "Player",
             "data": {
-                "x": 11,
-                "y": 7.75,
-                "direction": 3
+                "x": 9.0859375,
+                "y": 6.75,
+                "direction": "Left"
             }
         },
         {

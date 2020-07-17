@@ -3,7 +3,7 @@ import Shorthand from "../shorthand.js";
 const Player = {
     width: 1, height: 1,
     files: `{"Image": ["player/default"]}`,
-    defaults: `{"x":0,"y":0,"direction":"down"}`,
+    defaults: `{"x":0,"y":0,"direction":2}`,
     thumbnail: "player/default",
 
     create: ({isEditor,world,self,files},data) => {
@@ -26,14 +26,7 @@ const Player = {
 
     properties: {
         x: Shorthand.XProp, y: Shorthand.YProp,
-        direction: {
-            get: ({self}) => {
-                return self.sprite.direction;
-            },
-            set: ({self},value) => {
-                self.sprite.direction = value;
-            }
-        }
+        direction: Shorthand.DirectionProp
     }
 };
 export default Player;
