@@ -24,6 +24,8 @@ function SQObject(container,self,type,overrideID) {
 
     this.deletionCallback = null;
 
+    this.width = self.width, this.height = self.height;
+
     this.watchers = {};
     for(const key in self.properties) {
         MirrorProperty(this.watchers,this,key);
@@ -86,20 +88,6 @@ SQObject.prototype.setProperty = function(property,value) {
 };
 SQObject.prototype.hasProperty = function(property) {
     return property in this.self.properties;
-};
-SQObject.prototype.getSize = function() {
-    let width, height;
-    if(this.hasProperty("width")) {
-        width = this.width;
-    } else {
-        width = this.self.width;
-    }
-    if(this.hasProperty("height")) {
-        height = this.height;
-    } else {
-        height = this.self.height;
-    }
-    return {width,height};
 };
 SQObject.prototype.addPropertyWatcher = function(property,handler) {
     return this.watchers[property].add(handler);

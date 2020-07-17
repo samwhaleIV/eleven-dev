@@ -13,8 +13,8 @@
         {
             "type": "MysteriousLamp",
             "data": {
-                "x": 10.25,
-                "y": 8.25,
+                "x": 10.1171875,
+                "y": 8.40625,
                 "message": "Hello, world!"
             }
         },

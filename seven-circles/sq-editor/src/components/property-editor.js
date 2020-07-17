@@ -142,7 +142,7 @@ const installProperties = object => {
         element.classList.remove("hidden");
         editorHeading.textContent = object.type || "Properties";
         const updateLocation = () => {
-            const {width,height} = object.getSize();
+            const {width,height} = object;
             const location = world.grid.getLocation(
                 object.x + width / 2,object.y + height
             );
