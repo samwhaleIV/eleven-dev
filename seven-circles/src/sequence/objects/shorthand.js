@@ -28,8 +28,8 @@ const ColorProp = {
     }
 };
 
-const GetBoolProp = name => {
-    return {
+const GetBoolProp = (name,displayName) => {
+    const data = {
         type: "checkbox",
         get: ({self}) => {
             return self.sprite[name];
@@ -38,6 +38,8 @@ const GetBoolProp = name => {
             self.sprite[name]= value;
         }
     };
+    if(displayName) data.name = displayName;
+    return data;
 };
 
 const SpriteDeleter = ({world,self}) => {
@@ -73,7 +75,8 @@ const DirectionProp = OptionGen("direction",{
 const Shorthand = {
     XProp,YProp,SpriteDeleter,XYProp,
     ColorProp,GetBoolProp,XYDefaults,
-    WidthProp,HeightProp,DirectionProp
+    WidthProp,HeightProp,DirectionProp,
+    OptionGen
 };
 
 export default Shorthand;

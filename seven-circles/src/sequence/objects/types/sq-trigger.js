@@ -47,13 +47,9 @@ const SQTrigger = {
     properties: {
         width: Shorthand.WidthProp, height: Shorthand.HeightProp,
         x: Shorthand.XProp, y: Shorthand.YProp,
-        action: {
-            options: ["None","NextLevel","LastLevel"],
-            get: ({self}) => {
-                return self.sprite.action;
-            },
-            set: ({self},value) => self.sprite.action = value,
-        }
+        action: Shorthand.OptionGen("action",{
+            "Next Level": "NextLevel", "Last Level": "LastLevel", "None": "None"
+        })
     }
 };
 

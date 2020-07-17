@@ -1,9 +1,8 @@
 import Shorthand from "../shorthand.js";
-import OptionGen from "../option-gen.js";
 
 const SQLight = {
     width: 1, height: 1,
-
+    thumbnail: "editor/light",
     defaults: `{"x":0,"y":0,"gradientID":7}`,
 
     create: ({world,self},data) => {
@@ -16,13 +15,13 @@ const SQLight = {
     delete: Shorthand.SpriteDeleter,
 
     properties: {
-        x: Shorthand.XYProp, y: Shorthand.YProp,
-        gradientID: OptionGen("gradientID",{
+        x: Shorthand.XProp, y: Shorthand.YProp,
+        gradientID: Shorthand.OptionGen("gradientID",{
             "White": 7, "Beige": 11,
             "Yellow": 12, "Red": 9,
             "Green": 10, "Purple": 13,
             "Blue": 8, "Cerise": 14
-        })
+        },"Color")
     }
 };
 

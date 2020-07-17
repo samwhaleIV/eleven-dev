@@ -74,8 +74,10 @@ SQObject.prototype.delete = function() {
 };
 SQObject.prototype.serialize = function() {
     const data = {};
-    for(const property in this.self.properties) {
-        data[property] = this.getProperty(property);
+    const {properties} = this.self;
+    for(const [name,property] of Object.entries(properties)) {
+        const target = property.serialize || property.get;
+        data[name] = target(this.parameterHeader);
     }
     return data;
 };

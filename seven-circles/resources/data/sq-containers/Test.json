@@ -5,9 +5,10 @@
         {
             "type": "Player",
             "data": {
-                "x": 9.0859375,
-                "y": 6.75,
-                "direction": "Left"
+                "x": 9.5,
+                "y": 6,
+                "direction": 2,
+                "fromNext": false
             }
         },
         {
@@ -23,9 +24,24 @@
         {
             "type": "MysteriousLamp",
             "data": {
-                "x": 8.140625,
-                "y": 5.03125,
+                "x": 8,
+                "y": 4.5,
                 "message": "Hello, world!"
+            }
+        },
+        {
+            "type": "Light",
+            "data": {
+                "x": 8,
+                "y": 2,
+                "gradientID": 7
+            }
+        },
+        {
+            "type": "SaveStone",
+            "data": {
+                "x": 9.5,
+                "y": 3.5
             }
         }
     ]
