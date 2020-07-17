@@ -41,12 +41,15 @@
 .property:nth-child(2n) {
     background-color: #f9f9f9;
 }
-.property input {
+.property input, .property select {
     width: 100%;
     height: 20px;
     margin-top: 0px;
     border: 1px solid #a1a0a0;
     background-color: #fff;
+}
+.property select {
+    height: 24px;
 }
 
 .property label {

@@ -5,24 +5,9 @@
         {
             "type": "Player",
             "data": {
-                "x": 11.434426229508196,
-                "y": 7.639344262295082,
+                "x": 11,
+                "y": 7.75,
                 "direction": 3
-            }
-        },
-        {
-            "type": "MysteriousLamp",
-            "data": {
-                "x": 10.1171875,
-                "y": 8.40625,
-                "message": "Hello, world!"
-            }
-        },
-        {
-            "type": "SaveStone",
-            "data": {
-                "x": 8.625,
-                "y": 2.75
             }
         },
         {
@@ -30,9 +15,17 @@
             "data": {
                 "width": 1,
                 "height": 3,
-                "x": 6.518314549180327,
-                "y": 6.035604508196723,
-                "action": "None"
+                "x": 6.5,
+                "y": 6,
+                "action": "NextLevel"
+            }
+        },
+        {
+            "type": "MysteriousLamp",
+            "data": {
+                "x": 8.140625,
+                "y": 5.03125,
+                "message": "Hello, world!"
             }
         }
     ]

@@ -7,7 +7,8 @@ import {KnownNames,KnownTypes} from "../property-parsing.js";
 
 const ValidInputTypes = {
     "text": true, "number": true,
-    "color": true, "checkbox": true
+    "color": true, "checkbox": true,
+    "options": true
 };
 
 const addPropertyWatcher = (world,object,property,handler) => {
@@ -39,6 +40,7 @@ const getPropertyDisplayName = (key,data) => {
     return key.charAt(0).toUpperCase() + key.slice(1);
 };
 const getPropertyType = (key,data,object) => {
+    if(data.options) return "options";
     if(data.type) return data.type;
     if(key in KnownTypes) return KnownTypes[key];
     switch(typeof object.getProperty(key)) {
@@ -53,22 +55,9 @@ const getPropertyType = (key,data,object) => {
     }
 };
 
-const getPropertyElement = (
-    object,displayName,key,propertyType
-) => {
-
-    if(!(propertyType in ValidInputTypes)) return null;
-
+const getInputProperty = (object,key,propertyType) => {
     const {world} = object.container;
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "property";
-
-    const inputLabel = document.createElement("label");
-    inputLabel.appendChild(document.createTextNode(
-        displayName
-    ));
-    inputLabel.setAttribute("for",key);
     const input = document.createElement("input");
     input.setAttribute("type",propertyType);
     input.setAttribute("name",key);
@@ -113,7 +102,66 @@ const getPropertyElement = (
     );
     updatePropertyDisplay(object.getProperty(key));
 
+    return input;
+};
+const getSelectProperty = (object,key) => {
+    const options = object.self.properties[key].options;
+    const element = document.createElement("select");
+    element.setAttribute("name",key);
+    const optionList = [];
+    for(const option of options) {
+        const optionElement = document.createElement("option");
+        optionElement.setAttribute("value",option);
+        optionElement.appendChild(document.createTextNode(option));
+        element.appendChild(optionElement);
+        optionList.push(optionElement);
+    }
+
+    let recursionBreak = false;
+
+    const sendSelection = () => {
+        object.setProperty(key,element.value);
+        recursionBreak = true;
+    };
+
+    const setSelection = () => {
+        if(recursionBreak) {
+            recursionBreak = false;
+            return;
+        }
+        const value = object.getProperty(key);
+        element.value = value;
+    };
+
+    element.onchange = sendSelection;
+    setSelection();
+    addPropertyWatcher(
+        object.container.world,object,key,setSelection
+    );
+
+    return element;
+};
+
+const getPropertyElement = (
+    object,displayName,key,propertyType
+) => {
+    if(!(propertyType in ValidInputTypes)) return null;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "property";
+
+    const inputLabel = document.createElement("label");
+    inputLabel.appendChild(document.createTextNode(
+        displayName
+    ));
+    inputLabel.setAttribute("for",key);
     wrapper.appendChild(inputLabel);
+
+    const inputGenerator = propertyType === "options"
+        ? getSelectProperty : getInputProperty;
+    const input =  inputGenerator(
+        object,key,propertyType
+    );
     wrapper.appendChild(input);
 
     return wrapper;
