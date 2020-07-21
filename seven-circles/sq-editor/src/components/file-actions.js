@@ -82,7 +82,11 @@ function AddFileActions(prototype) {
             await WindowDialog.alert("Map image must be located in 'resources/images/maps' folder!");
             return;
         }
-        const mapName = FileSystem.basename(filePath,".png");
+        const mapNameSplit = filePath.split(FileSystem.mapImageFolder);
+
+        let mapName = mapNameSplit.pop().split(".png")[0];
+        mapName = mapName.split("\\").join("/");
+
         this.container.map = mapName;
     
         this.unsaved = true;

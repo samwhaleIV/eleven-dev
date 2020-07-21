@@ -63,7 +63,7 @@ function InstallContainer(target) {
         }
         const name = `maps/${map}`;
         ResourceManager.queueImage(name);
-        await ResourceManager.load();
+        await ResourceManager.load(true);
         const mapImage = ResourceManager.getImage(name);
         setMap(mapImage);
     });

@@ -9,7 +9,7 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 5, "y": 5, "scriptID": "DynamMap",
+                "x": 5, "y": 5, "scriptID": "PondHell",
                 "direction": 0,
                 "_deserialize": true
             }

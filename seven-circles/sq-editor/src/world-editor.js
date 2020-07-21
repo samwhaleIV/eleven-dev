@@ -159,6 +159,13 @@ WorldEditor.prototype.growGrid = function() {
 WorldEditor.prototype.shrinkGrid = function() {
     this.gridScale /= 2;
 };
+WorldEditor.prototype.reloadMap = function() {
+    const {container} = this;
+    if(!container) return;
+    const {map} = container;
+    if(!map) return;
+    container.map = map;
+};
 
 for(const actionName of PassthroughActions) {
     WorldEditor.prototype[actionName] = function() {

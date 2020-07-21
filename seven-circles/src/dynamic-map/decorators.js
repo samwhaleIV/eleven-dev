@@ -1,4 +1,4 @@
-const TheOG = ({image}) => [
+const c1 = ({image}) => [
     ["AddPattern","floor",image,112,16,32,32],
     ["AddPattern","wall",image,112,0,32,16],
     ["Pattern",1,"floor"],
@@ -9,15 +9,25 @@ const TheOG = ({image}) => [
     ["Shadow",2,3,3,3/5],
     ["CollisionMap",3]
 ];
-const c2 = () => [
+
+const c2Base = [
     ["Color",1,"#980404"],
-    ["Outline",1,"#740303"],
     ["Color",2,"#3C0101"],
     ["Color",3,"#F70000"],
+    ["Outline",1,"#740303"],
     ["Outline",3,"#C60000"],
     ["Shadow",1,3,4,3/5],
-    ["Shadow",2,3,4,3/5],
+    ["Shadow",2,3,4,3/5]
+];
+
+const c2 = () => [
+    ...c2Base,
     ["CollisionMap",3]
+];
+
+const c2Alt = () => [
+    ...c2Base,
+    ["CollisionMap",2]
 ];
 
 const Decorators = {
@@ -27,10 +37,7 @@ const Decorators = {
         ["Color",3,"#0000ff"],
         ["CollisionMap",3]
     ],
-    c1: TheOG,
-    og: TheOG,
-    classic: TheOG,
-    c2: c2
+    c1, c2, c2Alt
 };
 
 const DecoratorList = [

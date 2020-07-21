@@ -22,7 +22,8 @@ const CommandRouting = {
     "grid-toggle": "toggleGrid",
 
     "grid-shrink": "shrinkGrid",
-    "grid-grow": "growGrid"
+    "grid-grow": "growGrid",
+    "reload-map": "reloadMap"
 };
 
 const ControlCommands = {
@@ -38,7 +39,8 @@ const ControlCommands = {
 
     "KeyC": "edit-copy",
     "KeyV": "edit-paste",
-    "KeyX": "edit-cut"
+    "KeyX": "edit-cut",
+    "KeyM": "set-map"
 };
 
 const NonControlCommands = {
@@ -51,7 +53,7 @@ const NonControlCommands = {
         canRepeat: false
     },
     "KeyM": {
-        command: "set-map",
+        command: "reload-map",
         canRepeat: false
     },
     "KeyO": {

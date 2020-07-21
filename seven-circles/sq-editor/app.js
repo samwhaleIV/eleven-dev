@@ -70,8 +70,9 @@ const menuActions = {
         ["Exit Browser","Escape","exit-browser"]
     ],
     Map: [
-        ["Select Map","M","set-map"],
+        ["Select Map","Control+M","set-map"],
         ["Cycle Decorator","D","cycle-decorator"],
+        ["Reload Map","R","reload-map"]
     ]
 };
 

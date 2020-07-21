@@ -1,0 +1,22 @@
+{
+    "map": "c2/titan-base",
+    "decorator": "c2",
+    "objects": [
+        {
+            "type": "Player",
+            "data": {
+                "x": 7,
+                "y": 2.25,
+                "direction": 1
+            }
+        },
+        {
+            "type": "MysteriousLamp",
+            "data": {
+                "x": 7.804347826086955,
+                "y": 1.1086956521739129,
+                "message": ""
+            }
+        }
+    ]
+}
