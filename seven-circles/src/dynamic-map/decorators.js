@@ -25,23 +25,17 @@ const c2 = () => [
     ["CollisionMap",3]
 ];
 
-const c2Alt = () => [
-    ...c2Base,
-    ["CollisionMap",2]
+const none = () => [
+    ["Color",1,"#ff0000"],
+    ["Color",2,"#00ff00"],
+    ["Color",3,"#0000ff"],
+    ["CollisionMap",3]
 ];
 
 const Decorators = {
-    none: () => [
-        ["Color",1,"#ff0000"],
-        ["Color",2,"#00ff00"],
-        ["Color",3,"#0000ff"],
-        ["CollisionMap",3]
-    ],
-    c1, c2, c2Alt
+    none,c1,c2
 };
 
-const DecoratorList = [
-    "none","classic","c2"
-];
+const DecoratorList = Object.keys(Decorators);
 export default Decorators;
 export {Decorators, DecoratorList};
