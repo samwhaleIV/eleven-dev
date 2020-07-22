@@ -9,13 +9,13 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 5, "y": 5, "scriptID": "BombTest",
+                "x": 5, "y": 5, "scriptID": "ShotgunTest",
                 "direction": 0,
                 "_deserialize": true
             },
             "Inventory": {
                 "shotgun": 1,
-                "shells": 0
+                "shells": 27
             }
         }, 
 

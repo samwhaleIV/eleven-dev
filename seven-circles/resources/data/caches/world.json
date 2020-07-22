@@ -27,7 +27,9 @@
 
         "weapon/shotgun.png",
         "hud/shells.png",
-        "hud/hearts.png"
+        "hud/hearts.png",
+
+        "crawler.png"
     ],
     "Audio": ["text-sound.mp3"]
 }

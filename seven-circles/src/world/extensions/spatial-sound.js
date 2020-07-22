@@ -77,6 +77,7 @@ async function playSpatialSound(data) {
     if(isNaN(x)) x = this.camera.x; if(isNaN(y)) y = this.camera.y;
 
     const remoteControl = AudioManager.playSound(data);
+    if(!remoteControl) return;
 
     let updater;
     if(useTarget) {

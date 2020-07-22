@@ -39,8 +39,9 @@ import DynamMap from "./levels/test/dynam-map.js";
 import IkTest from "./levels/test/ik-test.js";
 import MouseTest from "./levels/test/mouse-test.js";
 import NpcClTest from "./levels/test/npc-cl-test.js";
+import ShotgunTest from "./levels/test/shotgun-test.js";
 
-const Scripts = ScriptBook.Import(AlicePalace,BombHell,Chaper1End,CheckerPalace,ChocolateHell,DeadTitanHell,GoodbyeHell,GraveHell,HatHell,HatStore,HelloHell,MazeHell,MineHell,PaintHell,PrepareHell,RiverHell,SaveHell,SavePalace,SuperCheckerPalace,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,BoatHell,DeadHell,PondHell,ErrorPlace,HelloWorld,BombTest,DynamMap,IkTest,MouseTest,NpcClTest);
+const Scripts = ScriptBook.Import(AlicePalace,BombHell,Chaper1End,CheckerPalace,ChocolateHell,DeadTitanHell,GoodbyeHell,GraveHell,HatHell,HatStore,HelloHell,MazeHell,MineHell,PaintHell,PrepareHell,RiverHell,SaveHell,SavePalace,SuperCheckerPalace,SwitchHell,TheBeginning,TunnelsOfHell,VoidHell,BoatHell,DeadHell,PondHell,ErrorPlace,HelloWorld,BombTest,DynamMap,IkTest,MouseTest,NpcClTest,ShotgunTest);
 
 export default Scripts;
 

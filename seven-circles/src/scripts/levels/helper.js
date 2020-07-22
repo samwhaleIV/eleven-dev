@@ -34,8 +34,10 @@ import AntiPlayer from "../helper/sprites/anti-player.js";
 import BoatLevel from "../helper/systems/boat-level.js";
 import AddBloodBackground from "../helper/backgrounds/blood-background.js";
 import AddMegaDemonGuy from "../helper/sprites/mega-demon-guy.js";
+import AddCrawler from "../helper/sprites/crawler.js";
 
 export {
+    AddCrawler,
     AddMegaDemonGuy,
     AddBloodBackground,
     BoatLevel,
