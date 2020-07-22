@@ -23,7 +23,11 @@
         "the-watcher.png",
 
         "weapon/gun.png",
-        "weapon/enemy-gun.png"
+        "weapon/enemy-gun.png",
+
+        "weapon/shotgun.png",
+        "hud/shells.png",
+        "hud/hearts.png"
     ],
     "Audio": ["text-sound.mp3"]
 }

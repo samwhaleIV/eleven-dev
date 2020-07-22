@@ -8,12 +8,12 @@ const makeProjectilePoint = (x,y,behind) => {
     return {x:x/16,y:y/16,behind};
 };
 
-const PROJECTILE_POINTS = Object.freeze({
+const PROJECTILE_POINTS = {
     0: makeProjectilePoint(11.5,11.6,true), //up
     1: makeProjectilePoint(10,12.1,true),   //right
     2: makeProjectilePoint(4.6,11.6,false), //down
     3: makeProjectilePoint(6,12.1,true)     //left
-});
+};
 
 function GenericBlaster(image) {
 

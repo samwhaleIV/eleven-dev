@@ -9,12 +9,12 @@
     "SwapHat": null,
     "RockGrabbed": null,
     "RockInWater": null,
-    "BombFuse": null,
-    "BombExplode": null,
+    "BombFuse": "bomb-tick.mp3",
+    "BombExplode": "boom.mp3",
     "ClawMachinePaint": null,
     "ChocolateMilkSip": null,
     "TheMapExploded": null,
-    "GotAnItem": null,
+    "GotAnItem": "item-sound.mp3",
     "SwitchDoorsToggled": null,
     "PlayerGateTeleport": null,
     "TeleporterStart": null,
@@ -28,5 +28,9 @@
     "CoffinClose": null,
     "BuildBridge": null,
     "ButtonClick": null,
-    "WireSnipped": null
+    "WireSnipped": null,
+    "ShotgunBlast": "shotgun-blast.mp3",
+    "ShotgunReload": "shotgun-reload.mp3",
+    "ShotgunBoom": "boom.mp3",
+    "ShotgunEmpty": "shotgun-empty.mp3"
 }

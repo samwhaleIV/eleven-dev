@@ -56,7 +56,7 @@ function getJitter(radius) {
 
 function addBomb(world,x,y,callback) {
     const tileSprite = world.addTileSprite(x,y,BOMB_TILE_ID,false);
-    world.playSound("BombFuse");
+    world.playSpatialSound({name:"BombFuse",x,y});
 
     const {render} = tileSprite;
 
@@ -69,7 +69,9 @@ function addBomb(world,x,y,callback) {
         context.translate(-xOffset,-yOffset);
     };
 
-    setTimeout(getEndOfExplosion(world,tileSprite,callback),EXPLOSION_DELAY);
+    setTimeout(getEndOfExplosion(world,tileSprite,()=>{
+        callback();
+    }),EXPLOSION_DELAY);
 }
 
 function InstallBombAreas(world,script) {
@@ -124,7 +126,7 @@ function InstallBombAreas(world,script) {
         return tiles;
     };
 
-    const finalizeDestructionTiles = destructionTiles => {
+    const finalizeDestructionTiles = (destructionTiles,x,y) => {
         for(let i = 0;i<destructionTiles.length;i++) {
             const [x,y,foregroundTile] = destructionTiles[i];
             world.setForegroundTile(x,y,foregroundTile);
@@ -133,13 +135,13 @@ function InstallBombAreas(world,script) {
         }
         world.pushInteractionChanges();
         world.pushCollisionChanges();
-        world.playSound("BombExplode");
+        world.playSpatialSound({name:"BombExplode",x,y});
 
         if(world.script.bombExploded) world.script.bombExploded();
     };
 
-    const getDestructionTileFinalizer = destructionTiles =>
-    () => finalizeDestructionTiles(destructionTiles);
+    const getDestructionTileFinalizer = (destructionTiles,x,y) =>
+    () => finalizeDestructionTiles(destructionTiles,x,y);
 
     const badBomb = () => {
         world.message("This isn't a good place for a bomb!");
@@ -162,7 +164,7 @@ function InstallBombAreas(world,script) {
                         world.player.clearWeapon();
                     }
 
-                    const callback = getDestructionTileFinalizer(destructionTiles);
+                    const callback = getDestructionTileFinalizer(destructionTiles,x,y);
                     addBomb(world,x,y,callback);
                     return true;
                 }

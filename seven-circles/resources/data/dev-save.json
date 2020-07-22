@@ -9,9 +9,13 @@
         "Named": {
             "player-hat": "dev",
             "PlayerPosition": {
-                "x": 5, "y": 5, "scriptID": "PondHell",
+                "x": 5, "y": 5, "scriptID": "BombTest",
                 "direction": 0,
                 "_deserialize": true
+            },
+            "Inventory": {
+                "shotgun": 1,
+                "shells": 0
             }
         }, 
 

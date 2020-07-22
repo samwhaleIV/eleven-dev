@@ -1,9 +1,11 @@
 import Pickup from "./scripts/pickup.js";
 import Present from "./scripts/present.js";
 import {BigPill,SmallPill,SpeedPill} from "./scripts/pills.js";
-import Blaster from "./scripts/blaster.js";
 import Key from "./scripts/key.js";
-import Bomb from "./scripts/bomb.js";
+import GetWeaponItem from "./scripts/weapon-item.js";
+import Blaster from "../weapons/generic-blaster.js";
+import Bomb from "../weapons/bomb-weapon.js";
+import Shotgun from "../weapons/shotgun.js";
 
 function Impulse() {
     this.retain = true;
@@ -22,7 +24,7 @@ const ItemUseTable = {
     "present": [Present,30],
     "big-pill": BigPill,
     "small-pill": SmallPill,
-    "blaster": Blaster,
+    "blaster": [GetWeaponItem(Blaster)],
 
     "red-key": [Key,"red"],
     "blue-key": [Key,"blue"],
@@ -33,8 +35,9 @@ const ItemUseTable = {
     "ice-key": [Key,"ice"],
     "chocolate-key": [Key,"chocolate"],
 
-    "bomb": Bomb,
+    "bomb": [GetWeaponItem(Bomb)],
     "speed-pill": SpeedPill,
+    "shotgun": [GetWeaponItem(Shotgun)],
 
     /* Impulse passthroughs... */
     "chocolate-milk": Impulse,

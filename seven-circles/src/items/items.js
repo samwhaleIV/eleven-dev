@@ -22,7 +22,9 @@ const ITEM_DATA = [
     ["Ice Key","ice-key"],
     ["Fissure Token","fissure-token"],
     ["Cleaver","cleaver"],
-    ["Bridge Piece","bridge-piece"]
+    ["Bridge Piece","bridge-piece"],
+    ["Shotgun","shotgun"],
+    ["Shells","shells"]
 ];
 
 const ItemLookup = new Object();

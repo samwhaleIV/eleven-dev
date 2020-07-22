@@ -1,5 +1,5 @@
 const TIMEOUT = 1000;
-const LABEL_OFFSET = -10.25 / 16;
+const LABEL_OFFSET = -0.6
 
 const LETTER_SPACING = 0;
 const WORD_SPACING = 2;

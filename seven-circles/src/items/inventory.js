@@ -71,16 +71,16 @@ function Inventory() {
 
     this.getItems = getItems;
 
-    const countItem = safeID => {
+    const count = safeID => {
         validateSafeID(safeID);
 
         const itemContainer = getItemContainer();
         return itemContainer[safeID];
     };
 
-    this.has = safeID => countItem(safeID) >= 1;
+    this.has = safeID => count(safeID) >= 1;
 
-    this.countItem = countItem;
+    this.count = count;
 
     this.take = (safeID,amount) => {
         validateSafeID(safeID);

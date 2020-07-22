@@ -1,7 +1,10 @@
 const NAME = "bomb";
 
-function BombWeapon(script,world) {
+function BombWeapon() {
     const image = Eleven.ResourceManager.getImage("weapon/bomb");
+
+    const {world} = this;
+    const {script} = world;
 
     this.name = NAME;
 
