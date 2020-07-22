@@ -35,17 +35,21 @@ function Addsprite(world,x,y,direction="down") {
         });
     };
 
+    const installShortHitbox = target => {
+        target.hitBox = {
+            x: target.x + 0.125,
+            y: target.y + 0.6,
+            width: 0.75,
+            height: 0.4
+        };
+    };
+
     const getDummyLegs = sourceSprite => {
         const dummySprite = new AnimatedSprite(image,sourceSprite.x,sourceSprite.y);
-        dummySprite.subtexture = 3;
+        dummySprite.subtexture = 4;
         dummySprite.direction = sourceSprite.direction;
         dummySprite.collides = true;
-        dummySprite.hitBox = {
-            x: dummySprite.x + 0.125,
-            y: dummySprite.y + 0.5,
-            width: 0.75,
-            height: 0.5
-        };
+        installShortHitbox(dummySprite);
         return dummySprite;
     };
 
@@ -69,8 +73,7 @@ function Addsprite(world,x,y,direction="down") {
 
     sprite.shot = () => {
         let newSubtexture = sprite.subtexture + 1;
-        const lastSubtexture = sprite.subtextureCount - 1;
-        if(newSubtexture > lastSubtexture) {
+        if(newSubtexture === 4) {
             world.spriteLayer.remove(sprite.ID);
             sprite.alive = false;
             sprite.shot = null;
