@@ -99,12 +99,15 @@ WorldEditor.prototype.cycleDecorator = function() {
     const currentDecorator = container.decorator || "none";
 
     let index = DecoratorList.indexOf(currentDecorator);
+    
     if(index < 0) {
         index = 0;
     } else {
-        index += 1;
+        index++;
+        if(index > currentDecorator.length) {
+            index = 0;
+        }
     }
-    if(index >= currentDecorator.length) index = 0;
 
     container.decorator = DecoratorList[index];
     this.unsaved = true;
