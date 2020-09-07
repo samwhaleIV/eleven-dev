@@ -14,7 +14,7 @@
     "ClawMachinePaint": null,
     "ChocolateMilkSip": null,
     "TheMapExploded": null,
-    "GotAnItem": "item-sound.mp3",
+    "GotAnItem": null,
     "SwitchDoorsToggled": null,
     "PlayerGateTeleport": null,
     "TeleporterStart": null,
