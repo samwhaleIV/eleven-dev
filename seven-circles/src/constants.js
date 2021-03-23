@@ -7,7 +7,7 @@ const ByCanvasScale = value => Math.ceil(WorldCanvasScale * value);
 const Constants = Object.freeze({
     Namespace: "SVCC",
 
-    PlayerSpeed: 2.5,
+    PlayerSpeed: 3,
     NPCSpeed: 2.5,
 
     FaderDuration: 500,
@@ -29,8 +29,8 @@ const Constants = Object.freeze({
     MusicVolumeKey: "SVCC_MUSIC_VOLUME",
     SoundVolumeKey: "SVCC_SOUND_VOLUME",
 
-    MusicVolume: 0.8,
-    SoundVolume: 1,
+    MusicVolume: 0.2,
+    SoundVolume: 0.8,
 
     MinVolume: 0,
     MaxVolume: 1,

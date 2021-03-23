@@ -1,6 +1,6 @@
 import PillParticles from "./pill-particles.js";
 
-const SPEED_MODIFIER = 3;
+const SPEED_MODIFIER = 1.5;
 
 const SPEED_PILL_FLAG = "speedPillActive";
 
