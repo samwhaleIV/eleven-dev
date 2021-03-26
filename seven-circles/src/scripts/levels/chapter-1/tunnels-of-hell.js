@@ -61,7 +61,7 @@ function TunnelsOfHell({world,inventory,saveState,fromNextMap,nextMap}) {
 
     const endWallLeft = new SpriteDoor(world,57,8,"grayDoor",player.x < 55,2000,48);
     const endWallRight = new SpriteDoor(
-        world,71,8,"grayDoor",saveState.get("talkedToDemonGuy")?true:false,2000,49
+        world,71,8,"grayDoor",saveState.get("talkedToDevilGuy")?true:false,2000,49
     );
 
     const objective = new ObjectiveText(world);
