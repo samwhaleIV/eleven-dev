@@ -10,7 +10,7 @@
   "author": "mistopportunity",
   "license": "CC-BY-NC-4.0",
   "devDependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.3"
   },
   "dependencies": {
     "connect-busboy": "0.0.2",
